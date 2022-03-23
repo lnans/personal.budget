@@ -2,9 +2,10 @@ namespace Domain.Entities;
 
 public class User
 {
-    public Guid Id { get; set; }
+    public string Id { get; set; }
     public string Username { get; set; }
-    public string Password { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
+    public string Hash { get; set; }
+
+    public virtual ICollection<Account> Accounts { get; set; }
+    public virtual ICollection<OperationTag> Tags { get; set; }
 }

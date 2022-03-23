@@ -7,7 +7,7 @@ namespace Application.Commands.OperationTag;
 
 public record UpdateOperationTagRequest(string Name, string Color);
 public record UpdateOperationTagCommand(string Id, string Name, string Color) : IRequest<UpdateOperationTagResponse>;
-public record UpdateOperationTagResponse(Guid Id, string Name, string Color);
+public record UpdateOperationTagResponse(string Id, string Name, string Color);
 
 public class UpdateOperationTagValidator : AbstractValidator<UpdateOperationTagCommand>
 {
@@ -30,7 +30,7 @@ public class UpdateOperationTagCommandHandler : IRequestHandler<UpdateOperationT
     public async Task<UpdateOperationTagResponse> Handle(UpdateOperationTagCommand request, CancellationToken cancellationToken)
     {
         var operationTag = await _dbContext.OperationTags
-            .FirstOrDefaultAsync(op => op.Id == request.Id.ToGuid(), cancellationToken);
+            .FirstOrDefaultAsync(op => op.Id == request.Id, cancellationToken);
 
         if (operationTag is null) throw new NotFoundException("operation_tag.not_found");
 
@@ -38,7 +38,7 @@ public class UpdateOperationTagCommandHandler : IRequestHandler<UpdateOperationT
             .OperationTags
             .FirstOrDefaultAsync(op =>
                     op.Name.ToLower() == request.Name.ToLower() &&
-                    op.Id != request.Id.ToGuid(),
+                    op.Id != request.Id,
                 cancellationToken);
 
         if (sameNameOperationTag is not null) throw new AlreadyExistException("operation_tag.already_exist");

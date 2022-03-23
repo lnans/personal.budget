@@ -18,7 +18,7 @@ public class DeleteOperationTagCommandHandler : IRequestHandler<DeleteOperationT
     public async Task<Unit> Handle(DeleteOperationTagCommand request, CancellationToken cancellationToken)
     {
         var operationTag = await _dbContext.OperationTags
-            .FirstOrDefaultAsync(op => op.Id == request.Id.ToGuid(), cancellationToken);
+            .FirstOrDefaultAsync(op => op.Id == request.Id, cancellationToken);
 
         if (operationTag is null) throw new NotFoundException("operation_tag.not_found");
 

@@ -15,7 +15,7 @@ public class GetAllOperationTagTests : TestBase
     {
         // Arrange
         for (var i = 0; i < 10; i++)
-            await DbContext.OperationTags.AddAsync(new Domain.Entities.OperationTag {Id = Guid.NewGuid()});
+            await DbContext.OperationTags.AddAsync(new Domain.Entities.OperationTag {Id = Guid.NewGuid().ToString()});
         await DbContext.SaveChangesAsync();
 
         // Act

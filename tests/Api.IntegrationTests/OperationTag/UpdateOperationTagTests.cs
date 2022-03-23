@@ -15,7 +15,7 @@ public class UpdateOperationTagTests : TestBase
     public async Task Put_WithValidRequest_ShouldReturn_OperationTagUpdated()
     {
         // Arrange
-        var operationTag = new Domain.Entities.OperationTag() {Id = Guid.NewGuid(), Name = "", Color = ""};
+        var operationTag = new Domain.Entities.OperationTag() {Id = Guid.NewGuid().ToString(), Name = "", Color = ""};
         await DbContext.OperationTags.AddAsync(operationTag);
         await DbContext.SaveChangesAsync();
         var request = new UpdateOperationTagRequest("tag", "#123456");
@@ -35,7 +35,7 @@ public class UpdateOperationTagTests : TestBase
     public async Task Put_WithUnknownId_ShouldReturn_ErrorResponse()
     {
         // Arrange
-        var operationTag = new Domain.Entities.OperationTag() {Id = Guid.NewGuid(), Name = "", Color = ""};
+        var operationTag = new Domain.Entities.OperationTag() {Id = Guid.NewGuid().ToString(), Name = "", Color = ""};
         var unkownId = Guid.NewGuid();
         await DbContext.OperationTags.AddAsync(operationTag);
         await DbContext.SaveChangesAsync();
@@ -59,7 +59,7 @@ public class UpdateOperationTagTests : TestBase
     public async Task Put_NotValidCommand_ShouldReturn_ErrorResponse(string name, string color)
     {
         // Arrange
-        var operationTag = new Domain.Entities.OperationTag() {Id = Guid.NewGuid(), Name = "exist", Color = ""};
+        var operationTag = new Domain.Entities.OperationTag() {Id = Guid.NewGuid().ToString(), Name = "exist", Color = ""};
         await DbContext.OperationTags.AddAsync(operationTag);
         await DbContext.SaveChangesAsync();
         var request = new UpdateOperationTagRequest(name, color);

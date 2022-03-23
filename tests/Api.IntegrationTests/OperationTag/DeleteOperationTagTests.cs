@@ -37,6 +37,6 @@ public class DeleteOperationTagTests : TestBase
         // Assert
         Check.That(result).IsNotNull();
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.NotFound);
-        Check.That(result.Message).IsEqualTo("errors.operation_tag.not_found");
+        Check.That(result?.Message).IsEqualTo("errors.operation_tag.not_found");
     }
 }

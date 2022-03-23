@@ -6,7 +6,7 @@ using Domain.Exceptions;
 namespace Application.Commands.OperationTag;
 
 public record CreateOperationTagCommand(string Name, string Color) : IRequest<CreateOperationTagResponse>;
-public record CreateOperationTagResponse(Guid Id, string Name, string Color);
+public record CreateOperationTagResponse(string Id, string Name, string Color);
 
 public class CreateOperationTagValidator : AbstractValidator<CreateOperationTagCommand>
 {

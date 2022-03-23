@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Application.Queries.OperationTag;
 
 public record GetAllOperationTagQuery : IRequest<IEnumerable<GetAllOperationTagResponse>>;
-public record GetAllOperationTagResponse(Guid Id, string Name, string Color);
+public record GetAllOperationTagResponse(string Id, string Name, string Color);
 
 public class GetAllOperationTagQueryHandler : IRequestHandler<GetAllOperationTagQuery, IEnumerable<GetAllOperationTagResponse>>
 {
