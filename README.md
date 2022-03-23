@@ -5,12 +5,13 @@
 # Budget. API
 
 **Budget.** is my personal app for organize and managed my spendings and savings over years.\
-This reporsitory only contains Backend code and its based on **CQRS** and **Clean Architecture** standards.
+This repository only contains Backend code and its based on **CQRS** and **Clean Architecture** standards.
 
 Technical informations:
 > \# .NET 6\
 > \# SQLite\
-> \# Mediatr
+> \# Mediatr\
+> \# FluentValidation
 
 # Getting Started
 
