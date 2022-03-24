@@ -1,6 +1,7 @@
-using Microsoft.EntityFrameworkCore;
 using Application;
 using Domain.Entities;
+using Infrastructure.Persistence.Configurations;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence;
 
@@ -10,10 +11,16 @@ public class ApplicationDbDbContext : DbContext, IApplicationDbContext
     {
     }
 
-    public DbSet<Constant> Constants => Set<Constant>();
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfiguration(new AccountEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new OperationEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new OperationTagEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
+    }
+
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Account> Accounts => Set<Account>();
     public DbSet<Operation> Operations => Set<Operation>();
     public DbSet<OperationTag> OperationTags => Set<OperationTag>();
-    public DbSet<Report> Reports => Set<Report>();
-    public DbSet<ReportConstant> ReportConstants => Set<ReportConstant>();
-    public DbSet<User> Users => Set<User>();
 }
