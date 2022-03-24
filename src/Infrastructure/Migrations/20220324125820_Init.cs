@@ -75,6 +75,7 @@ namespace Infrastructure.Migrations
                     TagId = table.Column<string>(type: "TEXT", nullable: true),
                     TransferAccountId = table.Column<Guid>(type: "TEXT", nullable: true),
                     Amount = table.Column<decimal>(type: "TEXT", nullable: false),
+                    IsIncome = table.Column<bool>(type: "INTEGER", nullable: false),
                     OperationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     CreatedById = table.Column<string>(type: "TEXT", nullable: true)
                 },

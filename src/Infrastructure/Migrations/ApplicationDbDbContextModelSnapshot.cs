@@ -72,6 +72,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsIncome")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("OperationDate")
                         .HasColumnType("TEXT");
 

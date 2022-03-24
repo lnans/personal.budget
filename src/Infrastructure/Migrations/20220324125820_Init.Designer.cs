@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbDbContext))]
-    [Migration("20220323122456_Init")]
+    [Migration("20220324125820_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -73,6 +73,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsIncome")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("OperationDate")
                         .HasColumnType("TEXT");

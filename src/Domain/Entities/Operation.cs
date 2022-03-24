@@ -8,6 +8,7 @@ public class Operation
     public OperationTag Tag { get; set; }
     public Account TransferAccount { get; set; }
     public decimal Amount { get; set; }
+    public bool IsIncome { get; set; }
     public DateTime OperationDate { get; set; }
     public User CreatedBy { get; set; }
 }
