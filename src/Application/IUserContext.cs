@@ -21,9 +21,9 @@ public class UserContext : IUserContext
     public string GetUserId()
     {
         var claim = _httpContextAccessor?.HttpContext?
-            .User.Claims.
-            FirstOrDefault(cl =>
-            cl.Type == JwtRegisteredClaimNames.Jti);
+            .User
+            .Claims
+            .FirstOrDefault(cl => cl.Type == JwtRegisteredClaimNames.Jti);
 
         if (claim is not null) return claim.Value;
 
