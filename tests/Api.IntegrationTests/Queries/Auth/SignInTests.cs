@@ -1,11 +1,11 @@
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Application.Commands.Auth;
+using Application.Queries.Auth;
 using Domain.Common;
 using NFluent;
 using NUnit.Framework;
 
-namespace Api.IntegrationTests.Commands.Auth;
+namespace Api.IntegrationTests.Queries.Auth;
 
 [TestFixture]
 public class SignInTests : TestBase
@@ -14,7 +14,7 @@ public class SignInTests : TestBase
     public async Task SignIn_WithGoodCred_ShouldReturn_Token()
     {
         // Arrange
-        var command = new SignInCommand("string", "string");
+        var command = new SignInRequest("string", "string");
         
         // Act
         var response = await HttpClient.PostAsJsonAsync("/auth/signin", command);
@@ -30,7 +30,7 @@ public class SignInTests : TestBase
     public async Task SignIn_WithWrongUserName_ShouldReturn_Error()
     {
         // Arrange
-        var command = new SignInCommand("none", "string");
+        var command = new SignInRequest("none", "string");
         
         // Act
         var response = await HttpClient.PostAsJsonAsync("/auth/signin", command);
@@ -45,7 +45,7 @@ public class SignInTests : TestBase
     public async Task SignIn_WithWrongPassword_ShouldReturn_Error()
     {
         // Arrange
-        var command = new SignInCommand("string", "none");
+        var command = new SignInRequest("string", "none");
         
         // Act
         var response = await HttpClient.PostAsJsonAsync("/auth/signin", command);

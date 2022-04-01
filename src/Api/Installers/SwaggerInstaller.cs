@@ -1,5 +1,3 @@
-using Microsoft.OpenApi.Models;
-
 namespace Api.Installers;
 
 public static class SwaggerInstaller

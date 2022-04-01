@@ -1,5 +1,3 @@
-using Application.Queries.Auth;
-
 namespace Api.Controllers;
 
 [Authorize]
@@ -16,16 +14,16 @@ public class AuthController : ControllerBase
     /// <summary>
     ///     Sign In
     /// </summary>
-    /// <param name="command"></param>
+    /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [AllowAnonymous]
     [HttpPost("signin")]
     [ProducesResponseType(typeof(SignInResponse), (int) HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.Unauthorized)]
-    public async Task<IActionResult> SignIn([FromBody] SignInCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> SignIn([FromBody] SignInRequest request, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(command, cancellationToken);
+        var response = await _mediator.Send(request, cancellationToken);
         return Ok(response);
     }
 
@@ -39,7 +37,7 @@ public class AuthController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.Unauthorized)]
     public async Task<IActionResult> GetInfo(CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(new GetAuthInfoQuery(), cancellationToken);
+        var response = await _mediator.Send(new GetAuthInfoRequest(), cancellationToken);
         return Ok(response);
     }
 }

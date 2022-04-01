@@ -1,8 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Application;
-using Infrastructure.Persistence;
-
 namespace Infrastructure;
 
 public static class DependencyInjection

@@ -13,7 +13,7 @@ public class GetAuthInfoTests : TestBase
     public async Task GetInfo_ShouldReturn_AuthInfo()
     {
         // Arrange
-        var query = new GetAuthInfoQuery();
+        var query = new GetAuthInfoRequest();
         
         // Act
         var response = await HttpClient.GetAsync("auth");

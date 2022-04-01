@@ -3,26 +3,23 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Infrastructure.Migrations
+namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbDbContext))]
-    [Migration("20220324125820_Init")]
-    partial class Init
+    partial class ApplicationDbDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.2");
 
             modelBuilder.Entity("Domain.Entities.Account", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Balance")
@@ -61,7 +58,8 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("AccountId")
+                    b.Property<string>("AccountId")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Amount")
@@ -83,7 +81,7 @@ namespace Infrastructure.Migrations
                     b.Property<string>("TagId")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("TransferAccountId")
+                    b.Property<string>("TransferAccountId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

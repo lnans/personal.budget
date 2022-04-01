@@ -1,7 +1,3 @@
-using System.Security.Authentication;
-using Microsoft.AspNetCore.Http;
-using Microsoft.IdentityModel.JsonWebTokens;
-
 namespace Application;
 
 public interface IUserContext
