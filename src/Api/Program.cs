@@ -1,21 +1,31 @@
 var builder = WebApplication.CreateBuilder(args);
 var dbName = builder.Configuration.GetConnectionString("Database");
+var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
+var defaultUser = builder.Configuration.GetValue<string>("DefaultUser:Username");
+var defaultPassword = builder.Configuration.GetValue<string>("DefaultUser:Password");
 void JsonOptions(JsonOptions options) => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
 
 // Register services
 builder.Services
     .AddApplication()
     .AddInfrastructure(dbName)
-    .AddSwaggerGen()
     .Configure((Action<JsonOptions>) JsonOptions)
+    .AddJwtAuthentication(jwtSettings)
+    .AddSwaggerGenWithSecurity()
+    .AddAuthorization()
+    .AddSingleton(jwtSettings)
+    .AddEndpointsApiExplorer()
     .AddControllers();
 
 // Register middlewares
 var api = builder.Build();
+
+if (api.Environment.IsDevelopment()) api.UseSwaggerUI();
+api.UseMiddleware<ExceptionMiddleware>()
+    .UseAuthentication()
+    .UseAuthorization();
+
 api.MapControllers();
-api.UseSwagger();
-api.UseSwaggerUI();
-api.UseMiddleware<ExceptionMiddleware>();
 
 // Database migration
 var scope = api.Services.CreateScope();
@@ -23,6 +33,20 @@ var dbContext = scope.ServiceProvider.GetService<ApplicationDbDbContext>();
 var provider = dbContext?.Database.ProviderName;
 if (provider is not null && !provider.Contains("InMemory"))
     dbContext.Database.Migrate();
+
+// Default User
+if (dbContext != null && !dbContext.Users.Any())
+{
+    var id = Guid.NewGuid().ToString();
+    dbContext.Users.Add(new User
+    {
+        Id = id,
+        Username = defaultUser,
+        Hash = Utils.GenerateHash(id, defaultPassword)
+    });
+    dbContext.SaveChanges();
+}
+
 scope.Dispose();
 
 // Start
