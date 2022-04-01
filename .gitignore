@@ -1,4 +1,6 @@
 .idea/
+.vs/
+*.DotSettings.*
 
 # Build results
 [Dd]ebug/
