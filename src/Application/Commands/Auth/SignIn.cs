@@ -31,23 +31,7 @@ public class SignIn : IRequestHandler<SignInCommand, SignInResponse>
             .FirstOrDefaultAsync(u => u.Username.Equals(username), cancellationToken);
         if (user is null || user.Hash != Utils.GenerateHash(user.Id, password)) throw new AuthenticationException();
 
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature);
-        var jwtTokenHandler = new JwtSecurityTokenHandler();
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Username),
-                new Claim(JwtRegisteredClaimNames.Jti, user.Id)
-            }),
-            Expires = DateTime.UtcNow.AddHours(6),
-            Audience = _jwtSettings.Audience,
-            Issuer = _jwtSettings.Issuer,
-            SigningCredentials = credentials
-        };
-        var token = jwtTokenHandler.CreateToken(tokenDescriptor);
-        var jwtToken = jwtTokenHandler.WriteToken(token);
+        var jwtToken = Utils.CreateJwtToken(_jwtSettings, user);
 
         return new SignInResponse(user.Username, jwtToken);
     }
