@@ -1,5 +1,5 @@
+using System.Security.Authentication;
 using System.Text.Json;
-using Domain.Common;
 using Domain.Exceptions;
 
 namespace Api.Middlewares;
@@ -44,6 +44,10 @@ public class ExceptionMiddleware
             case NotFoundException _:
                 context.Response.StatusCode = (int) HttpStatusCode.NotFound;
                 error.Message = $"errors.{exception.Message}";
+                break;
+            case AuthenticationException _:
+                context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                error.Message = "errors.auth_failed";
                 break;
             default:
                 context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
