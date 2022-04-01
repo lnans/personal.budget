@@ -8,3 +8,8 @@ global using Api.Middlewares;
 global using JsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 global using System.Net;
 global using MediatR;
+global using Api.Installers;
+global using Domain.Common;
+global using Application.Commands.Auth;
+global using Domain.Entities;
+global using Microsoft.AspNetCore.Authorization;

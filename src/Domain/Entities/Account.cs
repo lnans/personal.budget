@@ -11,6 +11,6 @@ public class Account
     public string Icon { get; set; }
     public AccountType Type { get; set; }
     public DateTime CreationDate { get; set; }
-    
+
     public virtual ICollection<Operation> Operations { get; set; }
 }
