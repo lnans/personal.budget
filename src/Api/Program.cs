@@ -14,16 +14,23 @@ builder.Services
     .AddSwaggerGenWithSecurity()
     .AddAuthorization()
     .AddSingleton(jwtSettings)
+    .AddScoped<IUserContext, UserContext>()
+    .AddHttpContextAccessor()
     .AddEndpointsApiExplorer()
     .AddControllers();
 
 // Register middlewares
 var api = builder.Build();
 
-if (api.Environment.IsDevelopment()) api.UseSwaggerUI();
-api.UseMiddleware<ExceptionMiddleware>()
-    .UseAuthentication()
-    .UseAuthorization();
+if (api.Environment.IsDevelopment())
+{
+    api.UseSwagger()
+        .UseSwaggerUI();
+}
+
+api.UseAuthentication()
+    .UseAuthorization()
+    .UseMiddleware<ExceptionMiddleware>();
 
 api.MapControllers();
 

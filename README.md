@@ -28,21 +28,16 @@ dotnet run
 Implemented
 ---
 
-`None`
+| Method                                                       | Endpoint       | Description             |
+|--------------------------------------------------------------|----------------|-------------------------|
+| ![](https://img.shields.io/badge/-POST-49cc90?style=plastic) | `/auth/signin` | Sign In                 |
+| ![](https://img.shields.io/badge/-GET-61affe?style=plastic)  | `/auth`        | Return user information |
 
 Pending
 ---
-
-### Authentication
-| Method                                                       | Endpoint   | Description |
-|--------------------------------------------------------------|------------|-------------|
-| ![](https://img.shields.io/badge/-POST-49cc90?style=plastic) | `/signin`  | Sign In     |
-| ![](https://img.shields.io/badge/-DELETE-red?style=plastic)  | `/signout` | Sign Out    |
-
 ### User
 | Method                                                        | Endpoint | Description             |
 |---------------------------------------------------------------|----------|-------------------------|
-| ![](https://img.shields.io/badge/-GET-61affe?style=plastic)   | `/me`    | Return user information |
 | ![](https://img.shields.io/badge/-PATCH-50e3c2?style=plastic) | `/me`    | Update password         |
 
 ### Account
