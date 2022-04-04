@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Application.Queries.Auth;
@@ -17,9 +18,10 @@ public class GetAuthInfoTests : TestBase
         
         // Act
         var response = await HttpClient.GetAsync("auth");
-        var result = await response.Content.ReadFromJsonAsync<GetAuthInfoResponse>();
-        
+        var result = await response.Content.ReadFromJsonOrDefaultAsync<GetAuthInfoResponse>();
+
         // Asset
+        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
         Check.That(result).IsNotNull();
         Check.That(result?.Id).IsEqualTo(DefaultUser.Id);
         Check.That(result?.Username).IsEqualTo(DefaultUser.Username);

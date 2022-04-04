@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Application.Queries.Auth;
@@ -18,9 +19,10 @@ public class SignInTests : TestBase
         
         // Act
         var response = await HttpClient.PostAsJsonAsync("/auth/signin", command);
-        var result = await response.Content.ReadFromJsonAsync<SignInResponse>();
-        
+        var result = await response.Content.ReadFromJsonOrDefaultAsync<SignInResponse>();
+
         // Assert
+        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
         Check.That(result).IsNotNull();
         Check.That(result?.Username).IsEqualTo("string");
         Check.That(result?.Token).IsNotEmpty();
@@ -34,9 +36,10 @@ public class SignInTests : TestBase
         
         // Act
         var response = await HttpClient.PostAsJsonAsync("/auth/signin", command);
-        var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-        
+        var result = await response.Content.ReadFromJsonOrDefaultAsync<ErrorResponse>();
+
         // Assert
+        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
         Check.That(result).IsNotNull();
         Check.That(result?.Message).IsEqualTo("errors.auth_failed");
     }
@@ -49,9 +52,10 @@ public class SignInTests : TestBase
         
         // Act
         var response = await HttpClient.PostAsJsonAsync("/auth/signin", command);
-        var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-        
+        var result = await response.Content.ReadFromJsonOrDefaultAsync<ErrorResponse>();
+
         // Assert
+        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
         Check.That(result).IsNotNull();
         Check.That(result?.Message).IsEqualTo("errors.auth_failed");
     }
