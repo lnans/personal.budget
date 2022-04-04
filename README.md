@@ -28,10 +28,14 @@ dotnet run
 Implemented
 ---
 
-| Method                                                       | Endpoint       | Description             |
-|--------------------------------------------------------------|----------------|-------------------------|
-| ![](https://img.shields.io/badge/-POST-49cc90?style=plastic) | `/auth/signin` | Sign In                 |
-| ![](https://img.shields.io/badge/-GET-61affe?style=plastic)  | `/auth`        | Return user information |
+| Method                                                         | Endpoint                      | Description                               |
+|----------------------------------------------------------------|-------------------------------|-------------------------------------------|
+| ![](https://img.shields.io/badge/-POST-49cc90?style=plastic)   | `/auth/signin`                | Sign In                                   |
+| ![](https://img.shields.io/badge/-GET-61affe?style=plastic)    | `/auth`                       | Return user information                   |
+| ![](https://img.shields.io/badge/-GET-61affe?style=plastic)    | `/operationTags?name=:filter` | Return all tags owned by the current user |
+| ![](https://img.shields.io/badge/-POST-49cc90?style=plastic)   | `/operationTags`              | Create a new operation tag                |
+| ![](https://img.shields.io/badge/-PATCH-50e3c2?style=plastic)  | `/operationTags/:id`          | Change Name and Color of an operation tag |
+| ![](https://img.shields.io/badge/-DELETE-f93e3e?style=plastic) | `/operationTags/:id`          | Delete an operation tag                   |
 
 Pending
 ---
@@ -57,10 +61,3 @@ Pending
 | ![](https://img.shields.io/badge/-PATCH-50e3c2?style=plastic)  | `/operations/:id` | Update operation description or amount          |
 | ![](https://img.shields.io/badge/-DELETE-f93e3e?style=plastic) | `/operations/:id` | Delete an operation                             |
 
-### Operation Tag
-| Method                                                         | Endpoint              | Description                               |
-|----------------------------------------------------------------|-----------------------|-------------------------------------------|
-| ![](https://img.shields.io/badge/-GET-61affe?style=plastic)    | `/operationTags`      | Return all tags owned by the current user |
-| ![](https://img.shields.io/badge/-POST-49cc90?style=plastic)   | `/operationTags`      | Create a new operation tag                |
-| ![](https://img.shields.io/badge/-PUT-fca130?style=plastic)    | `/operationTags/:id`  | Change Name and Color of an operation tag |
-| ![](https://img.shields.io/badge/-DELETE-f93e3e?style=plastic) | `/operationTags/:id`  | Delete an operation tag                   |

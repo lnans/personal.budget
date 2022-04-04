@@ -15,6 +15,7 @@ public class DeleteOperationTagTests : TestBase
     public async Task DeleteOperationTag_WithKnownId_Should_DeleteOperationTag()
     {
         // Arrange
+        var dbContext = GetDbContext();
         var operationTag = new OperationTag
         {
             Id = Guid.NewGuid().ToString(),
@@ -22,12 +23,12 @@ public class DeleteOperationTagTests : TestBase
             Color = "#123456",
             OwnerId = DefaultUser.Id
         };
-        DbContext.OperationTags.Add(operationTag);
-        await DbContext.SaveChangesAsync();
+        dbContext.OperationTags.Add(operationTag);
+        await dbContext.SaveChangesAsync();
 
         // Act
         var response = await HttpClient.DeleteAsync($"OperationTags/{operationTag.Id}");
-        var operationTagInDb = DbContext.OperationTags.FirstOrDefault();
+        var operationTagInDb = GetDbContext().OperationTags.FirstOrDefault();
 
         // Assert
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
@@ -35,9 +36,10 @@ public class DeleteOperationTagTests : TestBase
     }
     
     [Test]
-    public async Task DeleteOperationTag_WithUnkownId_ShouldReturn_ErrorResponse()
+    public async Task DeleteOperationTag_WithUnknownId_ShouldReturn_ErrorResponse()
     {
         // Arrange
+        var dbContext = GetDbContext();
         var operationTag = new OperationTag
         {
             Id = Guid.NewGuid().ToString(),
@@ -45,12 +47,12 @@ public class DeleteOperationTagTests : TestBase
             Color = "#123456",
             OwnerId = DefaultUser.Id
         };
-        DbContext.OperationTags.Add(operationTag);
-        await DbContext.SaveChangesAsync();
+        dbContext.OperationTags.Add(operationTag);
+        await dbContext.SaveChangesAsync();
 
         // Act
         var response = await HttpClient.DeleteAsync("OperationTags/none");
-        var operationTagInDb = DbContext.OperationTags.FirstOrDefault();
+        var operationTagInDb = GetDbContext().OperationTags.FirstOrDefault();
 
         // Assert
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.NotFound);

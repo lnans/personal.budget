@@ -21,13 +21,14 @@ public class CreateOperationTagTests : TestBase
         // Act
         var response = await HttpClient.PostAsJsonAsync("operationTags", request);
         var result = await response.Content.ReadFromJsonOrDefaultAsync<CreateOperationTagResponse>();
-        var operationTagInDb = DbContext.OperationTags.FirstOrDefault();
+        var operationTagInDb = GetDbContext().OperationTags.FirstOrDefault();
 
         // Assert
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
         Check.That(operationTagInDb).IsNotNull();
         Check.That(operationTagInDb?.Name).IsEqualTo(request.Name);
         Check.That(operationTagInDb?.Color).IsEqualTo(request.Color);
+        Check.That(operationTagInDb?.OwnerId).IsEqualTo(DefaultUser.Id);
         Check.That(result).IsNotNull();
         Check.That(result?.Name).IsEqualTo(request.Name);
         Check.That(result?.Color).IsEqualTo(request.Color);
@@ -45,7 +46,7 @@ public class CreateOperationTagTests : TestBase
         // Act
         var response = await HttpClient.PostAsJsonAsync("operationTags", request);
         var result = await response.Content.ReadFromJsonOrDefaultAsync<ErrorResponse>();
-        var operationTagInDb = DbContext.OperationTags.FirstOrDefault();
+        var operationTagInDb = GetDbContext().OperationTags.FirstOrDefault();
 
         // Assert
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.BadRequest);

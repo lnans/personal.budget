@@ -1,5 +1,4 @@
 using System.Net;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Application.Queries.Auth;
 using NFluent;
@@ -13,9 +12,6 @@ public class GetAuthInfoTests : TestBase
     [Test]
     public async Task GetInfo_ShouldReturn_AuthInfo()
     {
-        // Arrange
-        var query = new GetAuthInfoRequest();
-        
         // Act
         var response = await HttpClient.GetAsync("auth");
         var result = await response.Content.ReadFromJsonOrDefaultAsync<GetAuthInfoResponse>();
