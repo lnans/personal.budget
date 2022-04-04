@@ -1,8 +1,3 @@
-using Application;
-using Domain.Entities;
-using Infrastructure.Persistence.Configurations;
-using Microsoft.EntityFrameworkCore;
-
 namespace Infrastructure.Persistence;
 
 public class ApplicationDbDbContext : DbContext, IApplicationDbContext

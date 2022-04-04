@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Infrastructure.Migrations
+namespace Infrastructure.Persistence.Migrations
 {
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -26,7 +26,7 @@ namespace Infrastructure.Migrations
                 name: "Accounts",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
                     OwnerId = table.Column<string>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Balance = table.Column<decimal>(type: "TEXT", nullable: false),
@@ -70,10 +70,10 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "TEXT", nullable: false),
-                    AccountId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    AccountId = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: false),
                     TagId = table.Column<string>(type: "TEXT", nullable: true),
-                    TransferAccountId = table.Column<Guid>(type: "TEXT", nullable: true),
+                    TransferAccountId = table.Column<string>(type: "TEXT", nullable: true),
                     Amount = table.Column<decimal>(type: "TEXT", nullable: false),
                     IsIncome = table.Column<bool>(type: "INTEGER", nullable: false),
                     OperationDate = table.Column<DateTime>(type: "TEXT", nullable: false),

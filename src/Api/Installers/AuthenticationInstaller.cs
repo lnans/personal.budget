@@ -1,7 +1,3 @@
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-
 namespace Api.Installers;
 
 public static class AuthenticationInstaller

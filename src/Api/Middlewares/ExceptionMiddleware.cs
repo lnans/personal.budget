@@ -1,7 +1,3 @@
-using System.Security.Authentication;
-using System.Text.Json;
-using Domain.Exceptions;
-
 namespace Api.Middlewares;
 
 public class ExceptionMiddleware
@@ -36,22 +32,22 @@ public class ExceptionMiddleware
         context.Response.ContentType = "application/json";
         switch (exception)
         {
-            case ValidationException _:
+            case RequestValidationException _:
             case AlreadyExistException _:
                 context.Response.StatusCode = (int) HttpStatusCode.BadRequest;
-                error.Message = $"errors.{exception.Message}";
+                error.Message = exception.Message;
                 break;
             case NotFoundException _:
                 context.Response.StatusCode = (int) HttpStatusCode.NotFound;
-                error.Message = $"errors.{exception.Message}";
+                error.Message = exception.Message;
                 break;
             case AuthenticationException _:
                 context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
-                error.Message = "errors.auth_failed";
+                error.Message = Errors.AuthFailed;
                 break;
             default:
                 context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
-                error.Message = "errors.unhandled_exception";
+                error.Message = Errors.UnhandledException;
                 break;
         }
 

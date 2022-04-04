@@ -1,7 +1,3 @@
-using FluentValidation;
-using MediatR;
-using ValidationException = Domain.Exceptions.ValidationException;
-
 namespace Application;
 
 public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
@@ -21,7 +17,7 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
             if (result.IsValid) continue;
             var topError = result.Errors.First();
             var error = topError.ErrorMessage;
-            throw new ValidationException($"validator.{error}");
+            throw new RequestValidationException(error);
         }
 
         return next();
