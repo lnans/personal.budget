@@ -11,7 +11,7 @@ public class AccountEntityConfiguration : IEntityTypeConfiguration<Account>
         builder.Property(p => p.CreationDate).IsRequired();
         builder.Property(p => p.Archived).IsRequired();
 
-        builder.HasIndex(p => p.Name).IsUnique();
+        builder.HasIndex(p => new {p.Name, p.OwnerId}).IsUnique();
 
         builder
             .HasOne(p => p.Owner)

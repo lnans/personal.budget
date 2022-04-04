@@ -1,5 +1,6 @@
 global using Api.Installers;
 global using Api.Middlewares;
+global using Application.Commands.Accounts;
 global using Application.Commands.OperationTags;
 global using Application.Queries.Auth;
 global using Application.Queries.OperationTags;

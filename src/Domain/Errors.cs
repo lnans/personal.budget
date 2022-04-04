@@ -11,4 +11,10 @@ public static class Errors
     public const string OperationTagColorInvalid = "errors.operation_tag.color_invalid";
     public const string OperationTagAlreadyExist = "errors.operation_tag.already_exist";
     public const string OperationTagNotFound = "errors.operation_tag.not_found";
+    
+    // Accounts
+    public const string AccountNameRequired = "errors.account.name_required";
+    public const string AccountAlreadyExist = "errors.account.already_exist";
+    public const string AccountTypeUnknown = "errors.account.type_unknown";
+    public const string AccountNotFound = "errors.account.not_found";
 }
