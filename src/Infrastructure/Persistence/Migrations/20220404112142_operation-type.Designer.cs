@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbDbContext))]
-    partial class ApplicationDbDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220404112142_operation-type")]
+    partial class operationtype
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.2");
@@ -22,9 +24,6 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("Archived")
-                        .HasColumnType("INTEGER");
-
                     b.Property<decimal>("Balance")
                         .HasColumnType("TEXT");
 
@@ -32,9 +31,6 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Icon")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("InitialBalance")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
