@@ -6,17 +6,13 @@ public record UpdateAccountRequestWithId(string Id, UpdateAccountRequest Request
 
 public record UpdateAccountResponse(string Id, string Name, string Icon, AccountType Type, decimal Balance, DateTime CreationDate);
 
-public class UpdateAccountValidator : AbstractValidator<CreateAccountRequest>
+public class UpdateAccountValidator : AbstractValidator<UpdateAccountRequestWithId>
 {
     public UpdateAccountValidator()
     {
-        RuleFor(p => p.Name)
+        RuleFor(p => p.Request.Name)
             .NotEmpty()
             .WithMessage(Errors.AccountNameRequired);
-
-        RuleFor(p => p.Type)
-            .IsInEnum()
-            .WithMessage(Errors.AccountTypeUnknown);
     }
 }
 
