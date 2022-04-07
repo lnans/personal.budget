@@ -72,7 +72,7 @@ public class AccountsController : ControllerBase
     [HttpPatch("{id}/archive")]
     [ProducesResponseType((int) HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.Unauthorized)]
-    public async Task<IActionResult> Archive(string id, ArchivedAccountRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Archive(string id, [FromBody] ArchivedAccountRequest request, CancellationToken cancellationToken)
     {
         var requestWithId = new ArchivedAccountRequestWithId(id, request);
         await _mediator.Send(requestWithId, cancellationToken);
