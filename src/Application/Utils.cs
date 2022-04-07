@@ -1,11 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using Domain.Common;
-using Domain.Entities;
-using Microsoft.IdentityModel.Tokens;
-
 namespace Application;
 
 public static class Utils

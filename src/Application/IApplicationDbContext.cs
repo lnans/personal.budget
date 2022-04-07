@@ -1,6 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Domain.Entities;
-
 namespace Application;
 
 public interface IApplicationDbContext

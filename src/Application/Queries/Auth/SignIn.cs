@@ -1,19 +1,9 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Authentication;
-using System.Security.Claims;
-using System.Text;
-using Domain.Common;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
+namespace Application.Queries.Auth;
 
-namespace Application.Commands.Auth;
-
-public record SignInCommand(string Username, string Password) : IRequest<SignInResponse>;
+public record SignInRequest(string Username, string Password) : IRequest<SignInResponse>;
 public record SignInResponse(string Username, string Token);
 
-public class SignIn : IRequestHandler<SignInCommand, SignInResponse>
+public class SignIn : IRequestHandler<SignInRequest, SignInResponse>
 {
     private readonly IApplicationDbContext _dbContext;
     private readonly JwtSettings _jwtSettings;
@@ -24,7 +14,7 @@ public class SignIn : IRequestHandler<SignInCommand, SignInResponse>
         _jwtSettings = jwtSettings;
     }
 
-    public async Task<SignInResponse> Handle(SignInCommand request, CancellationToken cancellationToken)
+    public async Task<SignInResponse> Handle(SignInRequest request, CancellationToken cancellationToken)
     {
         var (username, password) = request;
         var user = await _dbContext.Users
