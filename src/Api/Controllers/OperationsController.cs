@@ -29,4 +29,21 @@ public class OperationsController : ControllerBase
         var response = await _mediator.Send(request, cancellationToken);
         return Ok(response);
     }
+
+    /// <summary>
+    ///     Delete an account operation
+    /// </summary>
+    /// <param name="id">Operation Id</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpDelete("{id}")]
+    [ProducesResponseType((int) HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.NotFound)]
+    public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
+    {
+        var request = new DeleteOperationRequest(id);
+        await _mediator.Send(request, cancellationToken);
+        return Ok();
+    }
 }

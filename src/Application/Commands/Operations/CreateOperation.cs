@@ -10,6 +10,7 @@ public record CreateOperationRequest(
     DateTime? ExecutionDate) : IRequest<CreateOperationResponse>;
 
 public record CreateOperationResponse(
+    string Id,
     string Description,
     string AccountId,
     string AccountName,
@@ -92,6 +93,7 @@ public class CreateOperation : IRequestHandler<CreateOperationRequest, CreateOpe
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         return new CreateOperationResponse(
+            operation.Id,
             operation.Description,
             operation.Account.Id,
             operation.Account.Name,

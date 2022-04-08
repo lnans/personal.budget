@@ -24,4 +24,5 @@ public static class Errors
     public const string OperationTypeUnknown = "errors.operation.type_unknown";
     public const string OperationAmountRequired = "errors.operation.amount_required";
     public const string OperationDateRequired = "errors.operation.date_required";
+    public const string OperationNotFound = "errors.operation.not_found";
 }
