@@ -17,4 +17,15 @@ public static class Errors
     public const string AccountAlreadyExist = "errors.account.already_exist";
     public const string AccountTypeUnknown = "errors.account.type_unknown";
     public const string AccountNotFound = "errors.account.not_found";
+    
+    // Operations
+    public const string OperationDescriptionRequired = "errors.operation.description_required";
+    public const string OperationAccountRequired = "errors.operation.account_required";
+    public const string OperationAccountNotFound = "errors.operation.account_not_found";
+    public const string OperationTypeUnknown = "errors.operation.type_unknown";
+    public const string OperationAmountRequired = "errors.operation.amount_required";
+    public const string OperationDateRequired = "errors.operation.date_required";
+    public const string OperationTransferAccountRequired = "errors.operation.transfer_account_required";
+    public const string OperationTransferAccountNotFound = "errors.operation.transfer_account_not_found";
+    public const string OperationTransferDateRequired = "errors.operation.transfer_date_required";
 }

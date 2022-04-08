@@ -12,5 +12,7 @@ public class Operation
     public decimal Amount { get; set; }
     public OperationType Type { get; set; }
     public DateTime OperationDate { get; set; }
-    public User CreatedBy { get; set; }
+    public string CreatedById { get; set; }
+
+    public virtual User CreatedBy { get; set; }
 }
