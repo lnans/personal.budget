@@ -17,7 +17,6 @@ public class CreateOperationTests : TestBase
 {
     private const string AccountId = "f12ac4ad-352a-4fb8-8455-04801d365ed2";
     private const string TagId = "d32ac4ad-352a-4fb8-8455-04801d365ed2";
-    private static DateTime Now = DateTime.Now;
     private Account _account = null!;
     private OperationTag _tag = null!;
 

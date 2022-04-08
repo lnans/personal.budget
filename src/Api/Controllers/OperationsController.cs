@@ -31,6 +31,25 @@ public class OperationsController : ControllerBase
     }
 
     /// <summary>
+    ///     Update Description, Tag and amount of an operation
+    /// </summary>
+    /// <param name="id">Operation id</param>
+    /// <param name="request">operation form</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns></returns>
+    [HttpPatch("{id}")]
+    [ProducesResponseType(typeof(UpdateOperationResponse), (int) HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.BadRequest)]
+    public async Task<IActionResult> Update(string id, [FromBody] UpdateOperationRequest request, CancellationToken cancellationToken)
+    {
+        var requestWithId = new UpdateOperationRequestWithId(id, request);
+        var response = await _mediator.Send(requestWithId, cancellationToken);
+        return Ok(response);
+    }
+
+    /// <summary>
     ///     Delete an account operation
     /// </summary>
     /// <param name="id">Operation Id</param>
