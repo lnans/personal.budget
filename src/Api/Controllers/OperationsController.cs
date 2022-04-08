@@ -1,4 +1,5 @@
 using Application.Commands.Operations;
+using Application.Queries.Operations;
 
 namespace Api.Controllers;
 
@@ -11,6 +12,21 @@ public class OperationsController : ControllerBase
     public OperationsController(IMediator mediator)
     {
         _mediator = mediator;
+    }
+
+    /// <summary>
+    ///     Get all operations
+    /// </summary>
+    /// <param name="request">Filters</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns></returns>
+    [HttpGet]
+    [ProducesResponseType(typeof(GetAllOperationsPaginatedResponse), (int) HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.Unauthorized)]
+    public async Task<IActionResult> GetAll([FromQuery] GetAllOperationsRequest request, CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(request, cancellationToken);
+        return Ok(response);
     }
 
     /// <summary>
