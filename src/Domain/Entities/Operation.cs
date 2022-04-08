@@ -8,10 +8,10 @@ public class Operation
     public Account Account { get; set; }
     public string Description { get; set; }
     public OperationTag Tag { get; set; }
-    public Account TransferAccount { get; set; }
     public decimal Amount { get; set; }
     public OperationType Type { get; set; }
-    public DateTime OperationDate { get; set; }
+    public DateTime CreationDate { get; set; }
+    public DateTime? ExecutionDate { get; set; }
     public string CreatedById { get; set; }
 
     public virtual User CreatedBy { get; set; }
