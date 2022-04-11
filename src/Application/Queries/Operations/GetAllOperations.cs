@@ -21,7 +21,7 @@ public record GetAllOperationsResponse(
     DateTime CreationDate,
     DateTime? ExecutionDate);
 
-public record GetAllOperationsPaginatedResponse(int Total, GetAllOperationsResponse[] List);
+public record GetAllOperationsPaginatedResponse(int Total, Dictionary<string, List<GetAllOperationsResponse>> OperationsByDays);
 
 public class GetAllOperations : IRequestHandler<GetAllOperationsRequest, GetAllOperationsPaginatedResponse>
 {
@@ -42,6 +42,7 @@ public class GetAllOperations : IRequestHandler<GetAllOperationsRequest, GetAllO
             .Operations
             .Include(o => o.Account)
             .Include(o => o.Tag)
+            .Where(o => o.Account.OwnerId == userId)
             .OrderByDescending(o => o.ExecutionDate ?? DateTime.MaxValue)
             .AsQueryable();
 
@@ -71,6 +72,15 @@ public class GetAllOperations : IRequestHandler<GetAllOperationsRequest, GetAllO
                 o.ExecutionDate))
             .ToListAsync(cancellationToken);
 
-        return new GetAllOperationsPaginatedResponse(totalSize, list.ToArray());
+        // Group result by days in a dictionary
+        var operationsByDays = new Dictionary<string, List<GetAllOperationsResponse>>();
+        foreach (var operation in list)
+        {
+            var strDateOnly = operation.ExecutionDate.HasValue ? operation.ExecutionDate.Value.ToMidnightIsoString() : "none";
+            if (!operationsByDays.ContainsKey(strDateOnly)) operationsByDays.Add(strDateOnly, new List<GetAllOperationsResponse>());
+            operationsByDays[strDateOnly].Add(operation);
+        }
+
+        return new GetAllOperationsPaginatedResponse(totalSize, operationsByDays);
     }
 }
