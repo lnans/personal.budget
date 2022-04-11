@@ -66,8 +66,9 @@ public class UpdateOperation : IRequestHandler<UpdateOperationRequestWithId, Upd
             _dbContext.OperationTags.Remove(operation.Tag);
         }
 
+        if (operation.ExecutionDate.HasValue) operation.Account.Balance += request.Request.Amount - operation.Amount;
+
         operation.Description = request.Request.Description;
-        operation.Account.Balance += request.Request.Amount - operation.Amount;
         operation.Amount = request.Request.Amount;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
