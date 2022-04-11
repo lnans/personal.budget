@@ -63,28 +63,28 @@ public class CreateOperation : IRequestHandler<CreateOperationRequest, CreateOpe
 
         if (account is null) throw new NotFoundException(Errors.AccountNotFound);
 
-        OperationTag tag = null;
-        if (!string.IsNullOrWhiteSpace(request.OperationTagId))
-        {
-            tag = await _dbContext
-                .OperationTags
-                .FirstOrDefaultAsync(o => o.Id == request.OperationTagId && o.OwnerId == userId, cancellationToken);
-
-            if (tag is null) throw new NotFoundException(Errors.OperationTagNotFound);
-        }
-
         var operation = new Operation
         {
             Id = Guid.NewGuid().ToString(),
             Description = request.Description,
             Account = account,
-            Tag = tag,
             Amount = request.Amount,
             Type = request.OperationType,
             CreationDate = request.CreationDate,
             ExecutionDate = request.ExecutionDate,
             CreatedById = userId
         };
+
+        if (!string.IsNullOrWhiteSpace(request.OperationTagId))
+        {
+            var tag = await _dbContext
+                .OperationTags
+                .FirstOrDefaultAsync(o => o.Id == request.OperationTagId && o.OwnerId == userId, cancellationToken);
+
+            if (tag is null) throw new NotFoundException(Errors.OperationTagNotFound);
+
+            operation.Tag = tag;
+        }
 
         // Update account balance
         account.Balance += request.Amount;

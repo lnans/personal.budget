@@ -46,22 +46,27 @@ public class UpdateOperation : IRequestHandler<UpdateOperationRequestWithId, Upd
         var operation = await _dbContext
             .Operations
             .Include(o => o.Account)
+            .Include(o => o.Tag)
             .FirstOrDefaultAsync(o => o.Id == request.Id && o.Account.OwnerId == userId, cancellationToken);
 
         if (operation is null) throw new NotFoundException(Errors.OperationNotFound);
 
-        OperationTag tag = null;
         if (!string.IsNullOrWhiteSpace(request.Request.OperationTagId))
         {
-            tag = await _dbContext
+            var tag = await _dbContext
                 .OperationTags
                 .FirstOrDefaultAsync(o => o.Id == request.Request.OperationTagId && o.OwnerId == userId, cancellationToken);
 
             if (tag is null) throw new NotFoundException(Errors.OperationTagNotFound);
+
+            operation.Tag = tag;
+        }
+        else if (operation.Tag is not null)
+        {
+            _dbContext.OperationTags.Remove(operation.Tag);
         }
 
         operation.Description = request.Request.Description;
-        operation.Tag = tag;
         operation.Account.Balance += request.Request.Amount - operation.Amount;
         operation.Amount = request.Request.Amount;
 
