@@ -14,11 +14,10 @@ namespace Api.IntegrationTests;
 
 public abstract class TestBase
 {
-    protected HttpClient HttpClient = null!;
-    protected User DefaultUser = null!;
-
     private ApiForTest _api = null!;
-    
+    protected User DefaultUser = null!;
+    protected HttpClient HttpClient = null!;
+
     [OneTimeSetUp]
     protected void OneTimeSetup()
     {

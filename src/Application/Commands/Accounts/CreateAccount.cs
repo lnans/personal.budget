@@ -47,7 +47,7 @@ public class CreateAccount : IRequestHandler<CreateAccountRequest, CreateAccount
 
         if (existingAccount is not null) throw new AlreadyExistException(Errors.AccountAlreadyExist);
 
-        var account = new Account()
+        var account = new Account
         {
             Id = Guid.NewGuid().ToString(),
             OwnerId = userId,

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Application.Queries.OperationTags;
 
 public record GetAllOperationTagsRequest(string Name) : IRequest<IEnumerable<GetAllOperationTagsResponse>>;
+
 public record GetAllOperationTagsResponse(string Id, string Name, string Color);
 
 public class GetAllOperationTags : IRequestHandler<GetAllOperationTagsRequest, IEnumerable<GetAllOperationTagsResponse>>

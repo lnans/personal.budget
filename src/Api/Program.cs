@@ -5,7 +5,11 @@ var dbName = builder.Configuration.GetConnectionString("Database");
 var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
 var defaultUser = builder.Configuration.GetValue<string>("DefaultUser:Username");
 var defaultPassword = builder.Configuration.GetValue<string>("DefaultUser:Password");
-void JsonOptions(JsonOptions options) => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+
+void JsonOptions(JsonOptions options)
+{
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+}
 
 // Register services
 builder.Services
@@ -25,10 +29,8 @@ builder.Services
 var api = builder.Build();
 
 if (api.Environment.IsDevelopment())
-{
     api.UseSwagger()
         .UseSwaggerUI();
-}
 
 api.UseAuthentication()
     .UseAuthorization()

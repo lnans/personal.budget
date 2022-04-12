@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Application.Commands.OperationTags;
 
 public record UpdateOperationTagRequest(string Name, string Color);
+
 public record UpdateOperationTagRequestWithId(string Id, UpdateOperationTagRequest Request) : IRequest<UpdateOperationTagResponse>;
 
 public record UpdateOperationTagResponse(string Id, string Name, string Color);

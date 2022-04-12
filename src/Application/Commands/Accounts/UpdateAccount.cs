@@ -34,7 +34,7 @@ public class UpdateAccount : IRequestHandler<UpdateAccountRequestWithId, UpdateA
         _dbContext = dbContext;
         _userContext = userContext;
     }
-    
+
     public async Task<UpdateAccountResponse> Handle(UpdateAccountRequestWithId requestWithId, CancellationToken cancellationToken)
     {
         var userId = _userContext.GetUserId();

@@ -11,6 +11,11 @@ public class ApplicationDbDbContext : DbContext, IApplicationDbContext
     {
     }
 
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Account> Accounts => Set<Account>();
+    public DbSet<Operation> Operations => Set<Operation>();
+    public DbSet<OperationTag> OperationTags => Set<OperationTag>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new AccountEntityConfiguration());
@@ -18,9 +23,4 @@ public class ApplicationDbDbContext : DbContext, IApplicationDbContext
         modelBuilder.ApplyConfiguration(new OperationTagEntityConfiguration());
         modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
     }
-
-    public DbSet<User> Users => Set<User>();
-    public DbSet<Account> Accounts => Set<Account>();
-    public DbSet<Operation> Operations => Set<Operation>();
-    public DbSet<OperationTag> OperationTags => Set<OperationTag>();
 }

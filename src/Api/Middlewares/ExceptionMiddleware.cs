@@ -8,7 +8,7 @@ public class ExceptionMiddleware
     public ExceptionMiddleware(RequestDelegate next)
     {
         _next = next;
-        _serializerOptions = new JsonSerializerOptions()
+        _serializerOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };

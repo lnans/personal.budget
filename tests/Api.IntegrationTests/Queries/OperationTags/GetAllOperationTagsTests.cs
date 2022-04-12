@@ -30,11 +30,11 @@ public class GetAllOperationTagsTests : TestBase
                 {Id = Guid.NewGuid().ToString(), Color = "#000000", OwnerId = DefaultUser.Id, Name = $"string{arg}"}));
         await dbContext.OperationTags.AddRangeAsync(operationTags);
         await dbContext.SaveChangesAsync();
-        
+
         // Act
         var response = await HttpClient.GetAsync($"OperationTags?name={name}");
         var result = await response.Content.ReadFromJsonOrDefaultAsync<IEnumerable<GetAllOperationTagsResponse>>();
-        
+
         // Assert
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
 

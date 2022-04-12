@@ -33,7 +33,7 @@ public class CreateOperationTagTests : TestBase
         Check.That(result?.Name).IsEqualTo(request.Name);
         Check.That(result?.Color).IsEqualTo(request.Color);
     }
-    
+
     [TestCase("", "")]
     [TestCase("string", "")]
     [TestCase("", "#123456")]

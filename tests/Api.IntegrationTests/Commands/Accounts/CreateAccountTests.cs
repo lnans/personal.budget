@@ -39,7 +39,7 @@ public class CreateAccountTests : TestBase
         Check.That(result?.Type).IsEqualTo(request.Type);
         Check.That(result?.Balance).IsEqualTo(request.InitialBalance);
     }
-    
+
     [TestCase("")]
     [TestCase(null)]
     public async Task CreateAccount_WithWrongRequest_ShouldReturn_ErrorResponse(string name)

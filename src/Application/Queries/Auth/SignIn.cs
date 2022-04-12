@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Application.Queries.Auth;
 
 public record SignInRequest(string Username, string Password) : IRequest<SignInResponse>;
+
 public record SignInResponse(string Username, string Token);
 
 public class SignIn : IRequestHandler<SignInRequest, SignInResponse>

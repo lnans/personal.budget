@@ -34,12 +34,12 @@ public class UpdateAccountTests : TestBase
         await dbContext.Accounts.AddAsync(account);
         await dbContext.SaveChangesAsync();
         var request = new UpdateAccountRequest("updated", "updatedIcon");
-        
+
         // Act
         var response = await HttpClient.PatchAsJsonAsync($"accounts/{account.Id}", request);
         var result = await response.Content.ReadFromJsonOrDefaultAsync<UpdateAccountResponse>();
         var accountInDb = await GetDbContext().Accounts.FirstOrDefaultAsync(a => a.Id == account.Id);
-        
+
         // Assert
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
         Check.That(accountInDb).IsNotNull();
@@ -49,7 +49,7 @@ public class UpdateAccountTests : TestBase
         Check.That(result?.Name).IsEqualTo(request.Name);
         Check.That(result?.Icon).IsEqualTo(request.Icon);
     }
-    
+
     [TestCase("")]
     [TestCase(null)]
     public async Task UpdateAccount_ShouldReturn_ErrorResponse_WithWrongRequest(string name)
@@ -71,12 +71,12 @@ public class UpdateAccountTests : TestBase
         await dbContext.Accounts.AddAsync(account);
         await dbContext.SaveChangesAsync();
         var request = new UpdateAccountRequest(name, "updatedIcon");
-        
+
         // Act
         var response = await HttpClient.PatchAsJsonAsync($"accounts/{account.Id}", request);
         var result = await response.Content.ReadFromJsonOrDefaultAsync<ErrorResponse>();
         var accountInDb = await GetDbContext().Accounts.FirstOrDefaultAsync(a => a.Id == account.Id);
-        
+
         // Assert
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.BadRequest);
         Check.That(accountInDb).IsNotNull();
@@ -85,7 +85,7 @@ public class UpdateAccountTests : TestBase
         Check.That(result).IsNotNull();
         Check.That(result?.Message).IsNotEmpty();
     }
-    
+
     [Test]
     public async Task UpdateAccount_ShouldReturn_ErrorResponse_WithUnknownAccount()
     {

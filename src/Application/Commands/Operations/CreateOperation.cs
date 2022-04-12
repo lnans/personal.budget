@@ -96,7 +96,7 @@ public class CreateOperation : IRequestHandler<CreateOperationRequest, CreateOpe
         }
 
         // Update account balance
-        if(request.ExecutionDate.HasValue) account.Balance += request.Amount;
+        if (request.ExecutionDate.HasValue) account.Balance += request.Amount;
 
         await _dbContext.Operations.AddAsync(operation, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);

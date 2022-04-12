@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Application.Commands.OperationTags;
 
 public record CreateOperationTagRequest(string Name, string Color) : IRequest<CreateOperationTagResponse>;
+
 public record CreateOperationTagResponse(string Id, string Name, string Color);
 
 public class CreateOperationTagValidator : AbstractValidator<CreateOperationTagRequest>

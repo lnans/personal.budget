@@ -20,7 +20,7 @@ public class ArchivedAccount : IRequestHandler<ArchivedAccountRequestWithId, Uni
         _dbContext = dbContext;
         _userContext = userContext;
     }
-    
+
     public async Task<Unit> Handle(ArchivedAccountRequestWithId requestWithId, CancellationToken cancellationToken)
     {
         var userId = _userContext.GetUserId();
