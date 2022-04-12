@@ -28,31 +28,40 @@ dotnet run
 Implemented
 ---
 
-| Method                                                         | Endpoint                      | Description                                   |
-|----------------------------------------------------------------|-------------------------------|-----------------------------------------------|
-| ![](https://img.shields.io/badge/-POST-49cc90?style=plastic)   | `/auth/signin`                | Sign In                                       |
-| ![](https://img.shields.io/badge/-GET-61affe?style=plastic)    | `/auth`                       | Return user information                       |
-| ![](https://img.shields.io/badge/-GET-61affe?style=plastic)    | `/operationTags?name=:filter` | Return all tags owned by the current user     |
-| ![](https://img.shields.io/badge/-POST-49cc90?style=plastic)   | `/operationTags`              | Create a new operation tag                    |
-| ![](https://img.shields.io/badge/-PATCH-50e3c2?style=plastic)  | `/operationTags/:id`          | Change Name and Color of an operation tag     |
-| ![](https://img.shields.io/badge/-DELETE-f93e3e?style=plastic) | `/operationTags/:id`          | Delete an operation tag                       |
-| ![](https://img.shields.io/badge/-GET-61affe?style=plastic)    | `/accounts`                   | Return all accounts owned by the current user |
-| ![](https://img.shields.io/badge/-POST-49cc90?style=plastic)   | `/accounts`                   | Create a new account                          |
-| ![](https://img.shields.io/badge/-PATCH-50e3c2?style=plastic)  | `/accounts/:id`               | Update account name or icon                   |
-| ![](https://img.shields.io/badge/-PATCH-50e3c2?style=plastic)  | `/accounts/:id/archived`      | Archived an account                           |
-| ![](https://img.shields.io/badge/-DELETE-f93e3e?style=plastic) | `/accounts/:id`               | Delete an account                             |
-| ![](https://img.shields.io/badge/-POST-49cc90?style=plastic)   | `/operations`                 | Create a new operation                        |
-| ![](https://img.shields.io/badge/-DELETE-f93e3e?style=plastic) | `/operations/:id`             | Delete an operation                           |
-| ![](https://img.shields.io/badge/-PATCH-50e3c2?style=plastic)  | `/operations/:id`             | Update operation description, tag or amount   |
+| Method                                                         | Endpoint                        | Description                                     |
+|----------------------------------------------------------------|---------------------------------|-------------------------------------------------|
+| ![](https://img.shields.io/badge/-POST-49cc90?style=plastic)   | `/auth/signin`                  | Sign In                                         |
+| ![](https://img.shields.io/badge/-GET-61affe?style=plastic)    | `/auth`                         | Return user information                         |
+| ![](https://img.shields.io/badge/-GET-61affe?style=plastic)    | `/operationTags?name=:filter`   | Return all tags owned by the current user       |
+| ![](https://img.shields.io/badge/-POST-49cc90?style=plastic)   | `/operationTags`                | Create a new operation tag                      |
+| ![](https://img.shields.io/badge/-PATCH-50e3c2?style=plastic)  | `/operationTags/:id`            | Change Name and Color of an operation tag       |
+| ![](https://img.shields.io/badge/-DELETE-f93e3e?style=plastic) | `/operationTags/:id`            | Delete an operation tag                         |
+| ![](https://img.shields.io/badge/-GET-61affe?style=plastic)    | `/accounts`                     | Return all accounts owned by the current user   |
+| ![](https://img.shields.io/badge/-POST-49cc90?style=plastic)   | `/accounts`                     | Create a new account                            |
+| ![](https://img.shields.io/badge/-PATCH-50e3c2?style=plastic)  | `/accounts/:id`                 | Update account name or icon                     |
+| ![](https://img.shields.io/badge/-PATCH-50e3c2?style=plastic)  | `/accounts/:id/archived`        | Archived an account                             |
+| ![](https://img.shields.io/badge/-DELETE-f93e3e?style=plastic) | `/accounts/:id`                 | Delete an account                               |
+| ![](https://img.shields.io/badge/-GET-61affe?style=plastic)    | `/operations?{operationFilter}` | Return all operations owned by the current user |
+| ![](https://img.shields.io/badge/-POST-49cc90?style=plastic)   | `/operations`                   | Create a new operation                          |
+| ![](https://img.shields.io/badge/-DELETE-f93e3e?style=plastic) | `/operations/:id`               | Delete an operation                             |
+| ![](https://img.shields.io/badge/-PATCH-50e3c2?style=plastic)  | `/operations/:id`               | Update operation description, tag or amount     |
+
+operationFilter:
+```json
+
+{
+  "description": "string",
+  "accountId": "string",
+  "tagIds": ["string"],
+  "operationType": "string",
+  "pageSize": 25,
+  "skip": 0
+}
+```
+
 Pending
 ---
 ### User
 | Method                                                        | Endpoint | Description             |
 |---------------------------------------------------------------|----------|-------------------------|
 | ![](https://img.shields.io/badge/-PATCH-50e3c2?style=plastic) | `/me`    | Update password         |
-
-
-### Operation
-| Method                                                         | Endpoint          | Description                                     |
-|----------------------------------------------------------------|-------------------|-------------------------------------------------|
-| ![](https://img.shields.io/badge/-GET-61affe?style=plastic)    | `/operations`     | Return all operations owned by the current user |
