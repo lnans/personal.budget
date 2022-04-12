@@ -1,6 +1,6 @@
 namespace Application.Commands.Operations;
 
-public record UpdateOperationRequest(string Description, string OperationTagId, decimal Amount);
+public record UpdateOperationRequest(string Description, string TagId, decimal Amount);
 
 public record UpdateOperationRequestWithId(string Id, UpdateOperationRequest Request) : IRequest<UpdateOperationResponse>;
 
@@ -51,11 +51,11 @@ public class UpdateOperation : IRequestHandler<UpdateOperationRequestWithId, Upd
 
         if (operation is null) throw new NotFoundException(Errors.OperationNotFound);
 
-        if (!string.IsNullOrWhiteSpace(request.Request.OperationTagId))
+        if (!string.IsNullOrWhiteSpace(request.Request.TagId))
         {
             var tag = await _dbContext
                 .OperationTags
-                .FirstOrDefaultAsync(o => o.Id == request.Request.OperationTagId && o.OwnerId == userId, cancellationToken);
+                .FirstOrDefaultAsync(o => o.Id == request.Request.TagId && o.OwnerId == userId, cancellationToken);
 
             if (tag is null) throw new NotFoundException(Errors.OperationTagNotFound);
 
