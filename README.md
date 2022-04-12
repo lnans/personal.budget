@@ -45,6 +45,7 @@ Implemented
 | ![](https://img.shields.io/badge/-POST-49cc90?style=plastic)   | `/operations`                   | Create a new operation                          |
 | ![](https://img.shields.io/badge/-DELETE-f93e3e?style=plastic) | `/operations/:id`               | Delete an operation                             |
 | ![](https://img.shields.io/badge/-PATCH-50e3c2?style=plastic)  | `/operations/:id`               | Update operation description, tag or amount     |
+| ![](https://img.shields.io/badge/-PATCH-50e3c2?style=plastic)  | `/operations/:id/execute`       | Set execution date on an operation              |
 
 operationFilter:
 ```json
