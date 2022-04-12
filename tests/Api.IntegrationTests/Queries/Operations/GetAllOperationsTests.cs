@@ -75,10 +75,10 @@ public class GetAllOperationsTests : TestBase
 
     /// <summary>
     ///     account 1 :
-    ///         - desc {N} with N is even
-    ///         - 50 operations
-    ///         - 16 Expenses, 17 Income, 17 Fixed
-    ///         - groups: 1 Not executed (10 op) + 3 different groups of executed date
+    ///     - desc {N} with N is even
+    ///     - 50 operations
+    ///     - 16 Expenses, 17 Income, 17 Fixed
+    ///     - groups: 1 Not executed (10 op) + 3 different groups of executed date
     /// </summary>
     /// <param name="accountId"></param>
     /// <param name="description"></param>
@@ -87,7 +87,7 @@ public class GetAllOperationsTests : TestBase
     /// <param name="expectedGroups"></param>
     /// <returns></returns>
     [TestCase(null, null, null, null, 4, ExpectedResult = 100)]
-    [TestCase(null, null, new []{TagId}, null, 2, ExpectedResult = 33)]
+    [TestCase(null, null, new[] {TagId}, null, 2, ExpectedResult = 33)]
     [TestCase(AccountOneId, null, null, null, 4, ExpectedResult = 50)]
     [TestCase(AccountOneId, "1", null, null, 4, ExpectedResult = 6)]
     [TestCase(AccountOneId, null, null, OperationType.Expense, 2, ExpectedResult = 16)]

@@ -40,7 +40,7 @@ public class DeleteAccountTests : TestBase
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
         Check.That(accountInDb).IsNull();
     }
-    
+
     [Test]
     public async Task DeleteAccount_ShouldReturn_ErrorResponse_WithUnknownAccount()
     {

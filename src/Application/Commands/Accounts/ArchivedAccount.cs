@@ -1,3 +1,9 @@
+using Application.Common.Interfaces;
+using Domain;
+using Domain.Exceptions;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
 namespace Application.Commands.Accounts;
 
 public record ArchivedAccountRequest(bool Archived);
@@ -14,7 +20,7 @@ public class ArchivedAccount : IRequestHandler<ArchivedAccountRequestWithId, Uni
         _dbContext = dbContext;
         _userContext = userContext;
     }
-    
+
     public async Task<Unit> Handle(ArchivedAccountRequestWithId requestWithId, CancellationToken cancellationToken)
     {
         var userId = _userContext.GetUserId();

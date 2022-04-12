@@ -1,3 +1,9 @@
+using Application.Common.Extensions;
+using Application.Common.Interfaces;
+using Domain.Enums;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
 namespace Application.Queries.Operations;
 
 public record GetAllOperationsRequest(

@@ -34,7 +34,7 @@ public class DeleteOperationTagTests : TestBase
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
         Check.That(operationTagInDb).IsNull();
     }
-    
+
     [Test]
     public async Task DeleteOperationTag_WithUnknownId_ShouldReturn_ErrorResponse()
     {

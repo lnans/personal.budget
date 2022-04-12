@@ -1,3 +1,8 @@
+using Application.Common.Interfaces;
+using Domain.Enums;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
 namespace Application.Queries.Accounts;
 
 public record GetAllAccountsRequest(string Name, bool Archived) : IRequest<IEnumerable<GetAllAccountsResponse>>;

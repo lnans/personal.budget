@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -24,15 +23,12 @@ public static class Extensions
 
     public static Task<HttpResponseMessage> PatchAsJsonAsync<TValue>(this HttpClient client, string? requestUri, TValue value)
     {
-        if (client == null)
-        {
-            throw new ArgumentNullException(nameof(client));
-        }
+        if (client == null) throw new ArgumentNullException(nameof(client));
 
         var content = JsonContent.Create(value);
         return client.PatchAsync(requestUri, content);
     }
-    
+
     public static string ToQueryString(this object request, string separator = ",")
     {
         if (request == null)
@@ -51,17 +47,20 @@ public static class Extensions
             .ToList();
 
         // Concat all IEnumerable properties into a comma separated string
-        foreach (var key in from key in propertyNames let valueType = properties[key]?.GetType() let valueElemType = valueType is {IsGenericType: true}
+        foreach (var key in from key in propertyNames
+                 let valueType = properties[key]?.GetType()
+                 let valueElemType = valueType is {IsGenericType: true}
                      ? valueType.GetGenericArguments()[0]
-                     : valueType?.GetElementType() where valueElemType != null && (valueElemType.IsPrimitive || valueElemType == typeof(string)) select key)
-        {
-            if (properties[key] is IEnumerable enumerable) properties[key] = string.Join(separator, enumerable.Cast<object>());
-        }
+                     : valueType?.GetElementType()
+                 where valueElemType != null && (valueElemType.IsPrimitive || valueElemType == typeof(string))
+                 select key)
+            if (properties[key] is IEnumerable enumerable)
+                properties[key] = string.Join(separator, enumerable.Cast<object>());
 
         // Concat all key/value pairs into a string separated by ampersand
         return string.Join("&", properties
             .Select(x => string.Concat(
                 Uri.EscapeDataString(x.Key), "=",
-                Uri.EscapeDataString(x.Value.ToString()))));
+                Uri.EscapeDataString(x.Value!.ToString()!))));
     }
 }

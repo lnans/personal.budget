@@ -1,3 +1,11 @@
+using Application.Common.Interfaces;
+using Domain;
+using Domain.Enums;
+using Domain.Exceptions;
+using FluentValidation;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
 namespace Application.Commands.Accounts;
 
 public record UpdateAccountRequest(string Name, string Icon);
@@ -26,7 +34,7 @@ public class UpdateAccount : IRequestHandler<UpdateAccountRequestWithId, UpdateA
         _dbContext = dbContext;
         _userContext = userContext;
     }
-    
+
     public async Task<UpdateAccountResponse> Handle(UpdateAccountRequestWithId requestWithId, CancellationToken cancellationToken)
     {
         var userId = _userContext.GetUserId();

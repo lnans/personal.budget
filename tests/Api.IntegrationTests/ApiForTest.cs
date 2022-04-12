@@ -1,4 +1,4 @@
-using Application;
+using Application.Common.Interfaces;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;

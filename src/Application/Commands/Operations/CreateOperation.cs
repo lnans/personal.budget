@@ -1,3 +1,12 @@
+using Application.Common.Interfaces;
+using Domain;
+using Domain.Entities;
+using Domain.Enums;
+using Domain.Exceptions;
+using FluentValidation;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
 namespace Application.Commands.Operations;
 
 public record CreateOperationRequest(
@@ -87,7 +96,7 @@ public class CreateOperation : IRequestHandler<CreateOperationRequest, CreateOpe
         }
 
         // Update account balance
-        if(request.ExecutionDate.HasValue) account.Balance += request.Amount;
+        if (request.ExecutionDate.HasValue) account.Balance += request.Amount;
 
         await _dbContext.Operations.AddAsync(operation, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);

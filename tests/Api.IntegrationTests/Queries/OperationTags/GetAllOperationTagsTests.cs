@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Application.Queries.OperationTags;
 using Domain.Entities;
@@ -31,11 +30,11 @@ public class GetAllOperationTagsTests : TestBase
                 {Id = Guid.NewGuid().ToString(), Color = "#000000", OwnerId = DefaultUser.Id, Name = $"string{arg}"}));
         await dbContext.OperationTags.AddRangeAsync(operationTags);
         await dbContext.SaveChangesAsync();
-        
+
         // Act
         var response = await HttpClient.GetAsync($"OperationTags?name={name}");
         var result = await response.Content.ReadFromJsonOrDefaultAsync<IEnumerable<GetAllOperationTagsResponse>>();
-        
+
         // Assert
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
 

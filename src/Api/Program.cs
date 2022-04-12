@@ -1,9 +1,15 @@
+using Application.Common.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 var dbName = builder.Configuration.GetConnectionString("Database");
 var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
 var defaultUser = builder.Configuration.GetValue<string>("DefaultUser:Username");
 var defaultPassword = builder.Configuration.GetValue<string>("DefaultUser:Password");
-void JsonOptions(JsonOptions options) => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+
+void JsonOptions(JsonOptions options)
+{
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+}
 
 // Register services
 builder.Services
@@ -23,10 +29,8 @@ builder.Services
 var api = builder.Build();
 
 if (api.Environment.IsDevelopment())
-{
     api.UseSwagger()
         .UseSwaggerUI();
-}
 
 api.UseAuthentication()
     .UseAuthorization()
@@ -49,7 +53,7 @@ if (dbContext != null && !dbContext.Users.Any())
     {
         Id = id,
         Username = defaultUser,
-        Hash = Utils.GenerateHash(id, defaultPassword)
+        Hash = HashHelper.GenerateHash(id, defaultPassword)
     });
     dbContext.SaveChanges();
 }

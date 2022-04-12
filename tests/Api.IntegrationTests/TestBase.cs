@@ -2,7 +2,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Application;
+using Application.Common.Helpers;
+using Application.Common.Interfaces;
 using Domain.Common;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,11 +14,10 @@ namespace Api.IntegrationTests;
 
 public abstract class TestBase
 {
-    protected HttpClient HttpClient = null!;
-    protected User DefaultUser = null!;
-
     private ApiForTest _api = null!;
-    
+    protected User DefaultUser = null!;
+    protected HttpClient HttpClient = null!;
+
     [OneTimeSetUp]
     protected void OneTimeSetup()
     {
@@ -27,7 +27,7 @@ public abstract class TestBase
         DefaultUser = GetDbContext().Users.First();
 
         var jwtSettings = scope.ServiceProvider.GetRequiredService<JwtSettings>();
-        var authToken = Utils.CreateJwtToken(jwtSettings, DefaultUser);
+        var authToken = JwtHelper.CreateJwtToken(jwtSettings, DefaultUser);
         var authHeader = new AuthenticationHeaderValue(JwtBearerDefaults.AuthenticationScheme, authToken);
         HttpClient = _api.CreateClient();
         HttpClient.DefaultRequestHeaders.Authorization = authHeader;
