@@ -6,8 +6,9 @@ public class OperationEntityConfiguration : IEntityTypeConfiguration<Operation>
     {
         builder.Property(p => p.Description).IsRequired();
         builder.Property(p => p.Amount).IsRequired();
-        builder.Property(p => p.OperationDate).IsRequired();
+        builder.Property(p => p.CreationDate).IsRequired();
         builder.Property(p => p.Type).HasConversion<string>().IsRequired();
+        builder.Property(p => p.CreatedById).IsRequired();
 
         builder
             .HasOne(p => p.Account)

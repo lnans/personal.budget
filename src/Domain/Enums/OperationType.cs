@@ -7,6 +7,5 @@ public enum OperationType
 {
     Expense,
     Income,
-    Fixed,
-    Transfer
+    Fixed
 }
