@@ -66,6 +66,24 @@ public class OperationsController : ControllerBase
     }
 
     /// <summary>
+    ///     Set execution date on an operation
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpPatch("{id}/execute")]
+    [ProducesResponseType((int) HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.NotFound)]
+    public async Task<IActionResult> Execute(string id, [FromBody] ExecuteOperationRequest request, CancellationToken cancellationToken)
+    {
+        var requestWithId = new ExecuteOperationRequestWithId(id, request);
+        await _mediator.Send(requestWithId, cancellationToken);
+        return Ok();
+    }
+
+    /// <summary>
     ///     Delete an account operation
     /// </summary>
     /// <param name="id">Operation Id</param>

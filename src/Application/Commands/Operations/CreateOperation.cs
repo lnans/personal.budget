@@ -39,7 +39,7 @@ public class CreateOperationValidator : AbstractValidator<CreateOperationRequest
             .WithMessage(Errors.OperationAmountRequired);
         RuleFor(p => p.CreationDate)
             .NotEqual(default(DateTime))
-            .WithMessage(Errors.OperationDateRequired);
+            .WithMessage(Errors.OperationCreationDateRequired);
     }
 }
 

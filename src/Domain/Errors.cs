@@ -23,6 +23,7 @@ public static class Errors
     public const string OperationAccountRequired = "errors.operation.account_required";
     public const string OperationTypeUnknown = "errors.operation.type_unknown";
     public const string OperationAmountRequired = "errors.operation.amount_required";
-    public const string OperationDateRequired = "errors.operation.date_required";
+    public const string OperationCreationDateRequired = "errors.operation.creation_date_required";
+    public const string OperationExecutionDateRequired = "errors.operation.execution_date_required";
     public const string OperationNotFound = "errors.operation.not_found";
 }
