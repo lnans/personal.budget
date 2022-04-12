@@ -48,11 +48,6 @@ public class GetAllOperationsTests : TestBase
             OwnerId = DefaultUser.Id
         };
         var operations = new List<Operation>();
-        
-        // account 1 :
-        //      - 50 operations
-        //      - 16 Expenses, 16 Income, 17 Fixed
-        //      - 10 Not executed, 3 different groups of executed date
         Enumerable
             .Range(1, 100)
             .ToList()
@@ -78,19 +73,35 @@ public class GetAllOperationsTests : TestBase
     private const string AccountTwoId = "132ac4ad-352a-4fb8-8455-04801d365ed2";
     private const string TagId = "f32ac4ad-352a-4fb8-8455-04801d365ed2";
 
-    [TestCase(null, null, null, null, 100, 0, ExpectedResult = 100)]
-    [TestCase(AccountOneId, null, null, null, 100, 0, ExpectedResult = 50)]
-    [TestCase(AccountOneId, null, null, OperationType.Expense, 100, 0, ExpectedResult = 50)]
+    /// <summary>
+    ///     account 1 :
+    ///         - desc {N} with N is even
+    ///         - 50 operations
+    ///         - 16 Expenses, 17 Income, 17 Fixed
+    ///         - groups: 1 Not executed (10 op) + 3 different groups of executed date
+    /// </summary>
+    /// <param name="accountId"></param>
+    /// <param name="description"></param>
+    /// <param name="tagsIds"></param>
+    /// <param name="type"></param>
+    /// <param name="expectedGroups"></param>
+    /// <returns></returns>
+    [TestCase(null, null, null, null, 4, ExpectedResult = 100)]
+    [TestCase(null, null, new []{TagId}, null, 2, ExpectedResult = 33)]
+    [TestCase(AccountOneId, null, null, null, 4, ExpectedResult = 50)]
+    [TestCase(AccountOneId, "1", null, null, 4, ExpectedResult = 6)]
+    [TestCase(AccountOneId, null, null, OperationType.Expense, 2, ExpectedResult = 16)]
+    [TestCase(AccountOneId, null, null, OperationType.Income, 2, ExpectedResult = 17)]
+    [TestCase(AccountOneId, null, null, OperationType.Fixed, 2, ExpectedResult = 17)]
     public async Task<int> GetAllOperations_ShouldReturn_OperationsGroupedByDays_WithFilters(
         string accountId,
         string description,
         string[] tagsIds,
         OperationType? type,
-        int pageSize,
-        int skip)
+        int expectedGroups)
     {
         // Arrange
-        var request = new GetAllOperationsRequest(accountId, description, tagsIds, type, pageSize, skip);
+        var request = new GetAllOperationsRequest(accountId, description, tagsIds, type, 100);
 
         // Act
         var test = request.ToQueryString();
@@ -99,7 +110,8 @@ public class GetAllOperationsTests : TestBase
 
         // Assert
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
-
+        Check.That(result).IsNotNull();
+        Check.That(result?.OperationsByDays.Count).IsEqualTo(expectedGroups);
 
         return result?.Total ?? 0;
     }
