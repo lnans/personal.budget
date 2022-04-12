@@ -1,4 +1,7 @@
 using Application.Common.Interfaces;
+using Domain.Entities;
+using Infrastructure.Persistence.Configurations;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence;
 

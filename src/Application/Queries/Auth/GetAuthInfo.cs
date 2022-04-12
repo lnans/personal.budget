@@ -1,3 +1,8 @@
+using System.Security.Authentication;
+using Application.Common.Interfaces;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
 namespace Application.Queries.Auth;
 
 public record GetAuthInfoRequest : IRequest<GetAuthInfoResponse>;

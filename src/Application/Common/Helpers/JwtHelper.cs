@@ -1,3 +1,10 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Domain.Common;
+using Domain.Entities;
+using Microsoft.IdentityModel.Tokens;
+
 namespace Application.Common.Helpers;
 
 public static class JwtHelper

@@ -1,4 +1,7 @@
 using Application.Common.Interfaces;
+using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure;
 

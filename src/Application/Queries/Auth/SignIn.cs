@@ -1,3 +1,10 @@
+using System.Security.Authentication;
+using Application.Common.Helpers;
+using Application.Common.Interfaces;
+using Domain.Common;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
 namespace Application.Queries.Auth;
 
 public record SignInRequest(string Username, string Password) : IRequest<SignInResponse>;

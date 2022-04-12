@@ -1,3 +1,6 @@
+using System.Security.Cryptography;
+using System.Text;
+
 namespace Application.Common.Helpers;
 
 public static class HashHelper

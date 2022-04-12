@@ -1,3 +1,9 @@
+using Application.Common.Interfaces;
+using Domain;
+using Domain.Exceptions;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
 namespace Application.Commands.Accounts;
 
 public record ArchivedAccountRequest(bool Archived);

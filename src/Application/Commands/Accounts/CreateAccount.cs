@@ -1,3 +1,12 @@
+using Application.Common.Interfaces;
+using Domain;
+using Domain.Entities;
+using Domain.Enums;
+using Domain.Exceptions;
+using FluentValidation;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
 namespace Application.Commands.Accounts;
 
 public record CreateAccountRequest(string Name, string Icon, AccountType Type, decimal InitialBalance) : IRequest<CreateAccountResponse>;

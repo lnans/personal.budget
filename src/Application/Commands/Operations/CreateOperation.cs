@@ -1,3 +1,12 @@
+using Application.Common.Interfaces;
+using Domain;
+using Domain.Entities;
+using Domain.Enums;
+using Domain.Exceptions;
+using FluentValidation;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
 namespace Application.Commands.Operations;
 
 public record CreateOperationRequest(

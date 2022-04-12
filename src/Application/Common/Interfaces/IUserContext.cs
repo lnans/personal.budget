@@ -1,3 +1,7 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Authentication;
+using Microsoft.AspNetCore.Http;
+
 namespace Application.Common.Interfaces;
 
 public interface IUserContext

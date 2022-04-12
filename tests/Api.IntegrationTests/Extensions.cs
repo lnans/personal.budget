@@ -61,6 +61,6 @@ public static class Extensions
         return string.Join("&", properties
             .Select(x => string.Concat(
                 Uri.EscapeDataString(x.Key), "=",
-                Uri.EscapeDataString(x.Value.ToString()))));
+                Uri.EscapeDataString(x.Value!.ToString()!))));
     }
 }
