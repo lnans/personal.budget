@@ -1,3 +1,5 @@
+using Application.Common.Interfaces;
+
 namespace Infrastructure;
 
 public static class DependencyInjection

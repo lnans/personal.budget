@@ -1,3 +1,5 @@
+using Application.Common.Extensions;
+
 namespace Application.Queries.Operations;
 
 public record GetAllOperationsRequest(

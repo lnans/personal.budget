@@ -19,9 +19,9 @@ public class SignIn : IRequestHandler<SignInRequest, SignInResponse>
         var (username, password) = request;
         var user = await _dbContext.Users
             .FirstOrDefaultAsync(u => u.Username.Equals(username), cancellationToken);
-        if (user is null || user.Hash != Utils.GenerateHash(user.Id, password)) throw new AuthenticationException();
+        if (user is null || user.Hash != HashHelper.GenerateHash(user.Id, password)) throw new AuthenticationException();
 
-        var jwtToken = Utils.CreateJwtToken(_jwtSettings, user);
+        var jwtToken = JwtHelper.CreateJwtToken(_jwtSettings, user);
 
         return new SignInResponse(user.Username, jwtToken);
     }

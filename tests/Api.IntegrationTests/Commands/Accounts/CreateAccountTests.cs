@@ -5,10 +5,8 @@ using Application.Commands.Accounts;
 using Domain.Common;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using NFluent;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace Api.IntegrationTests.Commands.Accounts;
 

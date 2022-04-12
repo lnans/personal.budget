@@ -1,3 +1,6 @@
+global using Application.Common.Behaviors;
+global using Application.Common.Interfaces;
+global using Application.Common.Helpers;
 global using Domain;
 global using Domain.Common;
 global using Domain.Entities;

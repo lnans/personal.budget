@@ -1,3 +1,5 @@
+using Application.Common.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 var dbName = builder.Configuration.GetConnectionString("Database");
 var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
@@ -49,7 +51,7 @@ if (dbContext != null && !dbContext.Users.Any())
     {
         Id = id,
         Username = defaultUser,
-        Hash = Utils.GenerateHash(id, defaultPassword)
+        Hash = HashHelper.GenerateHash(id, defaultPassword)
     });
     dbContext.SaveChanges();
 }
