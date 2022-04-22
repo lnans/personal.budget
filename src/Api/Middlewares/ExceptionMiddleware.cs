@@ -42,7 +42,7 @@ public class ExceptionMiddleware
                 error.Message = exception.Message;
                 break;
             case AuthenticationException _:
-                context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                context.Response.StatusCode = (int) HttpStatusCode.Forbidden;
                 error.Message = Errors.AuthFailed;
                 break;
             default:

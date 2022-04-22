@@ -22,6 +22,7 @@ public class GetAllOperationsTests : TestBase
         {
             Id = Guid.Parse(AccountOneId).ToString(),
             Name = "ForTest 1",
+            Bank = "bank",
             OwnerId = DefaultUser.Id,
             Balance = 50,
             InitialBalance = 0,
@@ -33,6 +34,7 @@ public class GetAllOperationsTests : TestBase
         {
             Id = Guid.Parse(AccountTwoId).ToString(),
             Name = "ForTest 2",
+            Bank = "bank",
             OwnerId = DefaultUser.Id,
             Balance = 50,
             InitialBalance = 0,

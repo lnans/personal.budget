@@ -7,6 +7,7 @@ public class Account
     public string Id { get; set; }
     public string OwnerId { get; set; }
     public string Name { get; set; }
+    public string Bank { get; set; }
     public decimal InitialBalance { get; set; }
     public decimal Balance { get; set; }
     public string Icon { get; set; }

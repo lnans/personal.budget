@@ -24,6 +24,7 @@ public class ArchivedAccountTests : TestBase
         {
             Id = Guid.NewGuid().ToString(),
             Name = "test",
+            Bank = "bank",
             Balance = 0,
             InitialBalance = 0,
             Icon = "",
@@ -55,6 +56,7 @@ public class ArchivedAccountTests : TestBase
         {
             Id = Guid.NewGuid().ToString(),
             Name = "test",
+            Bank = "bank",
             Balance = 0,
             InitialBalance = 0,
             Icon = "",

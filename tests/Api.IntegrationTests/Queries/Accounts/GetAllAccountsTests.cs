@@ -34,6 +34,7 @@ public class GetAllAccountsTests : TestBase
             {
                 Id = Guid.NewGuid().ToString(),
                 Name = $"string{arg}",
+                Bank = "bank",
                 Balance = 0,
                 InitialBalance = 0,
                 Icon = "",

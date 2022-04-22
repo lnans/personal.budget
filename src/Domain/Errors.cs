@@ -14,6 +14,7 @@ public static class Errors
 
     // Accounts
     public const string AccountNameRequired = "errors.account.name_required";
+    public const string AccountBankRequired = "errors.account.bank_required";
     public const string AccountAlreadyExist = "errors.account.already_exist";
     public const string AccountTypeUnknown = "errors.account.type_unknown";
     public const string AccountNotFound = "errors.account.not_found";

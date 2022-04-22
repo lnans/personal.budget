@@ -30,7 +30,13 @@ var api = builder.Build();
 
 if (api.Environment.IsDevelopment())
     api.UseSwagger()
-        .UseSwaggerUI();
+        .UseSwaggerUI()
+        .UseCors(options =>
+        {
+            options.AllowAnyHeader();
+            options.AllowAnyMethod();
+            options.AllowAnyOrigin();
+        });
 
 api.UseAuthentication()
     .UseAuthorization()

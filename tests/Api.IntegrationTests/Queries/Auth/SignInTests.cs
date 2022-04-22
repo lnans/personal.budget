@@ -39,7 +39,7 @@ public class SignInTests : TestBase
         var result = await response.Content.ReadFromJsonOrDefaultAsync<ErrorResponse>();
 
         // Assert
-        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.Unauthorized);
+        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.Forbidden);
         Check.That(result).IsNotNull();
         Check.That(result?.Message).IsEqualTo("errors.auth_failed");
     }
@@ -55,7 +55,7 @@ public class SignInTests : TestBase
         var result = await response.Content.ReadFromJsonOrDefaultAsync<ErrorResponse>();
 
         // Assert
-        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.Unauthorized);
+        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.Forbidden);
         Check.That(result).IsNotNull();
         Check.That(result?.Message).IsEqualTo("errors.auth_failed");
     }
