@@ -13,7 +13,7 @@ using NUnit.Framework;
 namespace Api.IntegrationTests.Commands.Operations;
 
 [TestFixture]
-public class CreateOperationTests : TestBase
+public class CreateOperationsTests : TestBase
 {
     [SetUp]
     public async Task SetupAccount()
@@ -52,18 +52,19 @@ public class CreateOperationTests : TestBase
     public async Task CreateOperation_Should_CreateOperationAndUpdateAccount_WithValidRequest()
     {
         // Arrange
-        var request = new CreateOperationRequest(
-            "desc",
-            _account.Id,
-            _tag.Id,
-            OperationType.Expense,
-            -50,
-            DateTime.UtcNow,
-            DateTime.UtcNow);
+        var request = new CreateOperationsRequest(_account.Id, new[]
+            {
+                new CreateOperation("desc",
+                    _tag.Id,
+                    OperationType.Expense,
+                    -50,
+                    DateTime.UtcNow,
+                    DateTime.UtcNow)
+            }
+        );
 
         // Act
         var response = await HttpClient.PostAsJsonAsync("operations", request);
-        var result = await response.Content.ReadFromJsonOrDefaultAsync<CreateOperationResponse>();
         var operationInDb = await GetDbContext().Operations
             .Include(o => o.Account)
             .Include(o => o.Tag)
@@ -73,25 +74,15 @@ public class CreateOperationTests : TestBase
         // Assert
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
         Check.That(operationInDb).IsNotNull();
-        Check.That(operationInDb?.Description).IsEqualTo(request.Description);
+        Check.That(operationInDb?.Description).IsEqualTo(request.Operations[0].Description);
         Check.That(operationInDb?.Account?.Id).IsEqualTo(request.AccountId);
-        Check.That(operationInDb?.Type).IsEqualTo(request.OperationType);
+        Check.That(operationInDb?.Type).IsEqualTo(request.Operations[0].OperationType);
         Check.That(operationInDb?.Amount).IsEqualTo(-50);
         Check.That(operationInDb?.Tag?.Name).IsEqualTo(_tag.Name);
         Check.That(operationInDb?.Tag?.Color).IsEqualTo(_tag.Color);
-        Check.That(operationInDb?.CreationDate).IsEqualTo(request.CreationDate);
-        Check.That(operationInDb?.ExecutionDate).IsEqualTo(request.ExecutionDate);
+        Check.That(operationInDb?.CreationDate).IsEqualTo(request.Operations[0].CreationDate);
+        Check.That(operationInDb?.ExecutionDate).IsEqualTo(request.Operations[0].ExecutionDate);
         Check.That(accountInDb?.Balance).IsEqualTo(-50);
-        Check.That(result).IsNotNull();
-        Check.That(result?.Description).IsEqualTo(request.Description);
-        Check.That(result?.AccountId).IsEqualTo(request.AccountId);
-        Check.That(result?.AccountName).IsEqualTo(accountInDb?.Name);
-        Check.That(result?.TagName).IsEqualTo(_tag.Name);
-        Check.That(result?.TagColor).IsEqualTo(_tag.Color);
-        Check.That(result?.OperationType).IsEqualTo(request.OperationType);
-        Check.That(result?.Amount).IsEqualTo(request.Amount);
-        Check.That(result?.CreationDate).IsEqualTo(request.CreationDate);
-        Check.That(result?.ExecutionDate).IsEqualTo(request.ExecutionDate);
     }
 
     [TestCase("", "", "", 0, ExpectedResult = HttpStatusCode.BadRequest)]
@@ -103,14 +94,17 @@ public class CreateOperationTests : TestBase
         decimal amount)
     {
         // Arrange
-        var request = new CreateOperationRequest(
-            description,
-            accountId,
-            tagId,
-            OperationType.Expense,
-            amount,
-            DateTime.UtcNow,
-            DateTime.UtcNow);
+        var request = new CreateOperationsRequest(
+            accountId, new[]
+            {
+                new CreateOperation(description,
+                    tagId,
+                    OperationType.Expense,
+                    amount,
+                    DateTime.UtcNow,
+                    DateTime.UtcNow)
+            }
+        );
 
         // Act
         var response = await HttpClient.PostAsJsonAsync("operations", request);

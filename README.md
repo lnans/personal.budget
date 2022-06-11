@@ -42,7 +42,7 @@ Implemented
 | ![](https://img.shields.io/badge/-PATCH-50e3c2?style=plastic)  | `/accounts/:id/archived`        | Archived an account                             |
 | ![](https://img.shields.io/badge/-DELETE-f93e3e?style=plastic) | `/accounts/:id`                 | Delete an account                               |
 | ![](https://img.shields.io/badge/-GET-61affe?style=plastic)    | `/operations?{operationFilter}` | Return all operations owned by the current user |
-| ![](https://img.shields.io/badge/-POST-49cc90?style=plastic)   | `/operations`                   | Create a new operation                          |
+| ![](https://img.shields.io/badge/-POST-49cc90?style=plastic)   | `/operations`                   | Create new operations                           |
 | ![](https://img.shields.io/badge/-DELETE-f93e3e?style=plastic) | `/operations/:id`               | Delete an operation                             |
 | ![](https://img.shields.io/badge/-PATCH-50e3c2?style=plastic)  | `/operations/:id`               | Update operation description, tag or amount     |
 | ![](https://img.shields.io/badge/-PATCH-50e3c2?style=plastic)  | `/operations/:id/execute`       | Set execution date on an operation              |

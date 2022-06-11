@@ -20,6 +20,7 @@ public static class Errors
     public const string AccountNotFound = "errors.account.not_found";
 
     // Operations
+    public const string OperationRequired = "errors.operation.required";
     public const string OperationDescriptionRequired = "errors.operation.description_required";
     public const string OperationAccountRequired = "errors.operation.account_required";
     public const string OperationTypeUnknown = "errors.operation.type_unknown";

@@ -36,11 +36,11 @@ public class OperationsController : ControllerBase
     /// <param name="cancellationToken">cancellation token</param>
     /// <returns>Operation created</returns>
     [HttpPost]
-    [ProducesResponseType(typeof(CreateOperationResponse), (int) HttpStatusCode.OK)]
+    [ProducesResponseType((int) HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.BadRequest)]
-    public async Task<IActionResult> Create([FromBody] CreateOperationRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromBody] CreateOperationsRequest request, CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(request, cancellationToken);
         return Ok(response);
