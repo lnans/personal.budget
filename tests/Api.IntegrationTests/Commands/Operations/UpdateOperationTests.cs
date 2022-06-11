@@ -22,6 +22,7 @@ public class UpdateOperationTests : TestBase
         {
             Id = Guid.NewGuid().ToString(),
             Name = "ForTest",
+            Bank = "bank",
             OwnerId = DefaultUser.Id,
             Balance = 50,
             InitialBalance = 0,

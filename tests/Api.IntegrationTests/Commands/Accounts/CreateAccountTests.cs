@@ -17,7 +17,7 @@ public class CreateAccountTests : TestBase
     public async Task CreateAccount_WithValidRequest_Should_CreateAccount()
     {
         // Arrange
-        var request = new CreateAccountRequest("Account", "Icon", AccountType.Expenses, 0);
+        var request = new CreateAccountRequest("Account", "Bank", "Icon", AccountType.Expenses, 0);
 
         // Act
         var response = await HttpClient.PostAsJsonAsync("accounts", request);
@@ -28,6 +28,7 @@ public class CreateAccountTests : TestBase
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
         Check.That(accountInDb).IsNotNull();
         Check.That(accountInDb?.Name).IsEqualTo(request.Name);
+        Check.That(accountInDb?.Bank).IsEqualTo(request.Bank);
         Check.That(accountInDb?.Icon).IsEqualTo(request.Icon);
         Check.That(accountInDb?.Type).IsEqualTo(request.Type);
         Check.That(accountInDb?.InitialBalance).IsEqualTo(request.InitialBalance);
@@ -35,17 +36,20 @@ public class CreateAccountTests : TestBase
         Check.That(accountInDb?.OwnerId).IsEqualTo(DefaultUser.Id);
         Check.That(result).IsNotNull();
         Check.That(result?.Name).IsEqualTo(request.Name);
+        Check.That(result?.Bank).IsEqualTo(request.Bank);
         Check.That(result?.Icon).IsEqualTo(request.Icon);
         Check.That(result?.Type).IsEqualTo(request.Type);
         Check.That(result?.Balance).IsEqualTo(request.InitialBalance);
     }
 
-    [TestCase("")]
-    [TestCase(null)]
-    public async Task CreateAccount_WithWrongRequest_ShouldReturn_ErrorResponse(string name)
+    [TestCase("", "")]
+    [TestCase(null, null)]
+    [TestCase("name", null)]
+    [TestCase(null, "bank")]
+    public async Task CreateAccount_WithWrongRequest_ShouldReturn_ErrorResponse(string name, string bank)
     {
         // Arrange
-        var request = new CreateAccountRequest(name, "Icon", AccountType.Expenses, 0);
+        var request = new CreateAccountRequest(name, bank, "Icon", AccountType.Expenses, 0);
 
         // Act
         var response = await HttpClient.PostAsJsonAsync("accounts", request);

@@ -1,5 +1,5 @@
-using Application.Common.Extensions;
 using Application.Common.Interfaces;
+using Domain.Common;
 using Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -11,8 +11,8 @@ public record GetAllOperationsRequest(
     string Description,
     string[] TagIds,
     OperationType? Type,
-    int PageSize = 25,
-    int Skip = 0) : IRequest<GetAllOperationsPaginatedResponse>;
+    int Cursor = 0,
+    int PageSize = 25) : IRequest<InfiniteData<GetAllOperationsResponse>>;
 
 public record GetAllOperationsResponse(
     string Id,
@@ -29,7 +29,7 @@ public record GetAllOperationsResponse(
 
 public record GetAllOperationsPaginatedResponse(int Total, Dictionary<string, List<GetAllOperationsResponse>> OperationsByDays);
 
-public class GetAllOperations : IRequestHandler<GetAllOperationsRequest, GetAllOperationsPaginatedResponse>
+public class GetAllOperations : IRequestHandler<GetAllOperationsRequest, InfiniteData<GetAllOperationsResponse>>
 {
     private readonly IApplicationDbContext _dbContext;
     private readonly IUserContext _userContext;
@@ -40,7 +40,7 @@ public class GetAllOperations : IRequestHandler<GetAllOperationsRequest, GetAllO
         _userContext = userContext;
     }
 
-    public async Task<GetAllOperationsPaginatedResponse> Handle(GetAllOperationsRequest request, CancellationToken cancellationToken)
+    public async Task<InfiniteData<GetAllOperationsResponse>> Handle(GetAllOperationsRequest request, CancellationToken cancellationToken)
     {
         var userId = _userContext.GetUserId();
 
@@ -61,8 +61,10 @@ public class GetAllOperations : IRequestHandler<GetAllOperationsRequest, GetAllO
         if (request.Type.HasValue) query = query.Where(o => o.Type == request.Type);
 
         var totalSize = await query.CountAsync(cancellationToken);
+        var nextCursor = (request.Cursor + request.PageSize) < totalSize ? request.Cursor + request.PageSize : (int?)null;
+
         var list = await query
-            .Skip(request.Skip)
+            .Skip(request.Cursor)
             .Take(request.PageSize)
             .Select(o => new GetAllOperationsResponse(
                 o.Id,
@@ -77,16 +79,6 @@ public class GetAllOperations : IRequestHandler<GetAllOperationsRequest, GetAllO
                 o.CreationDate,
                 o.ExecutionDate))
             .ToListAsync(cancellationToken);
-
-        // Group result by days in a dictionary
-        var operationsByDays = new Dictionary<string, List<GetAllOperationsResponse>>();
-        foreach (var operation in list)
-        {
-            var strDateOnly = operation.ExecutionDate.HasValue ? operation.ExecutionDate.Value.ToMidnightIsoString() : "none";
-            if (!operationsByDays.ContainsKey(strDateOnly)) operationsByDays.Add(strDateOnly, new List<GetAllOperationsResponse>());
-            operationsByDays[strDateOnly].Add(operation);
-        }
-
-        return new GetAllOperationsPaginatedResponse(totalSize, operationsByDays);
+        return new InfiniteData<GetAllOperationsResponse>(list, nextCursor);
     }
 }

@@ -21,6 +21,7 @@ public class DeleteAccountTests : TestBase
         {
             Id = Guid.NewGuid().ToString(),
             Name = "test",
+            Bank = "bank",
             Balance = 0,
             InitialBalance = 0,
             Icon = "",
@@ -50,6 +51,7 @@ public class DeleteAccountTests : TestBase
         {
             Id = Guid.NewGuid().ToString(),
             Name = "test",
+            Bank = "bank",
             Balance = 0,
             InitialBalance = 0,
             Icon = "",

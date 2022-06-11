@@ -1,7 +1,19 @@
+using System.Reflection;
+
 namespace Api.Installers;
 
 public static class SwaggerInstaller
 {
+    private static string XmlCommentsFilePath
+    {
+        get
+        {
+            var basePath = AppDomain.CurrentDomain.BaseDirectory;
+            var fileName = typeof(Program).GetTypeInfo().Assembly.GetName().Name + ".xml";
+            return Path.Combine(basePath, fileName);
+        }
+    }
+    
     public static IServiceCollection AddSwaggerGenWithSecurity(this IServiceCollection services)
     {
         var securityScheme = new OpenApiSecurityScheme
@@ -41,6 +53,7 @@ public static class SwaggerInstaller
             options.SwaggerDoc("v1", info);
             options.AddSecurityDefinition("Bearer", securityScheme);
             options.AddSecurityRequirement(securityReq);
+            options.IncludeXmlComments(XmlCommentsFilePath);
         });
     }
 }

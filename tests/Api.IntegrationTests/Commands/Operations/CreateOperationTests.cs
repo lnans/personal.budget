@@ -23,6 +23,7 @@ public class CreateOperationTests : TestBase
         {
             Id = Guid.Parse(AccountId).ToString(),
             Name = "ForTest",
+            Bank = "bank",
             OwnerId = DefaultUser.Id,
             Balance = 0,
             InitialBalance = 0,

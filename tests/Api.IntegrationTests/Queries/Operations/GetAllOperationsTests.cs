@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Application.Queries.Operations;
+using Domain.Common;
 using Domain.Entities;
 using Domain.Enums;
 using NFluent;
@@ -22,6 +23,7 @@ public class GetAllOperationsTests : TestBase
         {
             Id = Guid.Parse(AccountOneId).ToString(),
             Name = "ForTest 1",
+            Bank = "bank",
             OwnerId = DefaultUser.Id,
             Balance = 50,
             InitialBalance = 0,
@@ -33,6 +35,7 @@ public class GetAllOperationsTests : TestBase
         {
             Id = Guid.Parse(AccountTwoId).ToString(),
             Name = "ForTest 2",
+            Bank = "bank",
             OwnerId = DefaultUser.Id,
             Balance = 50,
             InitialBalance = 0,
@@ -84,35 +87,32 @@ public class GetAllOperationsTests : TestBase
     /// <param name="description"></param>
     /// <param name="tagsIds"></param>
     /// <param name="type"></param>
-    /// <param name="expectedGroups"></param>
     /// <returns></returns>
-    [TestCase(null, null, null, null, 4, ExpectedResult = 100)]
-    [TestCase(null, null, new[] {TagId}, null, 2, ExpectedResult = 33)]
-    [TestCase(AccountOneId, null, null, null, 4, ExpectedResult = 50)]
-    [TestCase(AccountOneId, "1", null, null, 4, ExpectedResult = 6)]
-    [TestCase(AccountOneId, null, null, OperationType.Expense, 2, ExpectedResult = 16)]
-    [TestCase(AccountOneId, null, null, OperationType.Income, 2, ExpectedResult = 17)]
-    [TestCase(AccountOneId, null, null, OperationType.Fixed, 2, ExpectedResult = 17)]
+    [TestCase(null, null, null, null, ExpectedResult = 100)]
+    [TestCase(null, null, new[] {TagId}, null, ExpectedResult = 33)]
+    [TestCase(AccountOneId, null, null, null, ExpectedResult = 50)]
+    [TestCase(AccountOneId, "1", null, null, ExpectedResult = 6)]
+    [TestCase(AccountOneId, null, null, OperationType.Expense, ExpectedResult = 16)]
+    [TestCase(AccountOneId, null, null, OperationType.Income, ExpectedResult = 17)]
+    [TestCase(AccountOneId, null, null, OperationType.Fixed, ExpectedResult = 17)]
     public async Task<int> GetAllOperations_ShouldReturn_OperationsGroupedByDays_WithFilters(
         string accountId,
         string description,
         string[] tagsIds,
-        OperationType? type,
-        int expectedGroups)
+        OperationType? type)
     {
         // Arrange
-        var request = new GetAllOperationsRequest(accountId, description, tagsIds, type, 100);
+        var request = new GetAllOperationsRequest(accountId, description, tagsIds, type, 0, 100);
 
         // Act
         var test = request.ToQueryString();
         var response = await HttpClient.GetAsync($"operations?{request.ToQueryString()}");
-        var result = await response.Content.ReadFromJsonOrDefaultAsync<GetAllOperationsPaginatedResponse>();
+        var result = await response.Content.ReadFromJsonOrDefaultAsync<InfiniteData<GetAllOperationsResponse>>();
 
         // Assert
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
         Check.That(result).IsNotNull();
-        Check.That(result?.OperationsByDays.Count).IsEqualTo(expectedGroups);
 
-        return result?.Total ?? 0;
+        return result?.Data.Count() ?? 0;
     }
 }

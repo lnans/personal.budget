@@ -56,7 +56,7 @@ operationFilter:
   "tagIds": ["string"],
   "operationType": "string",
   "pageSize": 25,
-  "skip": 0
+  "cursor": 0
 }
 ```
 

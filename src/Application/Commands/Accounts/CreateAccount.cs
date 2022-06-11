@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Commands.Accounts;
 
-public record CreateAccountRequest(string Name, string Icon, AccountType Type, decimal InitialBalance) : IRequest<CreateAccountResponse>;
+public record CreateAccountRequest(string Name, string Bank, string Icon, AccountType Type, decimal InitialBalance) : IRequest<CreateAccountResponse>;
 
-public record CreateAccountResponse(string Id, string Name, string Icon, AccountType Type, decimal Balance, DateTime CreationDate);
+public record CreateAccountResponse(string Id, string Name, string Bank, string Icon, AccountType Type, decimal Balance, DateTime CreationDate);
 
 public class CreateAccountValidator : AbstractValidator<CreateAccountRequest>
 {
@@ -20,6 +20,10 @@ public class CreateAccountValidator : AbstractValidator<CreateAccountRequest>
         RuleFor(p => p.Name)
             .NotEmpty()
             .WithMessage(Errors.AccountNameRequired);
+        
+        RuleFor(p => p.Bank)
+            .NotEmpty()
+            .WithMessage(Errors.AccountBankRequired);
 
         RuleFor(p => p.Type)
             .IsInEnum()
@@ -43,7 +47,10 @@ public class CreateAccount : IRequestHandler<CreateAccountRequest, CreateAccount
         var userId = _userContext.GetUserId();
         var existingAccount = await _dbContext
             .Accounts
-            .FirstOrDefaultAsync(a => a.Name.ToLower() == request.Name.ToLower() && a.OwnerId == userId, cancellationToken);
+            .FirstOrDefaultAsync(a => 
+                a.Name.ToLower() == request.Name.ToLower() && 
+                a.Bank.ToLower() == request.Bank.ToLower() &&
+                a.OwnerId == userId, cancellationToken);
 
         if (existingAccount is not null) throw new AlreadyExistException(Errors.AccountAlreadyExist);
 
@@ -52,6 +59,7 @@ public class CreateAccount : IRequestHandler<CreateAccountRequest, CreateAccount
             Id = Guid.NewGuid().ToString(),
             OwnerId = userId,
             Name = request.Name,
+            Bank = request.Bank,
             InitialBalance = request.InitialBalance,
             Balance = request.InitialBalance,
             Icon = request.Icon,
@@ -63,6 +71,6 @@ public class CreateAccount : IRequestHandler<CreateAccountRequest, CreateAccount
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return new CreateAccountResponse(account.Id, account.Name, account.Icon, account.Type, account.Balance, account.CreationDate);
+        return new CreateAccountResponse(account.Id, account.Name, account.Bank, account.Icon, account.Type, account.Balance, account.CreationDate);
     }
 }
