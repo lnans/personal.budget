@@ -30,10 +30,11 @@ public class GetAllAccountsTests : TestBase
         Enumerable
             .Range(0, 20)
             .ToList()
-            .ForEach(arg => accounts.Add(new Account()
+            .ForEach(arg => accounts.Add(new Account
             {
                 Id = Guid.NewGuid().ToString(),
                 Name = $"string{arg}",
+                Bank = "bank",
                 Balance = 0,
                 InitialBalance = 0,
                 Icon = "",

@@ -16,7 +16,7 @@ public class SignInTests : TestBase
     {
         // Arrange
         var command = new SignInRequest("string", "string");
-        
+
         // Act
         var response = await HttpClient.PostAsJsonAsync("/auth/signin", command);
         var result = await response.Content.ReadFromJsonOrDefaultAsync<SignInResponse>();
@@ -27,35 +27,35 @@ public class SignInTests : TestBase
         Check.That(result?.Username).IsEqualTo("string");
         Check.That(result?.Token).IsNotEmpty();
     }
-    
+
     [Test]
     public async Task SignIn_WithWrongUserName_ShouldReturn_Error()
     {
         // Arrange
         var command = new SignInRequest("none", "string");
-        
+
         // Act
         var response = await HttpClient.PostAsJsonAsync("/auth/signin", command);
         var result = await response.Content.ReadFromJsonOrDefaultAsync<ErrorResponse>();
 
         // Assert
-        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.Unauthorized);
+        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.Forbidden);
         Check.That(result).IsNotNull();
         Check.That(result?.Message).IsEqualTo("errors.auth_failed");
     }
-    
+
     [Test]
     public async Task SignIn_WithWrongPassword_ShouldReturn_Error()
     {
         // Arrange
         var command = new SignInRequest("string", "none");
-        
+
         // Act
         var response = await HttpClient.PostAsJsonAsync("/auth/signin", command);
         var result = await response.Content.ReadFromJsonOrDefaultAsync<ErrorResponse>();
 
         // Assert
-        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.Unauthorized);
+        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.Forbidden);
         Check.That(result).IsNotNull();
         Check.That(result?.Message).IsEqualTo("errors.auth_failed");
     }

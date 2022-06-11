@@ -1,10 +1,18 @@
+using Application.Common.Interfaces;
+using Domain;
+using Domain.Enums;
+using Domain.Exceptions;
+using FluentValidation;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
 namespace Application.Commands.Accounts;
 
-public record UpdateAccountRequest(string Name, string Icon);
+public record UpdateAccountRequest(string Name, string Bank, string Icon);
 
 public record UpdateAccountRequestWithId(string Id, UpdateAccountRequest Request) : IRequest<UpdateAccountResponse>;
 
-public record UpdateAccountResponse(string Id, string Name, string Icon, AccountType Type, decimal Balance, DateTime CreationDate);
+public record UpdateAccountResponse(string Id, string Name, string Bank, string Icon, AccountType Type, decimal Balance, DateTime CreationDate);
 
 public class UpdateAccountValidator : AbstractValidator<UpdateAccountRequestWithId>
 {
@@ -13,6 +21,10 @@ public class UpdateAccountValidator : AbstractValidator<UpdateAccountRequestWith
         RuleFor(p => p.Request.Name)
             .NotEmpty()
             .WithMessage(Errors.AccountNameRequired);
+
+        RuleFor(p => p.Request.Bank)
+            .NotEmpty()
+            .WithMessage(Errors.AccountBankRequired);
     }
 }
 
@@ -26,7 +38,7 @@ public class UpdateAccount : IRequestHandler<UpdateAccountRequestWithId, UpdateA
         _dbContext = dbContext;
         _userContext = userContext;
     }
-    
+
     public async Task<UpdateAccountResponse> Handle(UpdateAccountRequestWithId requestWithId, CancellationToken cancellationToken)
     {
         var userId = _userContext.GetUserId();
@@ -37,10 +49,11 @@ public class UpdateAccount : IRequestHandler<UpdateAccountRequestWithId, UpdateA
         if (account is null) throw new NotFoundException(Errors.AccountNotFound);
 
         account.Name = requestWithId.Request.Name;
+        account.Bank = requestWithId.Request.Bank;
         account.Icon = requestWithId.Request.Icon;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return new UpdateAccountResponse(account.Id, account.Name, account.Icon, account.Type, account.Balance, account.CreationDate);
+        return new UpdateAccountResponse(account.Id, account.Name, account.Bank, account.Icon, account.Type, account.Balance, account.CreationDate);
     }
 }

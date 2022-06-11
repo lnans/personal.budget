@@ -20,7 +20,7 @@ public class AuthController : ControllerBase
     [AllowAnonymous]
     [HttpPost("signin")]
     [ProducesResponseType(typeof(SignInResponse), (int) HttpStatusCode.OK)]
-    [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.Forbidden)]
     public async Task<IActionResult> SignIn([FromBody] SignInRequest request, CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(request, cancellationToken);

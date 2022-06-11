@@ -1,8 +1,13 @@
+using Application.Common.Interfaces;
+using Domain.Enums;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
 namespace Application.Queries.Accounts;
 
 public record GetAllAccountsRequest(string Name, bool Archived) : IRequest<IEnumerable<GetAllAccountsResponse>>;
 
-public record GetAllAccountsResponse(string Id, string Name, string Icon, AccountType Type, decimal Balance, bool Archived, DateTime CreationDate);
+public record GetAllAccountsResponse(string Id, string Name, string Bank, string Icon, AccountType Type, decimal Balance, bool Archived, DateTime CreationDate);
 
 public class GetAllAccounts : IRequestHandler<GetAllAccountsRequest, IEnumerable<GetAllAccountsResponse>>
 {
@@ -24,7 +29,7 @@ public class GetAllAccounts : IRequestHandler<GetAllAccountsRequest, IEnumerable
             accounts = accounts.Where(a => a.Name.ToLower().Contains(request.Name.ToLower()));
 
         return await accounts
-            .Select(a => new GetAllAccountsResponse(a.Id, a.Name, a.Icon, a.Type, a.Balance, a.Archived, a.CreationDate))
+            .Select(a => new GetAllAccountsResponse(a.Id, a.Name, a.Bank, a.Icon, a.Type, a.Balance, a.Archived, a.CreationDate))
             .ToListAsync(cancellationToken);
     }
 }

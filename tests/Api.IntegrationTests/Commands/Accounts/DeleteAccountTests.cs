@@ -21,6 +21,7 @@ public class DeleteAccountTests : TestBase
         {
             Id = Guid.NewGuid().ToString(),
             Name = "test",
+            Bank = "bank",
             Balance = 0,
             InitialBalance = 0,
             Icon = "",
@@ -40,7 +41,7 @@ public class DeleteAccountTests : TestBase
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
         Check.That(accountInDb).IsNull();
     }
-    
+
     [Test]
     public async Task DeleteAccount_ShouldReturn_ErrorResponse_WithUnknownAccount()
     {
@@ -50,6 +51,7 @@ public class DeleteAccountTests : TestBase
         {
             Id = Guid.NewGuid().ToString(),
             Name = "test",
+            Bank = "bank",
             Balance = 0,
             InitialBalance = 0,
             Icon = "",

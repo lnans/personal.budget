@@ -15,11 +15,6 @@ namespace Api.IntegrationTests.Commands.Operations;
 [TestFixture]
 public class CreateOperationTests : TestBase
 {
-    private const string AccountId = "f12ac4ad-352a-4fb8-8455-04801d365ed2";
-    private const string TagId = "d32ac4ad-352a-4fb8-8455-04801d365ed2";
-    private Account _account = null!;
-    private OperationTag _tag = null!;
-
     [SetUp]
     public async Task SetupAccount()
     {
@@ -28,6 +23,7 @@ public class CreateOperationTests : TestBase
         {
             Id = Guid.Parse(AccountId).ToString(),
             Name = "ForTest",
+            Bank = "bank",
             OwnerId = DefaultUser.Id,
             Balance = 0,
             InitialBalance = 0,
@@ -40,12 +36,17 @@ public class CreateOperationTests : TestBase
             Id = Guid.Parse(TagId).ToString(),
             Name = "Tag",
             OwnerId = DefaultUser.Id,
-            Color = "#000000",
+            Color = "#000000"
         };
         await dbContext.Accounts.AddAsync(_account);
         await dbContext.OperationTags.AddAsync(_tag);
         await dbContext.SaveChangesAsync();
     }
+
+    private const string AccountId = "f12ac4ad-352a-4fb8-8455-04801d365ed2";
+    private const string TagId = "d32ac4ad-352a-4fb8-8455-04801d365ed2";
+    private Account _account = null!;
+    private OperationTag _tag = null!;
 
     [Test]
     public async Task CreateOperation_Should_CreateOperationAndUpdateAccount_WithValidRequest()
@@ -68,7 +69,7 @@ public class CreateOperationTests : TestBase
             .Include(o => o.Tag)
             .FirstOrDefaultAsync();
         var accountInDb = await GetDbContext().Accounts.FirstOrDefaultAsync();
-        
+
         // Assert
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
         Check.That(operationInDb).IsNotNull();
@@ -98,7 +99,8 @@ public class CreateOperationTests : TestBase
     [TestCase("desc", AccountId, TagId, 0, ExpectedResult = HttpStatusCode.BadRequest)]
     [TestCase("desc", "none", "", -10, ExpectedResult = HttpStatusCode.NotFound)]
     [TestCase("desc", AccountId, "none", -10, ExpectedResult = HttpStatusCode.NotFound)]
-    public async Task<HttpStatusCode> CreateOperation_ShouldReturn_ErrorResponse_WithWrongRequest(string description, string accountId, string tagId, decimal amount)
+    public async Task<HttpStatusCode> CreateOperation_ShouldReturn_ErrorResponse_WithWrongRequest(string description, string accountId, string tagId,
+        decimal amount)
     {
         // Arrange
         var request = new CreateOperationRequest(
@@ -109,13 +111,13 @@ public class CreateOperationTests : TestBase
             amount,
             DateTime.UtcNow,
             DateTime.UtcNow);
-        
+
         // Act
         var response = await HttpClient.PostAsJsonAsync("operations", request);
         var result = await response.Content.ReadFromJsonOrDefaultAsync<ErrorResponse>();
         var operationInDb = await GetDbContext().Operations.FirstOrDefaultAsync();
         var accountInDb = await GetDbContext().Accounts.FirstOrDefaultAsync();
-        
+
         // Assert
         Check.That(result).IsNotNull();
         Check.That(result?.Message).IsNotEmpty();

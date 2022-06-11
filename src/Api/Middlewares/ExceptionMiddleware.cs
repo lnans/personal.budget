@@ -8,7 +8,7 @@ public class ExceptionMiddleware
     public ExceptionMiddleware(RequestDelegate next)
     {
         _next = next;
-        _serializerOptions = new JsonSerializerOptions()
+        _serializerOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
@@ -42,7 +42,7 @@ public class ExceptionMiddleware
                 error.Message = exception.Message;
                 break;
             case AuthenticationException _:
-                context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                context.Response.StatusCode = (int) HttpStatusCode.Forbidden;
                 error.Message = Errors.AuthFailed;
                 break;
             default:

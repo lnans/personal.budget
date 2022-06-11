@@ -1,3 +1,9 @@
+using Application.Common.Interfaces;
+using Domain;
+using Domain.Exceptions;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
 namespace Application.Commands.Operations;
 
 public record DeleteOperationRequest(string Id) : IRequest<Unit>;

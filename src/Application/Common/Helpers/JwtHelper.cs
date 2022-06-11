@@ -1,17 +1,14 @@
-namespace Application;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Domain.Common;
+using Domain.Entities;
+using Microsoft.IdentityModel.Tokens;
 
-public static class Utils
+namespace Application.Common.Helpers;
+
+public static class JwtHelper
 {
-    public static string GenerateHash(string salt, string input)
-    {
-        var sha512 = SHA512.Create();
-        var bytes = Encoding.UTF8.GetBytes(salt + input);
-        var hash = sha512.ComputeHash(bytes);
-        var result = new StringBuilder();
-        foreach (var hashByte in hash) result.Append(hashByte.ToString("X2"));
-        return result.ToString();
-    }
-
     public static string CreateJwtToken(JwtSettings jwtSettings, User defaultUser)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key));
@@ -33,11 +30,5 @@ public static class Utils
         var jwtToken = jwtTokenHandler.WriteToken(token);
 
         return jwtToken;
-    }
-
-    public static string ToMidnightIsoString(this DateTime date)
-    {
-        var midnight = new DateTime(date.Year, date.Month, date.Day);
-        return midnight.ToString("o");
     }
 }
