@@ -1,6 +1,6 @@
 using System.Net;
 using System.Threading.Tasks;
-using Application.Queries.Auth;
+using Application.Features.Authentication.Queries.GetAuthInfo;
 using NFluent;
 using NUnit.Framework;
 
@@ -14,7 +14,7 @@ public class GetAuthInfoTests : TestBase
     {
         // Act
         var response = await HttpClient.GetAsync("auth");
-        var result = await response.Content.ReadFromJsonOrDefaultAsync<GetAuthInfoResponse>();
+        var result = await response.Content.ReadFromJsonOrDefaultAsync<AuthenticationInfoDto>();
 
         // Asset
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);

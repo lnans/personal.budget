@@ -1,4 +1,8 @@
-using Application.Queries.Accounts;
+using Application.Features.Accounts.Commands.ArchivedAccount;
+using Application.Features.Accounts.Commands.CreateAccount;
+using Application.Features.Accounts.Commands.DeleteAccount;
+using Application.Features.Accounts.Commands.PatchAccount;
+using Application.Features.Accounts.Queries.GetAllAccounts;
 
 namespace Api.Controllers;
 
@@ -8,10 +12,7 @@ public class AccountsController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public AccountsController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
+    public AccountsController(IMediator mediator) => _mediator = mediator;
 
     /// <summary>
     ///     Get all accounts for the current user
@@ -20,7 +21,7 @@ public class AccountsController : ControllerBase
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<GetAllAccountsResponse>), (int) HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(IEnumerable<AccountDto>), (int) HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.Unauthorized)]
     public async Task<IActionResult> GetAll([FromQuery] GetAllAccountsRequest request, CancellationToken cancellationToken)
     {
@@ -35,7 +36,7 @@ public class AccountsController : ControllerBase
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpPost]
-    [ProducesResponseType(typeof(CreateAccountResponse), (int) HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(Guid), (int) HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.Unauthorized)]
     public async Task<IActionResult> Create([FromBody] CreateAccountRequest request, CancellationToken cancellationToken)
@@ -52,18 +53,18 @@ public class AccountsController : ControllerBase
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpPatch("{id}")]
-    [ProducesResponseType(typeof(UpdateAccountResponse), (int) HttpStatusCode.OK)]
+    [ProducesResponseType((int) HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.Unauthorized)]
-    public async Task<IActionResult> Update(string id, [FromBody] UpdateAccountRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update(string id, [FromBody] PatchAccountRequest request, CancellationToken cancellationToken)
     {
-        var requestWithId = new UpdateAccountRequestWithId(id, request);
-        var response = await _mediator.Send(requestWithId, cancellationToken);
-        return Ok(response);
+        request.Id = id;
+        await _mediator.Send(request, cancellationToken);
+        return Ok();
     }
 
     /// <summary>
-    ///     Archive an account
+    ///     Change account archived state
     /// </summary>
     /// <param name="id">account id</param>
     /// <param name="request"></param>
@@ -71,11 +72,12 @@ public class AccountsController : ControllerBase
     /// <returns></returns>
     [HttpPatch("{id}/archive")]
     [ProducesResponseType((int) HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.Unauthorized)]
-    public async Task<IActionResult> Archive(string id, [FromBody] ArchivedAccountRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Archived(string id, [FromBody] ArchivedAccountRequest request, CancellationToken cancellationToken)
     {
-        var requestWithId = new ArchivedAccountRequestWithId(id, request);
-        await _mediator.Send(requestWithId, cancellationToken);
+        request.Id = id;
+        await _mediator.Send(request, cancellationToken);
         return Ok();
     }
 
@@ -90,7 +92,7 @@ public class AccountsController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.Unauthorized)]
     public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
     {
-        await _mediator.Send(new DeleteAccountRequest(id), cancellationToken);
+        await _mediator.Send(new DeleteAccountRequest {Id = id}, cancellationToken);
         return Ok();
     }
 }

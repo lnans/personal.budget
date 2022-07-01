@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Application.Queries.Accounts;
+using Application.Features.Accounts.Queries.GetAllAccounts;
 using Domain.Entities;
 using Domain.Enums;
 using NFluent;
@@ -48,7 +48,7 @@ public class GetAllAccountsTests : TestBase
 
         // Act
         var response = await HttpClient.GetAsync($"Accounts?name={name}&archived={archived}");
-        var result = await response.Content.ReadFromJsonOrDefaultAsync<IEnumerable<GetAllAccountsResponse>>();
+        var result = await response.Content.ReadFromJsonOrDefaultAsync<IEnumerable<AccountDto>>();
 
         // Assert
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);

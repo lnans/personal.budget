@@ -1,10 +1,7 @@
+global using Api.Context;
 global using Api.Installers;
 global using Api.Middlewares;
-global using Application.Commands.Accounts;
-global using Application.Commands.OperationTags;
 global using Application.Common.Interfaces;
-global using Application.Queries.Auth;
-global using Application.Queries.OperationTags;
 global using Application;
 global using Domain.Common;
 global using Domain.Exceptions;

@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Application.Queries.Auth;
+using Application.Features.Authentication.Commands.SignIn;
 using Domain.Common;
 using NFluent;
 using NUnit.Framework;
@@ -15,11 +15,14 @@ public class SignInTests : TestBase
     public async Task SignIn_WithGoodCred_ShouldReturn_Token()
     {
         // Arrange
-        var command = new SignInRequest("string", "string");
+        var command = new SignInRequest
+        {
+            Username = "string", Password = "string"
+        };
 
         // Act
         var response = await HttpClient.PostAsJsonAsync("/auth/signin", command);
-        var result = await response.Content.ReadFromJsonOrDefaultAsync<SignInResponse>();
+        var result = await response.Content.ReadFromJsonOrDefaultAsync<AuthenticationDto>();
 
         // Assert
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
@@ -32,7 +35,10 @@ public class SignInTests : TestBase
     public async Task SignIn_WithWrongUserName_ShouldReturn_Error()
     {
         // Arrange
-        var command = new SignInRequest("none", "string");
+        var command = new SignInRequest
+        {
+            Username = "none", Password = "string"
+        };
 
         // Act
         var response = await HttpClient.PostAsJsonAsync("/auth/signin", command);
@@ -41,14 +47,17 @@ public class SignInTests : TestBase
         // Assert
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.Forbidden);
         Check.That(result).IsNotNull();
-        Check.That(result?.Message).IsEqualTo("errors.auth_failed");
+        Check.That(result?.Message).IsEqualTo("errors.auth.failed");
     }
 
     [Test]
     public async Task SignIn_WithWrongPassword_ShouldReturn_Error()
     {
         // Arrange
-        var command = new SignInRequest("string", "none");
+        var command = new SignInRequest
+        {
+            Username = "string", Password = "none"
+        };
 
         // Act
         var response = await HttpClient.PostAsJsonAsync("/auth/signin", command);
@@ -57,6 +66,6 @@ public class SignInTests : TestBase
         // Assert
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.Forbidden);
         Check.That(result).IsNotNull();
-        Check.That(result?.Message).IsEqualTo("errors.auth_failed");
+        Check.That(result?.Message).IsEqualTo("errors.auth.failed");
     }
 }

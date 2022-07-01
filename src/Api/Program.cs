@@ -16,7 +16,7 @@ builder.Services
     .AddSwaggerGenWithSecurity()
     .AddAuthorization()
     .AddSingleton(jwtSettings)
-    .AddScoped<IUserContext, UserContext>()
+    .AddScoped<IHttpUserContext, HttpUserContext>()
     .AddHttpContextAccessor()
     .AddEndpointsApiExplorer()
     .AddControllers();
@@ -26,11 +26,11 @@ webApp
     .UseSwagger()
     .UseSwaggerUI()
     .UseCors(options =>
-        {
-            options.AllowAnyHeader();
-            options.AllowAnyMethod();
-            options.AllowAnyOrigin();
-        })
+    {
+        options.AllowAnyHeader();
+        options.AllowAnyMethod();
+        options.AllowAnyOrigin();
+    })
     .UseAuthentication()
     .UseAuthorization()
     .UseMiddleware<ExceptionMiddleware>()

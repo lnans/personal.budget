@@ -13,7 +13,7 @@ public static class SwaggerInstaller
             return Path.Combine(basePath, fileName);
         }
     }
-    
+
     public static IServiceCollection AddSwaggerGenWithSecurity(this IServiceCollection services)
     {
         var securityScheme = new OpenApiSecurityScheme

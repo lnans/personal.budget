@@ -1,3 +1,6 @@
+using Application.Features.Authentication.Commands.SignIn;
+using Application.Features.Authentication.Queries.GetAuthInfo;
+
 namespace Api.Controllers;
 
 [Authorize]
@@ -6,10 +9,7 @@ public class AuthController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public AuthController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
+    public AuthController(IMediator mediator) => _mediator = mediator;
 
     /// <summary>
     ///     Sign In
@@ -19,7 +19,7 @@ public class AuthController : ControllerBase
     /// <returns></returns>
     [AllowAnonymous]
     [HttpPost("signin")]
-    [ProducesResponseType(typeof(SignInResponse), (int) HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(AuthenticationDto), (int) HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.Forbidden)]
     public async Task<IActionResult> SignIn([FromBody] SignInRequest request, CancellationToken cancellationToken)
     {
@@ -33,7 +33,7 @@ public class AuthController : ControllerBase
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet]
-    [ProducesResponseType(typeof(GetAuthInfoResponse), (int) HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(AuthenticationInfoDto), (int) HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.Unauthorized)]
     public async Task<IActionResult> GetInfo(CancellationToken cancellationToken)
     {

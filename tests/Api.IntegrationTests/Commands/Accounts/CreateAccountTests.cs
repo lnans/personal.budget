@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Application.Commands.Accounts;
+using Application.Features.Accounts.Commands.CreateAccount;
 using Domain.Common;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -17,11 +17,13 @@ public class CreateAccountTests : TestBase
     public async Task CreateAccount_WithValidRequest_Should_CreateAccount()
     {
         // Arrange
-        var request = new CreateAccountRequest("Account", "Bank", "Icon", AccountType.Expenses, 0);
+        var request = new CreateAccountRequest
+        {
+            Name = "Account", Bank = "Bank", Icon = "Icon", Type = AccountType.Expenses, InitialBalance = 0
+        };
 
         // Act
         var response = await HttpClient.PostAsJsonAsync("accounts", request);
-        var result = await response.Content.ReadFromJsonOrDefaultAsync<CreateAccountResponse>();
         var accountInDb = await GetDbContext().Accounts.FirstOrDefaultAsync();
 
         // Assert
@@ -34,12 +36,6 @@ public class CreateAccountTests : TestBase
         Check.That(accountInDb?.InitialBalance).IsEqualTo(request.InitialBalance);
         Check.That(accountInDb?.Balance).IsEqualTo(request.InitialBalance);
         Check.That(accountInDb?.OwnerId).IsEqualTo(DefaultUser.Id);
-        Check.That(result).IsNotNull();
-        Check.That(result?.Name).IsEqualTo(request.Name);
-        Check.That(result?.Bank).IsEqualTo(request.Bank);
-        Check.That(result?.Icon).IsEqualTo(request.Icon);
-        Check.That(result?.Type).IsEqualTo(request.Type);
-        Check.That(result?.Balance).IsEqualTo(request.InitialBalance);
     }
 
     [TestCase("", "")]
@@ -49,7 +45,10 @@ public class CreateAccountTests : TestBase
     public async Task CreateAccount_WithWrongRequest_ShouldReturn_ErrorResponse(string name, string bank)
     {
         // Arrange
-        var request = new CreateAccountRequest(name, bank, "Icon", AccountType.Expenses, 0);
+        var request = new CreateAccountRequest
+        {
+            Name = name, Bank = bank, Icon = "Icon", Type = AccountType.Expenses, InitialBalance = 0
+        };
 
         // Act
         var response = await HttpClient.PostAsJsonAsync("accounts", request);

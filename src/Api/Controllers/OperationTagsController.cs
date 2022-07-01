@@ -1,3 +1,8 @@
+using Application.Features.OperationTags.Commands.CreateOperationTag;
+using Application.Features.OperationTags.Commands.DeleteOperationTag;
+using Application.Features.OperationTags.Commands.PatchOperationTag;
+using Application.Features.OperationTags.Queries.GetAllOperationTags;
+
 namespace Api.Controllers;
 
 [Authorize]
@@ -6,10 +11,7 @@ public class OperationTagsController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public OperationTagsController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
+    public OperationTagsController(IMediator mediator) => _mediator = mediator;
 
     /// <summary>
     ///     Get all available operation tags
@@ -18,7 +20,7 @@ public class OperationTagsController : ControllerBase
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<GetAllOperationTagsResponse>), (int) HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(IEnumerable<OperationTagDto>), (int) HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.Unauthorized)]
     public async Task<IActionResult> GetAll([FromQuery] GetAllOperationTagsRequest request, CancellationToken cancellationToken)
     {
@@ -33,7 +35,7 @@ public class OperationTagsController : ControllerBase
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpPost]
-    [ProducesResponseType(typeof(CreateOperationTagResponse), (int) HttpStatusCode.OK)]
+    [ProducesResponseType((int) HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.Unauthorized)]
     public async Task<IActionResult> Create([FromBody] CreateOperationTagRequest request, CancellationToken cancellationToken)
@@ -50,13 +52,13 @@ public class OperationTagsController : ControllerBase
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpPatch("{id}")]
-    [ProducesResponseType(typeof(UpdateOperationTagResponse), (int) HttpStatusCode.OK)]
+    [ProducesResponseType((int) HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.Unauthorized)]
-    public async Task<IActionResult> Patch(string id, [FromBody] UpdateOperationTagRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Patch(string id, [FromBody] PatchOperationTagRequest request, CancellationToken cancellationToken)
     {
-        var command = new UpdateOperationTagRequestWithId(id, request);
-        var response = await _mediator.Send(command, cancellationToken);
+        request.Id = id;
+        var response = await _mediator.Send(request, cancellationToken);
         return Ok(response);
     }
 
@@ -72,7 +74,7 @@ public class OperationTagsController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.Unauthorized)]
     public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
     {
-        await _mediator.Send(new DeleteOperationTagRequest(id), cancellationToken);
+        await _mediator.Send(new DeleteOperationTagRequest {Id = id}, cancellationToken);
         return Ok();
     }
 }

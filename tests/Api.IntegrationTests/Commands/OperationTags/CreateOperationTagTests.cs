@@ -2,7 +2,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Application.Commands.OperationTags;
+using Application.Features.OperationTags.Commands.CreateOperationTag;
 using Domain.Common;
 using NFluent;
 using NUnit.Framework;
@@ -16,11 +16,13 @@ public class CreateOperationTagTests : TestBase
     public async Task CreateOperationTag_WithValidRequest_Should_CreateOperationTag()
     {
         // Arrange
-        var request = new CreateOperationTagRequest("name", "#123456");
+        var request = new CreateOperationTagRequest
+        {
+            Name = "name", Color = "#123456"
+        };
 
         // Act
         var response = await HttpClient.PostAsJsonAsync("operationTags", request);
-        var result = await response.Content.ReadFromJsonOrDefaultAsync<CreateOperationTagResponse>();
         var operationTagInDb = GetDbContext().OperationTags.FirstOrDefault();
 
         // Assert
@@ -29,9 +31,6 @@ public class CreateOperationTagTests : TestBase
         Check.That(operationTagInDb?.Name).IsEqualTo(request.Name);
         Check.That(operationTagInDb?.Color).IsEqualTo(request.Color);
         Check.That(operationTagInDb?.OwnerId).IsEqualTo(DefaultUser.Id);
-        Check.That(result).IsNotNull();
-        Check.That(result?.Name).IsEqualTo(request.Name);
-        Check.That(result?.Color).IsEqualTo(request.Color);
     }
 
     [TestCase("", "")]
@@ -41,7 +40,10 @@ public class CreateOperationTagTests : TestBase
     public async Task CreateOperationTag_WithWrongRequest_ShouldReturn_ErrorResponse(string name, string color)
     {
         // Arrange
-        var request = new CreateOperationTagRequest(name, color);
+        var request = new CreateOperationTagRequest
+        {
+            Name = name, Color = color
+        };
 
         // Act
         var response = await HttpClient.PostAsJsonAsync("operationTags", request);

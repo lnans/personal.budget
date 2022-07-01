@@ -2,7 +2,7 @@ using System;
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Application.Commands.Operations;
+using Application.Features.Operations.Commands.CreateOperations;
 using Domain.Common;
 using Domain.Entities;
 using Domain.Enums;
@@ -52,16 +52,22 @@ public class CreateOperationsTests : TestBase
     public async Task CreateOperation_Should_CreateOperationAndUpdateAccount_WithValidRequest()
     {
         // Arrange
-        var request = new CreateOperationsRequest(_account.Id, new[]
+        var request = new CreateOperationsRequest
+        {
+            AccountId = _account.Id,
+            Operations = new[]
             {
-                new CreateOperation("desc",
-                    _tag.Id,
-                    OperationType.Expense,
-                    -50,
-                    DateTime.UtcNow,
-                    DateTime.UtcNow)
+                new CreateOperationDto
+                {
+                    Description = "desc",
+                    OperationTagId = _tag.Id,
+                    OperationType = OperationType.Expense,
+                    Amount = -50,
+                    CreationDate = DateTime.UtcNow,
+                    ExecutionDate = DateTime.UtcNow
+                }
             }
-        );
+        };
 
         // Act
         var response = await HttpClient.PostAsJsonAsync("operations", request);
@@ -94,17 +100,21 @@ public class CreateOperationsTests : TestBase
         decimal amount)
     {
         // Arrange
-        var request = new CreateOperationsRequest(
-            accountId, new[]
+        var request = new CreateOperationsRequest
+        {
+            AccountId = accountId, Operations = new[]
             {
-                new CreateOperation(description,
-                    tagId,
-                    OperationType.Expense,
-                    amount,
-                    DateTime.UtcNow,
-                    DateTime.UtcNow)
+                new CreateOperationDto
+                {
+                    Description = description,
+                    OperationTagId = tagId,
+                    OperationType = OperationType.Expense,
+                    Amount = amount,
+                    CreationDate = DateTime.UtcNow,
+                    ExecutionDate = DateTime.UtcNow
+                }
             }
-        );
+        };
 
         // Act
         var response = await HttpClient.PostAsJsonAsync("operations", request);

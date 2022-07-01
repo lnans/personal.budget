@@ -1,7 +1,7 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
-using Application.Commands.Accounts;
+using Application.Features.Accounts.Commands.ArchivedAccount;
 using Domain.Common;
 using Domain.Entities;
 using Domain.Enums;
@@ -35,7 +35,11 @@ public class ArchivedAccountTests : TestBase
         };
         await dbContext.Accounts.AddAsync(account);
         await dbContext.SaveChangesAsync();
-        var request = new ArchivedAccountRequest(archived);
+        var request = new ArchivedAccountRequest
+        {
+            Id = account.Id,
+            Archived = archived
+        };
 
         // Act
         var response = await HttpClient.PatchAsJsonAsync($"accounts/{account.Id}/archive", request);
@@ -67,7 +71,7 @@ public class ArchivedAccountTests : TestBase
         };
         await dbContext.Accounts.AddAsync(account);
         await dbContext.SaveChangesAsync();
-        var request = new ArchivedAccountRequest(true);
+        var request = new ArchivedAccountRequest();
 
         // Act
         var response = await HttpClient.PatchAsJsonAsync("accounts/1/archive", request);

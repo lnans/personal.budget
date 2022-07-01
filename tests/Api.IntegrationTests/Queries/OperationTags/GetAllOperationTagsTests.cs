@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Application.Queries.OperationTags;
+using Application.Features.OperationTags.Queries.GetAllOperationTags;
 using Domain.Entities;
 using NFluent;
 using NUnit.Framework;
@@ -33,7 +33,7 @@ public class GetAllOperationTagsTests : TestBase
 
         // Act
         var response = await HttpClient.GetAsync($"OperationTags?name={name}");
-        var result = await response.Content.ReadFromJsonOrDefaultAsync<IEnumerable<GetAllOperationTagsResponse>>();
+        var result = await response.Content.ReadFromJsonOrDefaultAsync<IEnumerable<OperationTagDto>>();
 
         // Assert
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);

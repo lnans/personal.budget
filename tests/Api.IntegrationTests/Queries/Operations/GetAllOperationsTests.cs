@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Application.Queries.Operations;
+using Application.Features.Operations.Queries.GetPaginatedOperations;
 using Domain.Common;
 using Domain.Entities;
 using Domain.Enums;
@@ -102,12 +102,15 @@ public class GetAllOperationsTests : TestBase
         OperationType? type)
     {
         // Arrange
-        var request = new GetAllOperationsRequest(accountId, description, tagsIds, type, 0, 100);
+        var request = new GetPaginatedOperationsRequest
+        {
+            AccountId = accountId, Description = description, TagIds = tagsIds, Type = type, Cursor = 0, PageSize = 100
+        };
 
         // Act
         var test = request.ToQueryString();
         var response = await HttpClient.GetAsync($"operations?{request.ToQueryString()}");
-        var result = await response.Content.ReadFromJsonOrDefaultAsync<InfiniteData<GetAllOperationsResponse>>();
+        var result = await response.Content.ReadFromJsonOrDefaultAsync<InfiniteData<OperationDto>>();
 
         // Assert
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
