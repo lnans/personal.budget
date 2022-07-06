@@ -1,9 +1,5 @@
-using System.ComponentModel;
-using System.Globalization;
-using System.Reflection;
 using Application.Common.Interfaces;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Accounts.Queries.GetAllAccounts;
@@ -12,21 +8,6 @@ public class GetAllAccountsRequest : IRequest<IEnumerable<AccountDto>>
 {
     public string Name { get; init; }
     public bool Archived { get; init; }
-
-    public static bool TryParse(string query, out GetAllAccountsRequest queryObj)
-    {
-        var obj = TypeDescriptor.GetConverter(typeof(GetAllAccountsRequest));
-        var value = obj.ConvertFrom(null, CultureInfo.InvariantCulture, query);
-        queryObj = value as GetAllAccountsRequest;
-        return true;
-    }
-
-    public static ValueTask<GetAllAccountsRequest> BindAsync(HttpContext context, ParameterInfo parameterInfo)
-    {
-        string addressStr = context.Request.Query["address"];
-
-        return new ValueTask<GetAllAccountsRequest>();
-    }
 }
 
 public class GetAllAccountsQueryHandler : IRequestHandler<GetAllAccountsRequest, IEnumerable<AccountDto>>

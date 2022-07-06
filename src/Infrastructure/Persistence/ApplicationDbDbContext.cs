@@ -13,14 +13,14 @@ public class ApplicationDbDbContext : DbContext, IApplicationDbContext
 
     public DbSet<User> Users => Set<User>();
     public DbSet<Account> Accounts => Set<Account>();
-    public DbSet<Operation> Operations => Set<Operation>();
-    public DbSet<OperationTag> OperationTags => Set<OperationTag>();
+    public DbSet<Transaction> Transactions => Set<Transaction>();
+    public DbSet<Tag> Tags => Set<Tag>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new AccountEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new OperationEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new OperationTagEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new TransactionEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new TagEntityConfiguration());
         modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
     }
 }

@@ -6,6 +6,6 @@ public class User
     public string Username { get; set; }
     public string Hash { get; set; }
 
-    public virtual ICollection<Account> Accounts { get; set; }
-    public virtual ICollection<OperationTag> Tags { get; set; }
+    public ICollection<Account> Accounts { get; set; }
+    public ICollection<Tag> Tags { get; set; }
 }

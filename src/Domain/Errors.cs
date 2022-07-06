@@ -8,12 +8,12 @@ public static class Errors
     public const string AuthPasswordRequired = "errors.auth.password.required";
     public const string UnhandledException = "errors.unhandled_exception";
 
-    // Operation Tags
-    public const string OperationTagIdRequired = "errors.operation_tag.id_required";
-    public const string OperationTagNameRequired = "errors.operation_tag.name_required";
-    public const string OperationTagColorInvalid = "errors.operation_tag.color_invalid";
-    public const string OperationTagAlreadyExist = "errors.operation_tag.already_exist";
-    public const string OperationTagNotFound = "errors.operation_tag.not_found";
+    // Tags
+    public const string TagIdRequired = "errors.tag.id_required";
+    public const string TagNameRequired = "errors.tag.name_required";
+    public const string TagColorInvalid = "errors.tag.color_invalid";
+    public const string TagAlreadyExist = "errors.tag.already_exist";
+    public const string TagNotFound = "errors.tag.not_found";
 
     // Accounts
     public const string AccountIdRequired = "errors.account.id_required";
@@ -23,13 +23,13 @@ public static class Errors
     public const string AccountTypeUnknown = "errors.account.type_unknown";
     public const string AccountNotFound = "errors.account.not_found";
 
-    // Operations
-    public const string OperationRequired = "errors.operation.required";
-    public const string OperationDescriptionRequired = "errors.operation.description_required";
-    public const string OperationAccountRequired = "errors.operation.account_required";
-    public const string OperationTypeUnknown = "errors.operation.type_unknown";
-    public const string OperationAmountRequired = "errors.operation.amount_required";
-    public const string OperationCreationDateRequired = "errors.operation.creation_date_required";
-    public const string OperationExecutionDateRequired = "errors.operation.execution_date_required";
-    public const string OperationNotFound = "errors.operation.not_found";
+    // Transactions
+    public const string TransactionRequired = "errors.transaction.required";
+    public const string TransactionDescriptionRequired = "errors.transaction.description_required";
+    public const string TransactionAccountRequired = "errors.transaction.account_required";
+    public const string TransactionTypeUnknown = "errors.transaction.type_unknown";
+    public const string TransactionAmountRequired = "errors.transaction.amount_required";
+    public const string TransactionCreationDateRequired = "errors.transaction.creation_date_required";
+    public const string TransactionExecutionDateRequired = "errors.transaction.execution_date_required";
+    public const string TransactionNotFound = "errors.transaction.not_found";
 }

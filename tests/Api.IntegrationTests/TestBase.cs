@@ -37,8 +37,8 @@ public abstract class TestBase
     protected async Task Setup()
     {
         var dbContext = GetDbContext();
-        dbContext.OperationTags.RemoveRange(dbContext.OperationTags);
-        dbContext.Operations.RemoveRange(dbContext.Operations);
+        dbContext.Tags.RemoveRange(dbContext.Tags);
+        dbContext.Transactions.RemoveRange(dbContext.Transactions);
         dbContext.Accounts.RemoveRange(dbContext.Accounts);
         await dbContext.SaveChangesAsync();
     }

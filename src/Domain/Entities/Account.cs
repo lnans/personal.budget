@@ -15,6 +15,6 @@ public class Account
     public DateTime CreationDate { get; set; }
     public bool Archived { get; set; }
 
-    public virtual User Owner { get; set; }
-    public virtual ICollection<Operation> Operations { get; set; }
+    public User Owner { get; set; }
+    public ICollection<Transaction> Transactions { get; set; }
 }
