@@ -2,7 +2,7 @@ using System;
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Application.Features.Accounts.Commands.PatchAccount;
+using Application.Features.Accounts.Commands.PutAccount;
 using Domain.Common;
 using Domain.Entities;
 using Domain.Enums;
@@ -13,10 +13,10 @@ using NUnit.Framework;
 namespace Api.IntegrationTests.Features.Accounts.Commands;
 
 [TestFixture]
-public class PatchAccountTests : TestBase
+public class PutAccountTests : TestBase
 {
     [Test]
-    public async Task PatchAccount_Should_UpdateAccount_WithValidRequest()
+    public async Task PutAccount_Should_UpdateAccount_WithValidRequest()
     {
         // Arrange
         var dbContext = GetDbContext();
@@ -35,7 +35,7 @@ public class PatchAccountTests : TestBase
         };
         await dbContext.Accounts.AddAsync(account);
         await dbContext.SaveChangesAsync();
-        var request = new PatchAccountRequest
+        var request = new PutAccountRequest
         {
             Id = account.Id, Bank = "updated", Name = "updated", Icon = "updatedIcon"
         };
@@ -56,7 +56,7 @@ public class PatchAccountTests : TestBase
     [TestCase(null, null)]
     [TestCase("name", null)]
     [TestCase(null, "bank")]
-    public async Task PatchAccount_ShouldReturn_ErrorResponse_WithWrongRequest(string name, string bank)
+    public async Task PutAccount_ShouldReturn_ErrorResponse_WithWrongRequest(string name, string bank)
     {
         // Arrange
         var dbContext = GetDbContext();
@@ -75,7 +75,7 @@ public class PatchAccountTests : TestBase
         };
         await dbContext.Accounts.AddAsync(account);
         await dbContext.SaveChangesAsync();
-        var request = new PatchAccountRequest
+        var request = new PutAccountRequest
         {
             Id = account.Id, Name = name, Bank = bank, Icon = "updatedIcon"
         };
@@ -96,7 +96,7 @@ public class PatchAccountTests : TestBase
     }
 
     [Test]
-    public async Task PatchAccount_ShouldReturn_ErrorResponse_WithUnknownAccount()
+    public async Task PutAccount_ShouldReturn_ErrorResponse_WithUnknownAccount()
     {
         // Arrange
         var dbContext = GetDbContext();
@@ -115,7 +115,7 @@ public class PatchAccountTests : TestBase
         };
         await dbContext.Accounts.AddAsync(account);
         await dbContext.SaveChangesAsync();
-        var request = new PatchAccountRequest
+        var request = new PutAccountRequest
         {
             Id = "1", Name = "updated", Bank = "updated", Icon = "updatedIcon"
         };

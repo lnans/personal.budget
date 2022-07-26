@@ -4,9 +4,9 @@ using Domain.Exceptions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Features.Accounts.Commands.PatchAccount;
+namespace Application.Features.Accounts.Commands.PutAccount;
 
-public record PatchAccountRequest : IRequest<Unit>
+public record PutAccountRequest : IRequest<Unit>
 {
     public string Id { get; set; }
     public string Name { get; init; }
@@ -14,18 +14,18 @@ public record PatchAccountRequest : IRequest<Unit>
     public string Icon { get; init; }
 }
 
-public class PatchAccountCommandHandler : IRequestHandler<PatchAccountRequest, Unit>
+public class PutAccountCommandHandler : IRequestHandler<PutAccountRequest, Unit>
 {
     private readonly IApplicationDbContext _dbContext;
     private readonly IHttpUserContext _httpUserContext;
 
-    public PatchAccountCommandHandler(IApplicationDbContext dbContext, IHttpUserContext httpUserContext)
+    public PutAccountCommandHandler(IApplicationDbContext dbContext, IHttpUserContext httpUserContext)
     {
         _dbContext = dbContext;
         _httpUserContext = httpUserContext;
     }
 
-    public async Task<Unit> Handle(PatchAccountRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(PutAccountRequest request, CancellationToken cancellationToken)
     {
         var userId = _httpUserContext.GetUserId();
         var account = await _dbContext

@@ -1,6 +1,6 @@
 using Application.Features.Tags.Commands.CreateTag;
 using Application.Features.Tags.Commands.DeleteTag;
-using Application.Features.Tags.Commands.PatchTag;
+using Application.Features.Tags.Commands.PutTag;
 using Application.Features.Tags.Queries.GetAllTags;
 
 namespace Api.EndPoints;
@@ -48,7 +48,7 @@ public class TagsEndPoints : IEndPoints
         return Results.NoContent();
     }
 
-    private static async Task<IResult> Update(IMediator mediator, string id, PatchTagRequest request, CancellationToken ct)
+    private static async Task<IResult> Update(IMediator mediator, string id, PutTagRequest request, CancellationToken ct)
     {
         request.Id = id;
         await mediator.Send(request, ct);

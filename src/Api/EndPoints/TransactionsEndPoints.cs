@@ -1,7 +1,6 @@
-using Application.Features.Accounts.Commands.PatchAccount;
 using Application.Features.Transactions.Commands.CreateTransactions;
 using Application.Features.Transactions.Commands.DeleteTransaction;
-using Application.Features.Transactions.Commands.PatchTransaction;
+using Application.Features.Transactions.Commands.PutTransaction;
 using Application.Features.Transactions.Queries.GetPaginatedTransactions;
 using Domain.Enums;
 
@@ -65,7 +64,7 @@ public class TransactionsEndPoints : IEndPoints
         return Results.NoContent();
     }
 
-    private static async Task<IResult> Update(IMediator mediator, string id, PatchTransactionRequest request, CancellationToken ct)
+    private static async Task<IResult> Update(IMediator mediator, string id, PutTransactionRequest request, CancellationToken ct)
     {
         request.Id = id;
         await mediator.Send(request, ct);

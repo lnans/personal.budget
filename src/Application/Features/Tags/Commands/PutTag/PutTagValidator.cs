@@ -1,11 +1,11 @@
 using Domain;
 using FluentValidation;
 
-namespace Application.Features.Tags.Commands.PatchTag;
+namespace Application.Features.Tags.Commands.PutTag;
 
-public class PatchTagValidator : AbstractValidator<PatchTagRequest>
+public class PutTagValidator : AbstractValidator<PutTagRequest>
 {
-    public PatchTagValidator()
+    public PutTagValidator()
     {
         RuleFor(tag => tag.Id)
             .NotEmpty()

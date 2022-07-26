@@ -1,7 +1,7 @@
 using Application.Features.Accounts.Commands.ArchivedAccount;
 using Application.Features.Accounts.Commands.CreateAccount;
 using Application.Features.Accounts.Commands.DeleteAccount;
-using Application.Features.Accounts.Commands.PatchAccount;
+using Application.Features.Accounts.Commands.PutAccount;
 using Application.Features.Accounts.Queries.GetAllAccounts;
 
 namespace Api.EndPoints;
@@ -56,7 +56,7 @@ public class AccountsEndPoints : IEndPoints
         return Results.NoContent();
     }
 
-    private static async Task<IResult> Update(IMediator mediator, string id, [FromBody] PatchAccountRequest request, CancellationToken ct)
+    private static async Task<IResult> Update(IMediator mediator, string id, [FromBody] PutAccountRequest request, CancellationToken ct)
     {
         request.Id = id;
         await mediator.Send(request, ct);

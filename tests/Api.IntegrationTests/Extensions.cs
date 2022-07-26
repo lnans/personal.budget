@@ -21,14 +21,6 @@ public static class Extensions
         }
     }
 
-    public static Task<HttpResponseMessage> PatchAsJsonAsync<TValue>(this HttpClient client, string? requestUri, TValue value)
-    {
-        if (client == null) throw new ArgumentNullException(nameof(client));
-
-        var content = JsonContent.Create(value);
-        return client.PatchAsync(requestUri, content);
-    }
-
     public static string ToQueryString(this object request, string separator = ",")
     {
         if (request == null)

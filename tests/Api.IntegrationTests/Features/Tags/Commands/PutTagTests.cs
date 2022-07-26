@@ -2,7 +2,7 @@ using System;
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Application.Features.Tags.Commands.PatchTag;
+using Application.Features.Tags.Commands.PutTag;
 using Domain.Common;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +12,10 @@ using NUnit.Framework;
 namespace Api.IntegrationTests.Features.Tags.Commands;
 
 [TestFixture]
-public class PatchTagTests : TestBase
+public class PutTagTests : TestBase
 {
     [Test]
-    public async Task PatchTag_WithValidRequest_Should_UpdateTag()
+    public async Task PutTag_WithValidRequest_Should_UpdateTag()
     {
         // Arrange
         var dbContext = GetDbContext();
@@ -28,7 +28,7 @@ public class PatchTagTests : TestBase
         };
         dbContext.Tags.Add(tag);
         await dbContext.SaveChangesAsync();
-        var request = new PatchTagRequest
+        var request = new PutTagRequest
         {
             Name = "updated", Color = "#000000"
         };
@@ -48,7 +48,7 @@ public class PatchTagTests : TestBase
     [TestCase("string", "")]
     [TestCase("", "#123456")]
     [TestCase("string", "456789564")]
-    public async Task PatchTag_WithWrongRequest_ShouldReturn_ErrorResponse(string name, string color)
+    public async Task PutTag_WithWrongRequest_ShouldReturn_ErrorResponse(string name, string color)
     {
         // Arrange
         var dbContext = GetDbContext();
@@ -61,7 +61,7 @@ public class PatchTagTests : TestBase
         };
         dbContext.Tags.Add(tag);
         await dbContext.SaveChangesAsync();
-        var request = new PatchTagRequest
+        var request = new PutTagRequest
         {
             Name = name, Color = color
         };

@@ -4,9 +4,9 @@ using Domain.Exceptions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Features.Transactions.Commands.PatchTransaction;
+namespace Application.Features.Transactions.Commands.PutTransaction;
 
-public record PatchTransactionRequest : IRequest<Unit>
+public record PutTransactionRequest : IRequest<Unit>
 {
     public string Id { get; set; }
     public string Description { get; init; }
@@ -16,18 +16,18 @@ public record PatchTransactionRequest : IRequest<Unit>
     public DateTime? ExecutionDate { get; init; }
 }
 
-public class PatchTransactionCommandHandler : IRequestHandler<PatchTransactionRequest, Unit>
+public class PutTransactionCommandHandler : IRequestHandler<PutTransactionRequest, Unit>
 {
     private readonly IApplicationDbContext _dbContext;
     private readonly IHttpUserContext _httpUserContext;
 
-    public PatchTransactionCommandHandler(IApplicationDbContext dbContext, IHttpUserContext httpUserContext)
+    public PutTransactionCommandHandler(IApplicationDbContext dbContext, IHttpUserContext httpUserContext)
     {
         _dbContext = dbContext;
         _httpUserContext = httpUserContext;
     }
 
-    public async Task<Unit> Handle(PatchTransactionRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(PutTransactionRequest request, CancellationToken cancellationToken)
     {
         var userId = _httpUserContext.GetUserId();
         var transaction = await _dbContext

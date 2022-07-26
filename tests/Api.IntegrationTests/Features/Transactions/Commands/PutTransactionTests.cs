@@ -2,7 +2,7 @@ using System;
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Application.Features.Transactions.Commands.PatchTransaction;
+using Application.Features.Transactions.Commands.PutTransaction;
 using Domain.Common;
 using Domain.Entities;
 using Domain.Enums;
@@ -13,7 +13,7 @@ using NUnit.Framework;
 namespace Api.IntegrationTests.Features.Transactions.Commands;
 
 [TestFixture]
-public class PatchTransactionTests : TestBase
+public class PutTransactionTests : TestBase
 {
     [SetUp]
     public async Task SetupAccount()
@@ -57,10 +57,10 @@ public class PatchTransactionTests : TestBase
     private const string TransactionId = "d32ac4ad-352a-4fb8-8455-04801d365ed2";
 
     [Test]
-    public async Task PatchTransaction_Should_UpdateTransactionAndAccount_WithValidRequest()
+    public async Task PutTransaction_Should_UpdateTransactionAndAccount_WithValidRequest()
     {
         // Arrange
-        var request = new PatchTransactionRequest
+        var request = new PutTransactionRequest
         {
             Id = TransactionId, Description = "updated", TagId = null, Amount = 50, CreationDate = DateTime.Now, ExecutionDate = DateTime.Now
         };
@@ -84,11 +84,11 @@ public class PatchTransactionTests : TestBase
     [TestCase("updated", "unknown", "", 0, ExpectedResult = HttpStatusCode.BadRequest)]
     [TestCase("updated", "unknown", "", 10, ExpectedResult = HttpStatusCode.NotFound)]
     [TestCase("updated", TransactionId, "unknown", 10, ExpectedResult = HttpStatusCode.NotFound)]
-    public async Task<HttpStatusCode> PatchTransaction_ShouldReturn_ErrorResponse_WithWrongRequest(string description, string transactionId, string tagId,
+    public async Task<HttpStatusCode> PutTransaction_ShouldReturn_ErrorResponse_WithWrongRequest(string description, string transactionId, string tagId,
         decimal amount)
     {
         // Arrange
-        var request = new PatchTransactionRequest
+        var request = new PutTransactionRequest
         {
             Id = TransactionId, Description = description, TagId = tagId, Amount = amount, CreationDate = DateTime.Now
         };

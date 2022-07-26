@@ -1,11 +1,11 @@
 using Domain;
 using FluentValidation;
 
-namespace Application.Features.Accounts.Commands.PatchAccount;
+namespace Application.Features.Accounts.Commands.PutAccount;
 
-public class PatchAccountValidator : AbstractValidator<PatchAccountRequest>
+public class PutAccountValidator : AbstractValidator<PutAccountRequest>
 {
-    public PatchAccountValidator()
+    public PutAccountValidator()
     {
         RuleFor(p => p.Id)
             .NotEmpty()

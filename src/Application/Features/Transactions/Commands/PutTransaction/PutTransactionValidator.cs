@@ -1,11 +1,11 @@
 using Domain;
 using FluentValidation;
 
-namespace Application.Features.Transactions.Commands.PatchTransaction;
+namespace Application.Features.Transactions.Commands.PutTransaction;
 
-public class PatchTransactionValidator : AbstractValidator<PatchTransactionRequest>
+public class PutTransactionValidator : AbstractValidator<PutTransactionRequest>
 {
-    public PatchTransactionValidator()
+    public PutTransactionValidator()
     {
         RuleFor(p => p.Id)
             .NotEmpty()
