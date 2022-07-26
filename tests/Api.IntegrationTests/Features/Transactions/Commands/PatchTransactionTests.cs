@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Application.Features.Transactions.Commands.PatchTransaction;
 using Domain.Common;
@@ -65,12 +66,12 @@ public class PatchTransactionTests : TestBase
         };
 
         // Act
-        var response = await HttpClient.PatchAsJsonAsync($"transactions/{TransactionId}", request);
+        var response = await HttpClient.PutAsJsonAsync($"transactions/{TransactionId}", request);
         var transactionInDb = await GetDbContext().Transactions.Include(o => o.Tag).FirstOrDefaultAsync();
         var accountInDb = await GetDbContext().Accounts.FirstOrDefaultAsync();
 
         // Assert
-        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
+        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.NoContent);
         Check.That(transactionInDb).IsNotNull();
         Check.That(accountInDb).IsNotNull();
         Check.That(transactionInDb?.Description).IsEqualTo(request.Description);
@@ -93,7 +94,7 @@ public class PatchTransactionTests : TestBase
         };
 
         // Act
-        var response = await HttpClient.PatchAsJsonAsync($"transactions/{transactionId}", request);
+        var response = await HttpClient.PutAsJsonAsync($"transactions/{transactionId}", request);
         var result = await response.Content.ReadFromJsonOrDefaultAsync<ErrorResponse>();
         var transactionInDb = await GetDbContext().Transactions.Include(o => o.Tag).FirstOrDefaultAsync();
         var accountInDb = await GetDbContext().Accounts.FirstOrDefaultAsync();

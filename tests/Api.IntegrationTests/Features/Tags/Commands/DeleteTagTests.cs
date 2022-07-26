@@ -31,7 +31,7 @@ public class DeleteTagTests : TestBase
         var tagInDb = GetDbContext().Tags.FirstOrDefault();
 
         // Assert
-        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
+        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.NoContent);
         Check.That(tagInDb).IsNull();
     }
 

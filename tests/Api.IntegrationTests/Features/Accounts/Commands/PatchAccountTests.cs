@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Application.Features.Accounts.Commands.PatchAccount;
 using Domain.Common;
@@ -40,11 +41,11 @@ public class PatchAccountTests : TestBase
         };
 
         // Act
-        var response = await HttpClient.PatchAsJsonAsync($"accounts/{account.Id}", request);
+        var response = await HttpClient.PutAsJsonAsync($"accounts/{account.Id}", request);
         var accountInDb = await GetDbContext().Accounts.FirstOrDefaultAsync(a => a.Id == account.Id);
 
         // Assert
-        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
+        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.NoContent);
         Check.That(accountInDb).IsNotNull();
         Check.That(accountInDb?.Name).IsEqualTo(request.Name);
         Check.That(accountInDb?.Bank).IsEqualTo(request.Bank);
@@ -80,7 +81,7 @@ public class PatchAccountTests : TestBase
         };
 
         // Act
-        var response = await HttpClient.PatchAsJsonAsync($"accounts/{account.Id}", request);
+        var response = await HttpClient.PutAsJsonAsync($"accounts/{account.Id}", request);
         var result = await response.Content.ReadFromJsonOrDefaultAsync<ErrorResponse>();
         var accountInDb = await GetDbContext().Accounts.FirstOrDefaultAsync(a => a.Id == account.Id);
 
@@ -120,7 +121,7 @@ public class PatchAccountTests : TestBase
         };
 
         // Act
-        var response = await HttpClient.PatchAsJsonAsync("Accounts/1", request);
+        var response = await HttpClient.PutAsJsonAsync("Accounts/1", request);
         var result = await response.Content.ReadFromJsonOrDefaultAsync<ErrorResponse>();
         var accountInDb = await GetDbContext().Accounts.FirstOrDefaultAsync(a => a.Id == account.Id);
 

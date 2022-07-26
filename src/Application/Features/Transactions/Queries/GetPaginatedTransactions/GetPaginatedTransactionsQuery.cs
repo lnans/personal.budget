@@ -10,7 +10,7 @@ public record GetPaginatedTransactionsRequest : IRequest<InfiniteData<Transactio
 {
     public string AccountId { get; init; }
     public string Description { get; init; }
-    public string[] TagIds { get; init; }
+    public string TagId { get; init; }
     public TransactionType? Type { get; init; }
     public int Cursor { get; init; }
     public int PageSize { get; init; } = 25;
@@ -43,7 +43,7 @@ public class GetPaginatedTransactionsQueryHandler : IRequestHandler<GetPaginated
 
         if (!string.IsNullOrWhiteSpace(request.Description)) query = query.Where(o => o.Description.ToLower().Contains(request.Description.ToLower()));
 
-        if (request.TagIds is not null && request.TagIds.Length > 0) query = query.Where(o => request.TagIds.Contains(o.Tag.Id));
+        if (!string.IsNullOrWhiteSpace(request.TagId)) query = query.Where(o => o.Tag.Id == request.TagId);
 
         if (request.Type.HasValue) query = query.Where(o => o.Type == request.Type);
 

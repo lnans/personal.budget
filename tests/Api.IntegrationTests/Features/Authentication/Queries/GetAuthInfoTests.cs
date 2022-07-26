@@ -13,7 +13,7 @@ public class GetAuthInfoTests : TestBase
     public async Task GetInfo_ShouldReturn_AuthInfo()
     {
         // Act
-        var response = await HttpClient.GetAsync("auth");
+        var response = await HttpClient.GetAsync("auth/me");
         var result = await response.Content.ReadFromJsonOrDefaultAsync<AuthenticationInfoDto>();
 
         // Asset

@@ -26,7 +26,7 @@ public class CreateTagTests : TestBase
         var tagInDb = GetDbContext().Tags.FirstOrDefault();
 
         // Assert
-        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
+        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.NoContent);
         Check.That(tagInDb).IsNotNull();
         Check.That(tagInDb?.Name).IsEqualTo(request.Name);
         Check.That(tagInDb?.Color).IsEqualTo(request.Color);

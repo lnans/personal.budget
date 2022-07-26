@@ -57,7 +57,7 @@ public class DeleteTransactionTests : TestBase
         var accountInDb = await GetDbContext().Accounts.FirstOrDefaultAsync();
 
         // Assert
-        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
+        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.NoContent);
         Check.That(transactionInDb).IsNull();
         Check.That(accountInDb?.Balance).IsEqualTo(100);
     }

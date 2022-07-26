@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Application.Features.Tags.Commands.PatchTag;
 using Domain.Common;
@@ -33,11 +34,11 @@ public class PatchTagTests : TestBase
         };
 
         // Act
-        var response = await HttpClient.PatchAsJsonAsync($"tags/{tag.Id}", request);
+        var response = await HttpClient.PutAsJsonAsync($"tags/{tag.Id}", request);
         var tagInDb = await GetDbContext().Tags.FirstOrDefaultAsync();
 
         // Assert
-        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
+        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.NoContent);
         Check.That(tagInDb).IsNotNull();
         Check.That(tagInDb?.Name).IsEqualTo(request.Name);
         Check.That(tagInDb?.Color).IsEqualTo(request.Color);
@@ -66,7 +67,7 @@ public class PatchTagTests : TestBase
         };
 
         // Act
-        var response = await HttpClient.PatchAsJsonAsync($"tags/{tag.Id}", request);
+        var response = await HttpClient.PutAsJsonAsync($"tags/{tag.Id}", request);
         var result = await response.Content.ReadFromJsonOrDefaultAsync<ErrorResponse>();
         var tagInDb = await GetDbContext().Tags.FirstOrDefaultAsync();
 

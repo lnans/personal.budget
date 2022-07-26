@@ -18,8 +18,7 @@ builder.Services
     .AddSingleton(jwtSettings)
     .AddScoped<IHttpUserContext, HttpUserContext>()
     .AddHttpContextAccessor()
-    .AddEndpointsApiExplorer()
-    .AddControllers();
+    .AddEndpointsApiExplorer();
 
 var webApp = builder.Build();
 webApp
@@ -36,5 +35,5 @@ webApp
     .UseMiddleware<ExceptionMiddleware>()
     .InitDbContext(defaultUser, defaultPassword);
 
-webApp.MapControllers();
+webApp.MapEndPoints();
 webApp.Run();

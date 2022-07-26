@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Application.Features.Accounts.Commands.ArchivedAccount;
 using Domain.Common;
@@ -42,11 +43,11 @@ public class ArchivedAccountTests : TestBase
         };
 
         // Act
-        var response = await HttpClient.PatchAsJsonAsync($"accounts/{account.Id}/archive", request);
+        var response = await HttpClient.PutAsJsonAsync($"accounts/{account.Id}/archived", request);
         var accountInDb = await GetDbContext().Accounts.FirstOrDefaultAsync(a => a.Id == account.Id);
 
         // Assert
-        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
+        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.NoContent);
         Check.That(accountInDb).IsNotNull();
         Check.That(accountInDb?.Archived).IsEqualTo(archived);
     }
@@ -74,7 +75,7 @@ public class ArchivedAccountTests : TestBase
         var request = new ArchivedAccountRequest();
 
         // Act
-        var response = await HttpClient.PatchAsJsonAsync("accounts/1/archive", request);
+        var response = await HttpClient.PutAsJsonAsync("accounts/1/archived", request);
         var result = await response.Content.ReadFromJsonOrDefaultAsync<ErrorResponse>();
         var accountInDb = await GetDbContext().Accounts.FirstOrDefaultAsync(a => a.Id == account.Id);
 

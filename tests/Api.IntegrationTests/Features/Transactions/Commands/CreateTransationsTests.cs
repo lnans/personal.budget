@@ -78,7 +78,7 @@ public class CreateTransactionsTests : TestBase
         var accountInDb = await GetDbContext().Accounts.FirstOrDefaultAsync();
 
         // Assert
-        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
+        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.NoContent);
         Check.That(transactionInDb).IsNotNull();
         Check.That(transactionInDb?.Description).IsEqualTo(request.Transactions[0].Description);
         Check.That(transactionInDb?.Account?.Id).IsEqualTo(request.AccountId);

@@ -37,7 +37,7 @@ public static class SwaggerInstaller
                         Id = "Bearer"
                     }
                 },
-                new string[] { }
+                Array.Empty<string>()
             }
         };
 
@@ -54,6 +54,7 @@ public static class SwaggerInstaller
             options.AddSecurityDefinition("Bearer", securityScheme);
             options.AddSecurityRequirement(securityReq);
             options.IncludeXmlComments(XmlCommentsFilePath);
+            options.EnableAnnotations();
         });
     }
 }

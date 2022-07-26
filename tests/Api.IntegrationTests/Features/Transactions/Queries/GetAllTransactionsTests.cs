@@ -85,12 +85,12 @@ public class GetAllTransactionsTests : TestBase
     /// </summary>
     /// <param name="accountId"></param>
     /// <param name="description"></param>
-    /// <param name="tagsIds"></param>
+    /// <param name="tagId"></param>
     /// <param name="type"></param>
     /// <returns></returns>
-    [TestCase(null, null, null, null, ExpectedResult = 100)]
-    [TestCase(null, null, new[] {TagId}, null, ExpectedResult = 33)]
-    [TestCase(AccountOneId, null, null, null, ExpectedResult = 50)]
+    [TestCase(null, null, null, null, ExpectedResult = 25)]
+    [TestCase(null, null, TagId, null, ExpectedResult = 25)]
+    [TestCase(AccountOneId, null, null, null, ExpectedResult = 25)]
     [TestCase(AccountOneId, "1", null, null, ExpectedResult = 6)]
     [TestCase(AccountOneId, null, null, TransactionType.Expense, ExpectedResult = 16)]
     [TestCase(AccountOneId, null, null, TransactionType.Income, ExpectedResult = 17)]
@@ -98,13 +98,13 @@ public class GetAllTransactionsTests : TestBase
     public async Task<int> GetAllTransactions_ShouldReturn_TransactionsGroupedByDays_WithFilters(
         string accountId,
         string description,
-        string[] tagsIds,
+        string tagId,
         TransactionType? type)
     {
         // Arrange
         var request = new GetPaginatedTransactionsRequest
         {
-            AccountId = accountId, Description = description, TagIds = tagsIds, Type = type, Cursor = 0, PageSize = 100
+            AccountId = accountId, Description = description, TagId = tagId, Type = type, Cursor = 0
         };
 
         // Act

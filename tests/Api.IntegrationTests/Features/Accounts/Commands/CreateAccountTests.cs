@@ -27,7 +27,7 @@ public class CreateAccountTests : TestBase
         var accountInDb = await GetDbContext().Accounts.FirstOrDefaultAsync();
 
         // Assert
-        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
+        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.NoContent);
         Check.That(accountInDb).IsNotNull();
         Check.That(accountInDb?.Name).IsEqualTo(request.Name);
         Check.That(accountInDb?.Bank).IsEqualTo(request.Bank);
