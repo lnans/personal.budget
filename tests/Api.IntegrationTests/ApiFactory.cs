@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 using Respawn;
@@ -47,6 +48,8 @@ public class ApiFactory : WebApplicationFactory<IApiMaker>, IAsyncLifetime
 
     private async Task CreateDatabaseSnapshotAsync()
     {
+        using var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+        TestcontainersSettings.Logger = loggerFactory.CreateLogger<ApiFactory>();
         _dbConnection = new NpgsqlConnection(_dbContainer.ConnectionString);
         await _dbConnection.OpenAsync();
         _respawner = await Respawner.CreateAsync(_dbConnection, new RespawnerOptions
