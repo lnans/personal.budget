@@ -14,8 +14,9 @@ jobs:
 
     runs-on: self-hosted
     env:
-      DOTNET_INSTALL_DIR: "$HOME/.share/dotnet"
+      DOTNET_INSTALL_DIR: ".dotnet"
       TESTCONTAINERS_CHECKS_DISABLE: true
+      TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE: "/var/run/docker.sock"
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
