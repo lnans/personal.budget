@@ -15,6 +15,7 @@ jobs:
     runs-on: self-hosted
     env:
       DOTNET_INSTALL_DIR: "$HOME/.share/dotnet"
+      TESTCONTAINERS_CHECKS_DISABLE: true
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
