@@ -22,7 +22,7 @@ jobs:
       with:
         dotnet-version: 7.0.x
     - name: testing docker
-      run: docker run hello-world
+      run: echo $USER && docker run hello-world
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
