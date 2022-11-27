@@ -1,51 +1,19 @@
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using Application.Common.Helpers;
-using Application.Common.Interfaces;
-using Domain.Common;
-using Domain.Entities;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
-
 namespace Api.IntegrationTests;
 
-public abstract class TestBase
+public abstract class TestBase : IAsyncLifetime
 {
-    private ApiForTest _api = null!;
-    protected User DefaultUser = null!;
-    protected HttpClient HttpClient = null!;
+    private readonly Func<Task> _resetDatabase;
 
-    [OneTimeSetUp]
-    protected void OneTimeSetup()
+    protected readonly HttpClient Api;
+    protected readonly Func<IApplicationDbContext> DbContext;
+
+    protected TestBase(ApiFactory factory)
     {
-        _api = new ApiForTest();
-
-        var scope = _api.Services.CreateScope();
-        DefaultUser = GetDbContext().Users.First();
-
-        var jwtSettings = scope.ServiceProvider.GetRequiredService<JwtSettings>();
-        var authToken = JwtHelper.CreateJwtToken(jwtSettings, DefaultUser);
-        var authHeader = new AuthenticationHeaderValue(JwtBearerDefaults.AuthenticationScheme, authToken);
-        HttpClient = _api.CreateClient();
-        HttpClient.DefaultRequestHeaders.Authorization = authHeader;
+        _resetDatabase = factory.ResetDatabaseAsync;
+        Api = factory.ApiClient;
+        DbContext = factory.DbContext;
     }
 
-    [SetUp]
-    protected async Task Setup()
-    {
-        var dbContext = GetDbContext();
-        dbContext.Tags.RemoveRange(dbContext.Tags);
-        dbContext.Transactions.RemoveRange(dbContext.Transactions);
-        dbContext.Accounts.RemoveRange(dbContext.Accounts);
-        await dbContext.SaveChangesAsync();
-    }
-
-    protected IApplicationDbContext GetDbContext()
-    {
-        var scope = _api.Services.CreateScope();
-        return scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
-    }
+    public Task InitializeAsync() => Task.CompletedTask;
+    public Task DisposeAsync() => _resetDatabase();
 }

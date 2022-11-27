@@ -1,11 +1,11 @@
-namespace Domain.Entities;
+﻿namespace Domain.Entities;
 
-public class Tag
+public sealed class Tag
 {
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public string Color { get; set; }
-    public string OwnerId { get; set; }
+    public Guid Id { get; set; }
+    public string OwnerId { get; set; } = null!;
+    public string Name { get; set; } = default!;
+    public string Color { get; set; } = default!;
 
-    public User Owner { get; set; }
+    public ICollection<Operation>? Operations { get; set; }
 }
