@@ -1,7 +1,5 @@
 using System.Data.Common;
-using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Threading.Tasks;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
@@ -9,13 +7,11 @@ using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 using Respawn;
-using Xunit;
 
 namespace Api.IntegrationTests;
 
@@ -34,13 +30,24 @@ public class ApiFactory : WebApplicationFactory<IApiMaker>, IAsyncLifetime
     private Respawner _respawner = default!;
 
     public HttpClient ApiClient { get; private set; } = default!;
+    public Func<IApplicationDbContext> DbContext => GetDbContext;
 
     public async Task InitializeAsync()
     {
         await _dbContainer.StartAsync();
-        _dbConnection = new NpgsqlConnection(_dbContainer.ConnectionString);
         ApiClient = CreateClient();
         ApiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", FakeJwtManager.GenerateJwtToken());
+        await CreateDatabaseSnapshotAsync();
+    }
+
+    public new async Task DisposeAsync()
+    {
+        await _dbContainer.StopAsync();
+    }
+
+    private async Task CreateDatabaseSnapshotAsync()
+    {
+        _dbConnection = new NpgsqlConnection(_dbContainer.ConnectionString);
         await _dbConnection.OpenAsync();
         _respawner = await Respawner.CreateAsync(_dbConnection, new RespawnerOptions
         {
@@ -49,9 +56,10 @@ public class ApiFactory : WebApplicationFactory<IApiMaker>, IAsyncLifetime
         });
     }
 
-    public new async Task DisposeAsync()
+    private IApplicationDbContext GetDbContext()
     {
-        await _dbContainer.StopAsync();
+        var scope = Services.CreateScope();
+        return scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)

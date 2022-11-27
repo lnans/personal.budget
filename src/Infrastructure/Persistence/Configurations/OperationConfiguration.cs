@@ -13,7 +13,7 @@ public class OperationConfiguration : IEntityTypeConfiguration<Operation>
         builder.Property(operation => operation.Amount).IsRequired();
         builder.Property(operation => operation.CreationDate).IsRequired();
         builder.Property(operation => operation.Type).HasConversion<string>().IsRequired();
-        builder.Property(operation => operation.CreatedById).IsRequired();
+        builder.Property(operation => operation.OwnerId).IsRequired();
 
         builder
             .HasOne(p => p.Account)

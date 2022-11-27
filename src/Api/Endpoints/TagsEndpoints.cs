@@ -21,7 +21,7 @@ internal class TagsEndpoints : IEndPoints
             .ProduceError(HttpStatusCode.Unauthorized, "Authentication failed")
             .WithTags(Tag);
 
-        app.MapPost("tags/{id:guid}", PostTag)
+        app.MapPost("tags", PostTag)
             .RequireAuthorization()
             .Summary("Create a tag", "Create a new tag for the current user")
             .ProduceResponse(HttpStatusCode.NoContent, "Tag created")
@@ -66,7 +66,7 @@ internal class TagsEndpoints : IEndPoints
 
     private static async Task<IResult> DeleteTag(ISender mediator, Guid id, CancellationToken ct)
     {
-        await mediator.Send(new DeleteTagRequest(), ct);
+        await mediator.Send(new DeleteTagRequest { Id = id }, ct);
         return Results.NoContent();
     }
 }

@@ -1,5 +1,3 @@
-using Xunit;
-
 namespace Api.IntegrationTests;
 
 [CollectionDefinition("Shared")]

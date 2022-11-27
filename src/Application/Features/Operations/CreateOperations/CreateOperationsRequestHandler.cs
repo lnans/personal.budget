@@ -38,7 +38,7 @@ internal sealed class CreateOperationsRequestHandler : IRequestHandler<CreateOpe
                 Type = operationData.Type,
                 CreationDate = operationData.CreationDate,
                 ExecutionDate = operationData.ExecutionDate,
-                CreatedById = userId
+                OwnerId = userId
             };
 
             if (operationData.TagIds != null)

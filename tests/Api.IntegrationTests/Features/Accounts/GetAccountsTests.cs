@@ -1,42 +1,45 @@
-using System;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
 using Application.Features.Accounts.GetAccounts;
-using FluentAssertions;
-using Xunit;
 
 namespace Api.IntegrationTests.Features.Accounts;
 
 [Collection("Shared")]
-public class GetAccountsTests : IAsyncLifetime
+public class GetAccountsTests : TestBase
 {
-    private readonly HttpClient _api;
-    private readonly Func<Task> _resetDatabase;
-
-    public GetAccountsTests(ApiFactory factory)
+    public GetAccountsTests(ApiFactory factory) : base(factory)
     {
-        _api = factory.ApiClient;
-        _resetDatabase = factory.ResetDatabaseAsync;
     }
 
-    public Task InitializeAsync() => Task.CompletedTask;
-    public Task DisposeAsync() => _resetDatabase();
-
-    [Fact]
-    public async Task Test()
+    [Theory]
+    [InlineData(false, 10)]
+    [InlineData(true, 10)]
+    public async Task GetAllAccounts_ShouldReturn_AccountsList(bool archived, int excepted)
     {
         // Arrange
-        var request = new GetAccountsRequest();
+        var dbContext = DbContext();
+        var accounts = new List<Account>();
+        Enumerable
+            .Range(0, 20)
+            .ToList()
+            .ForEach(arg => accounts.Add(new Account
+            {
+                Name = $"string{arg}",
+                Bank = "bank",
+                Balance = 0,
+                InitialBalance = 0,
+                OwnerId = FakeJwtManager.UserId,
+                Type = AccountType.Expenses,
+                CreationDate = DateTime.UtcNow,
+                Archived = arg % 2 == 0
+            }));
+        await dbContext.Accounts.AddRangeAsync(accounts);
+        await dbContext.SaveChangesAsync(CancellationToken.None);
 
         // Act
-        var response = await _api.PostAsJsonAsync("accounts", request);
-        var responseText = await response.Content.ReadAsStringAsync();
-        //var result = JsonSerializer.Deserialize<GetAccountsResponse>(responseText);
+        var response = await Api.GetAsync($"accounts?archived={archived}");
+        var result = await response.Content.ReadFromJsonOrDefaultAsync<IEnumerable<GetAccountsResponse>>();
 
         // Assert
-        response.StatusCode
-            .Should().Be(HttpStatusCode.OK);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        result!.Count().Should().Be(excepted);
     }
 }

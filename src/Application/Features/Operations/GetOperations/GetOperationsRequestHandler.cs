@@ -32,7 +32,7 @@ internal sealed class GetOperationsRequestHandler : IRequestHandler<GetOperation
         if (!string.IsNullOrWhiteSpace(request.Description))
             operations = operations.Where(o => o.Description.ToLower().Contains(request.Description.ToLower()));
 
-        if (request.TagIds != null)
+        if (request.TagIds != null && request.TagIds.Any())
             operations = operations.Where(o => o.Tags!.Any(t => request.TagIds.Contains(t.Id)));
 
         if (request.Type.HasValue)

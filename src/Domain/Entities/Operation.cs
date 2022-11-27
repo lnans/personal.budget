@@ -11,6 +11,6 @@ public sealed class Operation
     public OperationType Type { get; set; }
     public DateTime CreationDate { get; set; }
     public DateTime? ExecutionDate { get; set; }
-    public string CreatedById { get; set; } = null!;
+    public string OwnerId { get; set; } = null!;
     public ICollection<Tag>? Tags { get; set; }
 }

@@ -1,4 +1,3 @@
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -21,6 +20,7 @@ public static class FakeJwtManager
 
     public static string Issuer { get; } = Guid.NewGuid().ToString();
     public static string Audience { get; } = Guid.NewGuid().ToString();
+    public static string UserId { get; } = Guid.NewGuid().ToString();
     public static SecurityKey SecurityKey { get; }
     private static SigningCredentials SigningCredentials { get; }
 
@@ -29,7 +29,7 @@ public static class FakeJwtManager
             new JwtSecurityToken(
                 Issuer,
                 Audience,
-                new[] { new Claim(ClaimTypes.NameIdentifier, "auth0|tests") },
+                new[] { new Claim(ClaimTypes.NameIdentifier, UserId) },
                 null,
                 DateTime.UtcNow.AddMinutes(10), SigningCredentials)
         );

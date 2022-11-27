@@ -22,9 +22,12 @@ internal sealed class DeleteTagRequestHandler : IRequestHandler<DeleteTagRequest
         var userId = _userContext.GetAuthenticatedUserId();
         var tag = await _dbContext
             .Tags
+            .Include(t => t.Operations)
             .FirstOrDefaultAsync(op => op.Id == request.Id && op.OwnerId == userId, cancellationToken);
 
         if (tag is null) throw new NotFoundException(ErrorsTags.NotFound);
+
+        if (tag.Operations is not null && tag.Operations.Any()) throw new BadRequestException(ErrorsTags.IsInUse);
 
         _dbContext.Tags.Remove(tag);
         await _dbContext.SaveChangesAsync(cancellationToken);

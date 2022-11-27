@@ -14,5 +14,5 @@ public sealed class Account
     public DateTime CreationDate { get; set; }
     public bool Archived { get; set; }
 
-    public ICollection<Operation> Operations { get; set; } = default!;
+    public ICollection<Operation>? Operations { get; set; }
 }

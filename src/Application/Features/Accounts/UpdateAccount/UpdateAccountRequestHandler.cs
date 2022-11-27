@@ -20,6 +20,16 @@ internal sealed class UpdateAccountRequestHandler : IRequestHandler<UpdateAccoun
     public async Task<Unit> Handle(UpdateAccountRequest request, CancellationToken cancellationToken)
     {
         var userId = _userContext.GetAuthenticatedUserId();
+
+        var existingAccount = await _dbContext
+            .Accounts
+            .FirstOrDefaultAsync(a =>
+                a.Name.ToLower() == request.Name!.ToLower() &&
+                a.Bank.ToLower() == request.Bank!.ToLower() &&
+                a.OwnerId == userId, cancellationToken);
+
+        if (existingAccount is not null) throw new ConflictException(ErrorsAccounts.AlreadyExist);
+
         var account = await _dbContext
             .Accounts
             .FirstOrDefaultAsync(a => a.Id == request.Id && a.OwnerId == userId, cancellationToken);

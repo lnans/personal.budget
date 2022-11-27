@@ -20,6 +20,13 @@ internal sealed class UpdateTagRequestHandler : IRequestHandler<UpdateTagRequest
     public async Task<Unit> Handle(UpdateTagRequest request, CancellationToken cancellationToken)
     {
         var userId = _userContext.GetAuthenticatedUserId();
+        var existingTag = await _dbContext
+            .Tags
+            .FirstOrDefaultAsync(op => op.Name.ToLower() == request.Name!.ToLower() && op.OwnerId == userId,
+                cancellationToken);
+
+        if (existingTag is not null) throw new ConflictException(ErrorsTags.AlreadyExist);
+
         var tag = await _dbContext
             .Tags
             .FirstOrDefaultAsync(op => op.Id == request.Id && op.OwnerId == userId, cancellationToken);

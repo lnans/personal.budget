@@ -38,6 +38,7 @@ internal class AccountsEndpoints : IEndPoints
             .ProduceError(HttpStatusCode.Unauthorized, "Authentication failed")
             .ProduceError(HttpStatusCode.BadRequest, "Validation error occured")
             .ProduceError(HttpStatusCode.NotFound, "Account not found")
+            .ProduceError(HttpStatusCode.Conflict, "Account already exist")
             .WithTags(Tag);
 
         app.MapPatch("accounts/{id:guid}/archive", ArchiveAccount)
@@ -77,7 +78,7 @@ internal class AccountsEndpoints : IEndPoints
     {
         request.Id = id;
         await mediator.Send(request, ct);
-        return Results.NotFound();
+        return Results.NoContent();
     }
 
     private static async Task<IResult> DeleteAccount(ISender mediator, Guid id, CancellationToken ct)
