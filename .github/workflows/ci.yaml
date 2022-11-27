@@ -27,4 +27,4 @@ jobs:
         run: dotnet build --no-restore
 
       - name: "[Test] Personal.Budget.Api"
-        run: dotnet test --no-build --verbosity quiet --no-logo --logger "console;verbosity=normal"
+        run: dotnet test --no-build --verbosity quiet --nologo --logger "console;verbosity=normal"
