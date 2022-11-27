@@ -1,22 +1,20 @@
 # This workflow will build a .NET project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
-name: .NET
+name: Personal.Budget.Api
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
 
 jobs:
   build:
-
     runs-on: self-hosted
     env:
       DOTNET_INSTALL_DIR: ".dotnet"
-      TESTCONTAINERS_CHECKS_DISABLE: true
-      TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE: "/var/run/docker.sock"
+      DOCKER_HOST: "unix:///var/run/docker.sock"
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
