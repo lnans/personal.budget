@@ -1,40 +1,43 @@
+using Api.Configurations;
+using Api.Middlewares;
+using Application;
+using Infrastructure;
+using Serilog;
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog();
 
-var dbName = builder.Configuration.GetConnectionString("Database");
-var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
-var defaultUser = builder.Configuration.GetValue<string>("DefaultUser:Username");
-var defaultPassword = builder.Configuration.GetValue<string>("DefaultUser:Password");
+try
+{
+    var connectionString = builder.Configuration.GetConnectionString("Database")!;
+    var authSettings = builder.Configuration.GetSection("Auth").Get<AuthSettings>()!;
 
-void JsonOptions(JsonOptions options) => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    builder.Services.AddApplication();
+    builder.Services.AddInfrastructure(connectionString);
+    builder.Services.AddAuthenticationAuth0(authSettings);
+    builder.Services.AddSwaggerDoc();
 
-builder.Services
-    .AddApplication()
-    .AddInfrastructure(dbName)
-    .Configure((Action<JsonOptions>) JsonOptions)
-    .AddCors()
-    .AddJwtAuthentication(jwtSettings)
-    .AddSwaggerGenWithSecurity()
-    .AddAuthorization()
-    .AddSingleton(jwtSettings)
-    .AddScoped<IUserContext, UserContext>()
-    .AddHttpContextAccessor()
-    .AddEndpointsApiExplorer()
-    .AddControllers();
+    var app = builder.Build();
 
-var webApp = builder.Build();
-webApp
-    .UseSwagger()
-    .UseSwaggerUI()
-    .UseCors(options =>
-        {
-            options.AllowAnyHeader();
-            options.AllowAnyMethod();
-            options.AllowAnyOrigin();
-        })
-    .UseAuthentication()
-    .UseAuthorization()
-    .UseMiddleware<ExceptionMiddleware>()
-    .InitDbContext(defaultUser, defaultPassword);
+    app.UseSwaggerDoc();
+    app.UseAuthentication();
+    app.UseAuthorization();
+    app.UseMiddleware<ExceptionMiddleware>();
+    app.UseEndpoints();
 
-webApp.MapControllers();
-webApp.Run();
+    await app.InitDbContext();
+
+    app.Run();
+}
+catch (Exception e)
+{
+    Log.Fatal(e, "Host terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
