@@ -1,0 +1,22 @@
+name: '[Deploy] Personal.Budget.Api'
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    env:
+      APP_AUTHORITY: ${{ secrets.APP_AUTHORITY }}
+      APP_AUDIENCE: ${{ secrets.APP_AUDIENCE }}
+      DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
+    steps:
+      - name: "Stop services"
+        run: docker compose down
+
+      - name: Build services
+        run: docker compose build --no-cache
+
+      - name: Start services
+        run: docker compose up
