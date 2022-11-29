@@ -28,11 +28,6 @@ try
     {
         app.UseDeveloperExceptionPage();
     }
-    else
-    {
-        app.UseHttpsRedirection();
-        app.UseHsts();
-    }
 
     app.UseSwaggerDoc();
     app.UseAuthentication();

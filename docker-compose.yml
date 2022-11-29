@@ -9,4 +9,3 @@
       - ConnectionStrings__Database=${DB_CONNECTION_STRING}
     ports:
       - "5038:5038"
-      - "5039:5039"
