@@ -12,6 +12,9 @@ jobs:
       APP_AUDIENCE: ${{ secrets.APP_AUDIENCE }}
       DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
     steps:
+      - name: "[Setup] Checkout repository"
+        uses: actions/checkout@v3
+
       - name: "Stop services"
         run: docker compose down
 
