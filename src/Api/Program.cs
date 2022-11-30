@@ -13,6 +13,8 @@ builder.Host.UseSerilog();
 
 try
 {
+    builder.Configuration.AddEnvironmentVariables();
+
     var connectionString = builder.Configuration.GetConnectionString("Database")!;
     var authSettings = builder.Configuration.GetSection("Auth").Get<AuthSettings>()!;
 
@@ -22,6 +24,10 @@ try
     builder.Services.AddSwaggerDoc();
 
     var app = builder.Build();
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();
+    }
 
     app.UseSwaggerDoc();
     app.UseAuthentication();
