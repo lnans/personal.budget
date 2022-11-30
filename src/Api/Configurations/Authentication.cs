@@ -26,7 +26,7 @@ internal static class AuthenticationConfiguration
     /// services.AddAuth0WebAppAuthentication()
     /// <param name="services">The web api services from builder</param>
     /// <param name="authSettings">The authentication settings</param>
-    public static void AddAuthenticationAuth0(this IServiceCollection services, AuthSettings authSettings)
+    public static void AddAuthenticationAuth0(this IServiceCollection services, AuthSettings? authSettings)
     {
         services.AddAuthentication(o =>
             {
@@ -35,8 +35,8 @@ internal static class AuthenticationConfiguration
             })
             .AddJwtBearer(options =>
             {
-                options.Authority = authSettings.Authority;
-                options.Audience = authSettings.Audience;
+                options.Authority = authSettings?.Authority;
+                options.Audience = authSettings?.Audience;
             });
         services.AddAuthorization();
         services.AddHttpContextAccessor();

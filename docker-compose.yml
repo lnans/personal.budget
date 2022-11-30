@@ -1,9 +1,11 @@
 ﻿services:
-  postgres:
-    image: postgres:latest
+  budget_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgrespw
-      - POSTGRES_DB=budget_db
+      - Auth__Authority=${APP_AUTHORITY}
+      - Auth__Audience=${APP_AUDIENCE}
+      - ConnectionStrings__Database=${DB_CONNECTION_STRING}
     ports:
-      - 5432:5432
+      - "5038:5038"
