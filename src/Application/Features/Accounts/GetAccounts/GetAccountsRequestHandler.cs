@@ -1,10 +1,10 @@
 using Application.Common.Interfaces;
+using Application.Common.Models;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Accounts.GetAccounts;
 
-internal sealed class GetAccountsQueryHandler : IRequestHandler<GetAccountsRequest, IEnumerable<GetAccountsResponse>>
+internal sealed class GetAccountsQueryHandler : IRequestHandler<GetAccountsRequest, PaginatedList<GetAccountsResponse>>
 {
     private readonly IApplicationDbContext _dbContext;
     private readonly IUserContext _userContext;
@@ -15,11 +15,13 @@ internal sealed class GetAccountsQueryHandler : IRequestHandler<GetAccountsReque
         _dbContext = dbContext;
     }
 
-
-    public async Task<IEnumerable<GetAccountsResponse>> Handle(GetAccountsRequest request, CancellationToken cancellationToken)
+    public async Task<PaginatedList<GetAccountsResponse>> Handle(GetAccountsRequest request, CancellationToken cancellationToken)
     {
         var userId = _userContext.GetAuthenticatedUserId();
         var accounts = _dbContext.Accounts.Where(a => a.OwnerId == userId && a.Archived == request.Archived);
+
+        if (!string.IsNullOrWhiteSpace(request.Search))
+            accounts = accounts.Where(a => a.Name.ToLower().Contains(request.Search.ToLower()) || a.Bank.ToLower().Contains(request.Search.ToLower()));
 
         return await accounts
             .Select(a => new GetAccountsResponse
@@ -34,6 +36,6 @@ internal sealed class GetAccountsQueryHandler : IRequestHandler<GetAccountsReque
             })
             .OrderBy(a => a.Type)
             .ThenBy(a => a.Name.ToLower())
-            .ToListAsync(cancellationToken);
+            .ToPaginatedListAsync(request.Page, request.PageSize, cancellationToken);
     }
 }

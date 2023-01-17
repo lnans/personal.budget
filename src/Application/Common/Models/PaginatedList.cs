@@ -2,26 +2,30 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Common.Models;
 
-public sealed class InfiniteDataList<TItem>
+public sealed class PaginatedList<TItem>
 {
+    public int Page { get; set; }
+    public int TotalElements { get; set; }
+    public int TotalPages { get; set; }
     public List<TItem> Items { get; set; } = new();
-    public int? NextCursor { get; set; }
 }
 
-public static class InfiniteDataList
+public static class PaginatedList
 {
-    public static async Task<InfiniteDataList<TItem>> ToInfiniteDataListAsync<TItem>(this IQueryable<TItem> source, int cursor, int pageSize,
+    public static async Task<PaginatedList<TItem>> ToPaginatedListAsync<TItem>(this IQueryable<TItem> source, int page, int pageSize,
         CancellationToken ct = default)
     {
-        var totalSize = await source.CountAsync(ct);
-        var nextCursor = cursor + pageSize < totalSize ? cursor + pageSize : (int?)null;
+        var totalElements = await source.CountAsync(ct);
+        var totalPages = (int)Math.Ceiling(totalElements / (decimal)pageSize);
 
-        var items = await source.Skip(cursor).Take(pageSize).ToListAsync(ct);
+        var items = await source.Skip(page * pageSize).Take(pageSize).ToListAsync(ct);
 
-        return new InfiniteDataList<TItem>
+        return new PaginatedList<TItem>
         {
-            Items = items,
-            NextCursor = nextCursor
+            Page = page,
+            TotalElements = totalElements,
+            TotalPages = totalPages,
+            Items = items
         };
     }
 }

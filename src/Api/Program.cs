@@ -22,12 +22,17 @@ try
     builder.Services.AddInfrastructure(connectionString);
     builder.Services.AddAuthenticationAuth0(authSettings);
     builder.Services.AddSwaggerDoc();
+    builder.Services.AddCors();
 
     var app = builder.Build();
-    if (app.Environment.IsDevelopment())
+    if (app.Environment.IsDevelopment()) app.UseDeveloperExceptionPage();
+
+    app.UseCors(options =>
     {
-        app.UseDeveloperExceptionPage();
-    }
+        options.AllowAnyHeader();
+        options.AllowAnyMethod();
+        options.AllowAnyOrigin();
+    });
 
     app.UseSwaggerDoc();
     app.UseAuthentication();

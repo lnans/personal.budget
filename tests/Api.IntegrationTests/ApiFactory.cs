@@ -17,7 +17,7 @@ using Serilog;
 
 namespace Api.IntegrationTests;
 
-public class ApiFactory : WebApplicationFactory<IApiMaker>, IAsyncLifetime
+public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
 {
     private readonly PostgreSqlTestcontainer _dbContainer =
         new TestcontainersBuilder<PostgreSqlTestcontainer>()

@@ -1,5 +1,6 @@
 using System.Net;
 using Api.Configurations;
+using Application.Common.Models;
 using Application.Features.Accounts.ArchiveAccount;
 using Application.Features.Accounts.CreateAccount;
 using Application.Features.Accounts.DeleteAccount;
@@ -18,7 +19,7 @@ internal class AccountsEndpoints : IEndPoints
         app.MapGet("accounts", GetAccounts)
             .RequireAuthorization()
             .Summary("Get accounts list", "Return all accounts")
-            .ProduceResponse<IEnumerable<GetAccountsResponse>>(HttpStatusCode.OK, "Accounts list paginated")
+            .ProduceResponse<PaginatedList<GetAccountsResponse>>(HttpStatusCode.OK, "Accounts list paginated")
             .ProduceError(HttpStatusCode.Unauthorized, "Authentication failed")
             .WithTags(Tag);
 
@@ -58,8 +59,19 @@ internal class AccountsEndpoints : IEndPoints
             .WithTags(Tag);
     }
 
-    private static async Task<IResult> GetAccounts(ISender mediator, [AsParameters] GetAccountsRequest request, CancellationToken ct) =>
-        Results.Ok(await mediator.Send(request, ct));
+    private static async Task<IResult> GetAccounts(ISender mediator,
+        bool archived,
+        string? search,
+        int? page,
+        int? pageSize,
+        CancellationToken ct) =>
+        Results.Ok(await mediator.Send(new GetAccountsRequest
+        {
+            Archived = archived,
+            Search = search,
+            Page = page ?? 0,
+            PageSize = pageSize ?? 50
+        }, ct));
 
     private static async Task<IResult> PostAccount(ISender mediator, CreateAccountRequest request, CancellationToken ct)
     {

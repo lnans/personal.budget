@@ -36,10 +36,10 @@ public class GetAccountsTests : TestBase
 
         // Act
         var response = await Api.GetAsync($"accounts?archived={archived}");
-        var result = await response.Content.ReadFromJsonOrDefaultAsync<IEnumerable<GetAccountsResponse>>();
+        var result = await response.Content.ReadFromJsonOrDefaultAsync<PaginatedList<GetAccountsResponse>>();
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        result!.Count().Should().Be(excepted);
+        result!.Items.Count.Should().Be(excepted);
     }
 }

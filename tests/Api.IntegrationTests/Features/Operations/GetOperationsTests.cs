@@ -67,7 +67,7 @@ public class GetOperationsTests : TestBase
 
         // Act
         var response = await Api.GetAsync($"operations?{request.ToQueryString()}");
-        var result = await response.Content.ReadFromJsonOrDefaultAsync<InfiniteDataList<GetOperationsResponse>>();
+        var result = await response.Content.ReadFromJsonOrDefaultAsync<PaginatedList<GetOperationsResponse>>();
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Operations.GetOperations;
 
-internal sealed class GetOperationsRequestHandler : IRequestHandler<GetOperationsRequest, InfiniteDataList<GetOperationsResponse>>
+internal sealed class GetOperationsRequestHandler : IRequestHandler<GetOperationsRequest, PaginatedList<GetOperationsResponse>>
 {
     private readonly IApplicationDbContext _dbContext;
     private readonly IUserContext _userContext;
@@ -16,7 +16,7 @@ internal sealed class GetOperationsRequestHandler : IRequestHandler<GetOperation
         _userContext = userContext;
     }
 
-    public async Task<InfiniteDataList<GetOperationsResponse>> Handle(GetOperationsRequest request, CancellationToken cancellationToken)
+    public async Task<PaginatedList<GetOperationsResponse>> Handle(GetOperationsRequest request, CancellationToken cancellationToken)
     {
         var userId = _userContext.GetAuthenticatedUserId();
         var operations = _dbContext.Operations
@@ -61,6 +61,6 @@ internal sealed class GetOperationsRequestHandler : IRequestHandler<GetOperation
                 CreationDate = o.CreationDate,
                 ExecutionDate = o.ExecutionDate
             })
-            .ToInfiniteDataListAsync(request.Cursor, request.PageSize, cancellationToken);
+            .ToPaginatedListAsync(request.Page, request.PageSize, cancellationToken);
     }
 }

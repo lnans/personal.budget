@@ -5,6 +5,7 @@ using Application.Features.Operations.CreateOperations;
 using Application.Features.Operations.DeleteOperation;
 using Application.Features.Operations.GetOperations;
 using Application.Features.Operations.UpdateOperation;
+using Domain.Enums;
 using MediatR;
 
 namespace Api.Endpoints;
@@ -18,7 +19,7 @@ internal class OperationsEndpoints : IEndPoints
         app.MapGet("operations", GetOperations)
             .RequireAuthorization()
             .Summary("Get operations", "Return a fragment of operations list with next iterator")
-            .ProduceResponse<InfiniteDataList<GetOperationsResponse>>(HttpStatusCode.OK, "Operation list with iterator information")
+            .ProduceResponse<PaginatedList<GetOperationsResponse>>(HttpStatusCode.OK, "Operation list with iterator information")
             .ProduceError(HttpStatusCode.Unauthorized, "Authentication failed")
             .WithTags(Tag);
 
@@ -49,8 +50,23 @@ internal class OperationsEndpoints : IEndPoints
             .WithTags(Tag);
     }
 
-    private static async Task<IResult> GetOperations(ISender mediator, [AsParameters] GetOperationsRequest request, CancellationToken ct) =>
-        Results.Ok(await mediator.Send(request, ct));
+    private static async Task<IResult> GetOperations(ISender mediator,
+        Guid? accountId,
+        string? description,
+        Guid[]? tagIds,
+        OperationType? type,
+        int? page,
+        int? pageSize,
+        CancellationToken ct) =>
+        Results.Ok(await mediator.Send(new GetOperationsRequest
+        {
+            AccountId = accountId,
+            Description = description,
+            TagIds = tagIds,
+            Type = type,
+            Page = page ?? 0,
+            PageSize = pageSize ?? 50
+        }, ct));
 
     private static async Task<IResult> PostOperations(ISender mediator, CreateOperationsRequest request, CancellationToken ct)
     {
