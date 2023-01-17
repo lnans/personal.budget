@@ -15,11 +15,11 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<Operation> Operations => Set<Operation>();
     public DbSet<Tag> Tags => Set<Tag>();
 
-    protected override void OnModelCreating(ModelBuilder builder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        builder.HasPostgresExtension("uuid-ossp");
+        modelBuilder.HasPostgresExtension("uuid-ossp");
 
-        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-        base.OnModelCreating(builder);
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        base.OnModelCreating(modelBuilder);
     }
 }
