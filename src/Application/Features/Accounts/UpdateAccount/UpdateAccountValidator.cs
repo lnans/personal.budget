@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Application.Features.Accounts.UpdateAccount;
 
-public class UpdateAccountValidator : AbstractValidator<UpdateAccountRequest>
+public sealed class UpdateAccountValidator : AbstractValidator<UpdateAccountRequest>
 {
     public UpdateAccountValidator()
     {

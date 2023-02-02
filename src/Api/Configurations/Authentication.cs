@@ -23,7 +23,6 @@ internal static class AuthenticationConfiguration
     ///     Configure and enable jwt bearer authentication
     ///     and register <see cref="AuthSettings" /> in the service provider
     /// </summary>
-    /// services.AddAuth0WebAppAuthentication()
     /// <param name="services">The web api services from builder</param>
     /// <param name="authSettings">The authentication settings</param>
     public static void AddAuthenticationAuth0(this IServiceCollection services, AuthSettings? authSettings)
@@ -40,19 +39,27 @@ internal static class AuthenticationConfiguration
             });
         services.AddAuthorization();
         services.AddHttpContextAccessor();
-        services.AddScoped<IUserContext, UserContext>();
+        services.AddScoped<IAuthContext, AuthContext>();
     }
 }
 
-public sealed class UserContext : IUserContext
+/// <summary>
+///     Authentication service used for auth information in the HttpContext
+/// </summary>
+public sealed class AuthContext : IAuthContext
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public UserContext(IHttpContextAccessor httpContextAccessor)
+    public AuthContext(IHttpContextAccessor httpContextAccessor)
     {
         _httpContextAccessor = httpContextAccessor;
     }
 
+    /// <summary>
+    ///     Return the Id of the user in the current HttpContext request
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="AuthenticationException">User is not authenticated</exception>
     public string GetAuthenticatedUserId()
     {
         var httpContext = _httpContextAccessor.HttpContext!;

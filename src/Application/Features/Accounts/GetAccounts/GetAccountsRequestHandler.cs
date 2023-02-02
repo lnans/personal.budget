@@ -7,17 +7,17 @@ namespace Application.Features.Accounts.GetAccounts;
 internal sealed class GetAccountsQueryHandler : IRequestHandler<GetAccountsRequest, PaginatedList<GetAccountsResponse>>
 {
     private readonly IApplicationDbContext _dbContext;
-    private readonly IUserContext _userContext;
+    private readonly IAuthContext _authContext;
 
-    public GetAccountsQueryHandler(IApplicationDbContext dbContext, IUserContext userContext)
+    public GetAccountsQueryHandler(IApplicationDbContext dbContext, IAuthContext authContext)
     {
-        _userContext = userContext;
+        _authContext = authContext;
         _dbContext = dbContext;
     }
 
     public async Task<PaginatedList<GetAccountsResponse>> Handle(GetAccountsRequest request, CancellationToken cancellationToken)
     {
-        var userId = _userContext.GetAuthenticatedUserId();
+        var userId = _authContext.GetAuthenticatedUserId();
         var accounts = _dbContext.Accounts.Where(a => a.OwnerId == userId && a.Archived == request.Archived);
 
         if (!string.IsNullOrWhiteSpace(request.Search))

@@ -10,17 +10,17 @@ namespace Application.Features.Operations.CreateOperations;
 internal sealed class CreateOperationsRequestHandler : IRequestHandler<CreateOperationsRequest, Unit>
 {
     private readonly IApplicationDbContext _dbContext;
-    private readonly IUserContext _userContext;
+    private readonly IAuthContext _authContext;
 
-    public CreateOperationsRequestHandler(IApplicationDbContext dbContext, IUserContext userContext)
+    public CreateOperationsRequestHandler(IApplicationDbContext dbContext, IAuthContext authContext)
     {
         _dbContext = dbContext;
-        _userContext = userContext;
+        _authContext = authContext;
     }
 
     public async Task<Unit> Handle(CreateOperationsRequest request, CancellationToken cancellationToken)
     {
-        var userId = _userContext.GetAuthenticatedUserId();
+        var userId = _authContext.GetAuthenticatedUserId();
         var account = await _dbContext
             .Accounts
             .FirstOrDefaultAsync(a => a.Id == request.AccountId && a.OwnerId == userId, cancellationToken);

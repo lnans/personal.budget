@@ -8,7 +8,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace Api.Configurations;
 
 /// <summary>
-///     A set of swagger extensions
+///     A set of swagger documentation extensions
 /// </summary>
 internal static class DocumentationExtensions
 {
@@ -54,7 +54,7 @@ internal static class DocumentationExtensions
                         Id = "Bearer"
                     }
                 },
-                new string[] { }
+                Array.Empty<string>()
             }
         };
 
@@ -82,15 +82,44 @@ internal static class DocumentationExtensions
         return app;
     }
 
+    /// <summary>
+    ///     Add summary and a description definition to an API endpoint on swagger
+    /// </summary>
+    /// <param name="builder">Endpoint builder</param>
+    /// <param name="summary">Summary</param>
+    /// <param name="description">Description</param>
+    /// <returns>Endpoint builder</returns>
     public static RouteHandlerBuilder Summary(this RouteHandlerBuilder builder, string summary, string description) =>
         builder.WithMetadata(new SwaggerOperationAttribute(summary, description));
 
+    /// <summary>
+    ///     Describe a success http request on swagger
+    /// </summary>
+    /// <param name="builder">Endpoint builder</param>
+    /// <param name="statusCode">HTTP status code</param>
+    /// <param name="description">Description</param>
+    /// <typeparam name="TResponse">Response type</typeparam>
+    /// <returns>Endpoint builder</returns>
     public static RouteHandlerBuilder ProduceResponse<TResponse>(this RouteHandlerBuilder builder, HttpStatusCode statusCode, string description) =>
         builder.WithMetadata(new SwaggerResponseAttribute((int)statusCode, description, typeof(TResponse)));
 
+    /// <summary>
+    ///     Describe a success http request on swagger
+    /// </summary>
+    /// <param name="builder">Endpoint builder</param>
+    /// <param name="statusCode">HTTP status code</param>
+    /// <param name="description">Description</param>
+    /// <returns>Endpoint builder</returns>
     public static RouteHandlerBuilder ProduceResponse(this RouteHandlerBuilder builder, HttpStatusCode statusCode, string description) =>
         builder.WithMetadata(new SwaggerResponseAttribute((int)statusCode, description));
 
+    /// <summary>
+    ///     Describe an error response on swagger
+    /// </summary>
+    /// <param name="builder">Endpoint builder</param>
+    /// <param name="statusCode">HTTP status code</param>
+    /// <param name="description">Description</param>
+    /// <returns>Endpoint builder</returns>
     public static RouteHandlerBuilder ProduceError(this RouteHandlerBuilder builder, HttpStatusCode statusCode, string description) =>
         builder.WithMetadata(new SwaggerResponseAttribute((int)statusCode, description, typeof(ErrorResponse)));
 }

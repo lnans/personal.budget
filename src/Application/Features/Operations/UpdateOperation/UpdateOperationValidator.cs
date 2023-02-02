@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Application.Features.Operations.UpdateOperation;
 
-public class UpdateOperationValidator : AbstractValidator<UpdateOperationRequest>
+public sealed class UpdateOperationValidator : AbstractValidator<UpdateOperationRequest>
 {
     public UpdateOperationValidator()
     {

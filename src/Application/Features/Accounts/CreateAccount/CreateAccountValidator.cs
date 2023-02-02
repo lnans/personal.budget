@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Application.Features.Accounts.CreateAccount;
 
-public class CreateAccountValidator : AbstractValidator<CreateAccountRequest>
+public sealed class CreateAccountValidator : AbstractValidator<CreateAccountRequest>
 {
     public CreateAccountValidator()
     {

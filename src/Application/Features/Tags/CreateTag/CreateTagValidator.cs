@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Application.Features.Tags.CreateTag;
 
-public class CreateTagValidator : AbstractValidator<CreateTagRequest>
+public sealed class CreateTagValidator : AbstractValidator<CreateTagRequest>
 {
     public CreateTagValidator()
     {

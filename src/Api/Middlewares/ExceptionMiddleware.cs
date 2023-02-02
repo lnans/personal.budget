@@ -6,7 +6,7 @@ using Application.Common.Models;
 
 namespace Api.Middlewares;
 
-public class ExceptionMiddleware
+public sealed class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly JsonSerializerOptions _serializerOptions;
@@ -32,7 +32,7 @@ public class ExceptionMiddleware
         }
     }
 
-    private Task HandleExceptionAsync(HttpContext context, Exception exception, ILogger<ExceptionMiddleware> logger)
+    private Task HandleExceptionAsync(HttpContext context, Exception exception, ILogger logger)
     {
         var error = new ErrorResponse
         {

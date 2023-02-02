@@ -13,6 +13,10 @@ public interface IEndPoints
 /// </summary>
 public static class EndpointsExtensions
 {
+    /// <summary>
+    ///     Discover all endpoints classes and call the register endpoints method
+    /// </summary>
+    /// <param name="app">WebApplication built</param>
     public static void UseEndpoints(this WebApplication app)
     {
         var endPointsInterface = typeof(IEndPoints);

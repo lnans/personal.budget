@@ -10,7 +10,7 @@ using MediatR;
 
 namespace Api.Endpoints;
 
-internal class OperationsEndpoints : IEndPoints
+internal sealed class OperationsEndpoints : IEndPoints
 {
     private const string Tag = "Operations";
 

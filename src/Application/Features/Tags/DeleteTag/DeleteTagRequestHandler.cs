@@ -9,17 +9,17 @@ namespace Application.Features.Tags.DeleteTag;
 internal sealed class DeleteTagRequestHandler : IRequestHandler<DeleteTagRequest, Unit>
 {
     private readonly IApplicationDbContext _dbContext;
-    private readonly IUserContext _userContext;
+    private readonly IAuthContext _authContext;
 
-    public DeleteTagRequestHandler(IApplicationDbContext dbContext, IUserContext userContext)
+    public DeleteTagRequestHandler(IApplicationDbContext dbContext, IAuthContext authContext)
     {
         _dbContext = dbContext;
-        _userContext = userContext;
+        _authContext = authContext;
     }
 
     public async Task<Unit> Handle(DeleteTagRequest request, CancellationToken cancellationToken)
     {
-        var userId = _userContext.GetAuthenticatedUserId();
+        var userId = _authContext.GetAuthenticatedUserId();
         var tag = await _dbContext
             .Tags
             .Include(t => t.Operations)

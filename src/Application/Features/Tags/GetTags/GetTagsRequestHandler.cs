@@ -7,21 +7,21 @@ namespace Application.Features.Tags.GetTags;
 internal sealed class GetTagsRequestHandler : IRequestHandler<GetTagsRequest, IEnumerable<GetTagsResponse>>
 {
     private readonly IApplicationDbContext _dbContext;
-    private readonly IUserContext _userContext;
+    private readonly IAuthContext _authContext;
 
-    public GetTagsRequestHandler(IApplicationDbContext dbContext, IUserContext userContext)
+    public GetTagsRequestHandler(IApplicationDbContext dbContext, IAuthContext authContext)
     {
         _dbContext = dbContext;
-        _userContext = userContext;
+        _authContext = authContext;
     }
 
     public async Task<IEnumerable<GetTagsResponse>> Handle(GetTagsRequest request, CancellationToken cancellationToken)
     {
-        var userId = _userContext.GetAuthenticatedUserId();
-        var tags = _dbContext.Tags.Where(op => op.OwnerId == userId);
+        var userId = _authContext.GetAuthenticatedUserId();
+        var tags = _dbContext.Tags.Where(tag => tag.OwnerId == userId);
 
         return await tags
-            .Select(op => new GetTagsResponse { Id = op.Id, Name = op.Name, Color = op.Color })
+            .Select(tag => new GetTagsResponse { Id = tag.Id, Name = tag.Name, Color = tag.Color })
             .ToListAsync(cancellationToken);
     }
 }

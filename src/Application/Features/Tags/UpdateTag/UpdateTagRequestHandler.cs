@@ -9,32 +9,32 @@ namespace Application.Features.Tags.UpdateTag;
 internal sealed class UpdateTagRequestHandler : IRequestHandler<UpdateTagRequest, Unit>
 {
     private readonly IApplicationDbContext _dbContext;
-    private readonly IUserContext _userContext;
+    private readonly IAuthContext _authContext;
 
-    public UpdateTagRequestHandler(IApplicationDbContext dbContext, IUserContext userContext)
+    public UpdateTagRequestHandler(IApplicationDbContext dbContext, IAuthContext authContext)
     {
         _dbContext = dbContext;
-        _userContext = userContext;
+        _authContext = authContext;
     }
 
     public async Task<Unit> Handle(UpdateTagRequest request, CancellationToken cancellationToken)
     {
-        var userId = _userContext.GetAuthenticatedUserId();
+        var userId = _authContext.GetAuthenticatedUserId();
         var existingTag = await _dbContext
             .Tags
-            .FirstOrDefaultAsync(op => op.Name.ToLower() == request.Name!.ToLower() && op.OwnerId == userId,
+            .FirstOrDefaultAsync(tag => tag.Name.ToLower() == request.Name!.ToLower() && tag.OwnerId == userId,
                 cancellationToken);
 
         if (existingTag is not null) throw new ConflictException(ErrorsTags.AlreadyExist);
 
-        var tag = await _dbContext
+        var updatedTag = await _dbContext
             .Tags
             .FirstOrDefaultAsync(op => op.Id == request.Id && op.OwnerId == userId, cancellationToken);
 
-        if (tag is null) throw new NotFoundException(ErrorsTags.NotFound);
+        if (updatedTag is null) throw new NotFoundException(ErrorsTags.NotFound);
 
-        tag.Name = request.Name!;
-        tag.Color = request.Color!;
+        updatedTag.Name = request.Name!;
+        updatedTag.Color = request.Color!;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 

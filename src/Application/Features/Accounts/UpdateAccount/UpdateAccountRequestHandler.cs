@@ -9,17 +9,17 @@ namespace Application.Features.Accounts.UpdateAccount;
 internal sealed class UpdateAccountRequestHandler : IRequestHandler<UpdateAccountRequest, Unit>
 {
     private readonly IApplicationDbContext _dbContext;
-    private readonly IUserContext _userContext;
+    private readonly IAuthContext _authContext;
 
-    public UpdateAccountRequestHandler(IApplicationDbContext dbContext, IUserContext userContext)
+    public UpdateAccountRequestHandler(IApplicationDbContext dbContext, IAuthContext authContext)
     {
         _dbContext = dbContext;
-        _userContext = userContext;
+        _authContext = authContext;
     }
 
     public async Task<Unit> Handle(UpdateAccountRequest request, CancellationToken cancellationToken)
     {
-        var userId = _userContext.GetAuthenticatedUserId();
+        var userId = _authContext.GetAuthenticatedUserId();
 
         var existingAccount = await _dbContext
             .Accounts

@@ -8,17 +8,17 @@ namespace Application.Features.Operations.GetOperations;
 internal sealed class GetOperationsRequestHandler : IRequestHandler<GetOperationsRequest, PaginatedList<GetOperationsResponse>>
 {
     private readonly IApplicationDbContext _dbContext;
-    private readonly IUserContext _userContext;
+    private readonly IAuthContext _authContext;
 
-    public GetOperationsRequestHandler(IApplicationDbContext dbContext, IUserContext userContext)
+    public GetOperationsRequestHandler(IApplicationDbContext dbContext, IAuthContext authContext)
     {
         _dbContext = dbContext;
-        _userContext = userContext;
+        _authContext = authContext;
     }
 
     public async Task<PaginatedList<GetOperationsResponse>> Handle(GetOperationsRequest request, CancellationToken cancellationToken)
     {
-        var userId = _userContext.GetAuthenticatedUserId();
+        var userId = _authContext.GetAuthenticatedUserId();
         var operations = _dbContext.Operations
             .Include(o => o.Account)
             .Include(o => o.Tags)

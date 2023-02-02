@@ -13,6 +13,5 @@ public sealed class Account
     public AccountType Type { get; set; }
     public DateTime CreationDate { get; set; }
     public bool Archived { get; set; }
-
     public ICollection<Operation>? Operations { get; set; }
 }

@@ -7,20 +7,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Accounts.CreateAccount;
 
-public class CreateAccountRequestHandler : IRequestHandler<CreateAccountRequest, Guid>
+internal sealed class CreateAccountRequestHandler : IRequestHandler<CreateAccountRequest, Guid>
 {
     private readonly IApplicationDbContext _dbContext;
-    private readonly IUserContext _userContext;
+    private readonly IAuthContext _authContext;
 
-    public CreateAccountRequestHandler(IApplicationDbContext dbContext, IUserContext userContext)
+    public CreateAccountRequestHandler(IApplicationDbContext dbContext, IAuthContext authContext)
     {
         _dbContext = dbContext;
-        _userContext = userContext;
+        _authContext = authContext;
     }
 
     public async Task<Guid> Handle(CreateAccountRequest request, CancellationToken cancellationToken)
     {
-        var userId = _userContext.GetAuthenticatedUserId();
+        var userId = _authContext.GetAuthenticatedUserId();
         var existingAccount = await _dbContext
             .Accounts
             .FirstOrDefaultAsync(a =>

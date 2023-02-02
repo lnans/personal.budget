@@ -1,6 +1,6 @@
 namespace Application.Common.Interfaces;
 
-public interface IUserContext
+public interface IAuthContext
 {
     /// <summary>
     ///     Return the authenticated user id from the current http context

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Persistence;
 
-public class ApplicationDbContextInitializer
+public sealed class ApplicationDbContextInitializer
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly ILogger<ApplicationDbContextInitializer> _logger;

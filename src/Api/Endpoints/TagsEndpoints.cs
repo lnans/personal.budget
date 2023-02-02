@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Api.Endpoints;
 
-internal class TagsEndpoints : IEndPoints
+internal sealed class TagsEndpoints : IEndPoints
 {
     private const string Tag = "Tags";
 

@@ -10,17 +10,17 @@ namespace Application.Features.Operations.UpdateOperation;
 internal sealed class UpdateOperationRequestHandler : IRequestHandler<UpdateOperationRequest, Unit>
 {
     private readonly IApplicationDbContext _dbContext;
-    private readonly IUserContext _userContext;
+    private readonly IAuthContext _authContext;
 
-    public UpdateOperationRequestHandler(IApplicationDbContext dbContext, IUserContext userContext)
+    public UpdateOperationRequestHandler(IApplicationDbContext dbContext, IAuthContext authContext)
     {
         _dbContext = dbContext;
-        _userContext = userContext;
+        _authContext = authContext;
     }
 
     public async Task<Unit> Handle(UpdateOperationRequest request, CancellationToken cancellationToken)
     {
-        var userId = _userContext.GetAuthenticatedUserId();
+        var userId = _authContext.GetAuthenticatedUserId();
         var operation = await _dbContext
             .Operations
             .Include(o => o.Account)
@@ -54,6 +54,7 @@ internal sealed class UpdateOperationRequestHandler : IRequestHandler<UpdateOper
         operation.Description = request.Description!;
         operation.Amount = request.Amount;
         operation.CreationDate = request.CreationDate;
+        operation.ExecutionDate = request.ExecutionDate;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 
