@@ -1,0 +1,213 @@
+# -----------------------------------------------------------------------------------
+# This file was inspired by the .editorconfig file from the dotnet/dotnet repository
+# ref: https://github.com/dotnet/dotnet/blob/main/src/sdk/.editorconfig
+#
+# And also inspired by jaysontay/CleanArchitecture
+# ref: https://github.com/jasontaylordev/CleanArchitecture/blob/main/.editorconfig
+#
+# And discussed between our development team
+# -----------------------------------------------------------------------------------
+
+root = true
+
+[*]
+indent_style = space
+end_of_line = lf
+charset = utf-8
+tab_width = 4
+indent_size = 4
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.cs]
+max_line_length = 130
+
+# ------------------ #
+#     Code style     #
+# ------------------ #
+
+# Enforce 'using' directives placement, order and groups
+dotnet_separate_import_directive_groups = false
+dotnet_sort_system_directives_first = true
+csharp_using_directive_placement = outside_namespace:error
+
+# Enforce namespace should match folder structure
+dotnet_style_namespace_match_folder = true:error
+
+# avoid 'this.' unless absolutely necessary
+dotnet_style_qualification_for_field = false:error
+dotnet_style_qualification_for_property = false:error
+dotnet_style_qualification_for_method = false:error
+dotnet_style_qualification_for_event = false:error
+
+# Enforce 'var' usage
+csharp_style_var_for_built_in_types = true:error
+csharp_style_var_when_type_is_apparent = true:error
+csharp_style_var_elsewhere = true:error
+
+# Enforce using keyword types instead of BCL types (e.g. use 'string' instead of 'String')
+dotnet_style_predefined_type_for_locals_parameters_members = true:error
+dotnet_style_predefined_type_for_member_access = true:error
+
+# Enforce parentheses style in binary operators (e.g. use 'a * b * c' instead of 'a * (b * c)')
+dotnet_style_parentheses_in_arithmetic_binary_operators = always_for_clarity:error
+dotnet_style_parentheses_in_other_binary_operators = always_for_clarity:error
+dotnet_style_parentheses_in_other_operators = never_if_unnecessary:error
+dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity:error
+
+# Enforce modifiers style and order (e.g. use 'private int _var' instead of 'int _var')
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:error
+csharp_preferred_modifier_order = public,private,protected,internal,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,volatile,async:error
+
+# Enforce readonly modifier for fields which never change after initialization
+dotnet_style_readonly_field = true:error
+
+# Enforce remove unused parameters
+dotnet_code_quality_unused_parameters = all:error
+
+# Enforce static local functions when not accessing instance members
+csharp_prefer_static_local_function = true:error
+
+# Enforce placing operators at the beginning of the line when wrapping
+dotnet_style_operator_placement_when_wrapping = beginning_of_line
+
+# Enforce use of braces
+csharp_prefer_braces = true:error
+
+# Enforce using statement without scope block when not needed
+csharp_prefer_simple_using_statement = true:error
+
+# Expression-level preferences
+dotnet_style_coalesce_expression = true:error                                      # 'a ?? b' instead of 'a != null ? a : b'
+dotnet_style_collection_initializer = true:error                                   # 'new List<int> { 1 }' instead of 'new List<int>(); list.Add(1);'
+dotnet_style_explicit_tuple_names = true:error                                     # (string a, int b) obj = new() instead of (string, int) obj = new()
+dotnet_style_null_propagation = true:error                                         # 'a?.b' instead of 'a != null ? a.b : null'
+dotnet_style_object_initializer = true:error                                       # new() { a = 1 } instead of new(); obj.a = 1;
+dotnet_style_prefer_auto_properties = true:error                                   # 'public int A { get; set; }' instead of 'private int _a; public int A { get => _a; set => _a = value; }'
+dotnet_style_prefer_compound_assignment = true:error                               # 'a += b' instead of 'a = a + b'
+dotnet_style_prefer_conditional_expression_over_assignment = true:error            # 'a = b ? c : d' instead of 'if (b) a = c; else a = d;'
+dotnet_style_prefer_conditional_expression_over_return = true:error                # 'return b ? c : d' instead of 'if (b) return c; else return d;'
+dotnet_style_prefer_inferred_anonymous_type_member_names = true:error              # var obj = new { a, b }; instead of var obj = new { a = a, b = b };
+dotnet_style_prefer_inferred_tuple_names = true:error                              # var tuple = (age, name); instead of var tuple = (age: age, name: name);
+dotnet_style_prefer_is_null_check_over_reference_equality_method = true:error      # 'a is null' instead of 'object.ReferenceEquals(a, null)'
+dotnet_style_prefer_simplified_boolean_expressions = true:error                    # 'if (a && b)' instead of 'if (a == true && b == true)'
+dotnet_style_prefer_simplified_interpolation = true:error                          # 'Console.WriteLine($"Hello {name}")' instead of 'Console.WriteLine(string.Format("Hello {0}", name))'
+csharp_prefer_simple_default_expression = true:error                               # int number = default; instead of int number = default(int);
+csharp_style_deconstructed_variable_declaration = true:error                       # 'var (name, age) = GetPerson();' instead of 'var person = GetPersonTuple();'
+csharp_style_inlined_variable_declaration = true:error                             #  'if (int.TryParse(value, out int i)) {}' instead of 'int i; if (int.TryParse(value, out i)) {}'
+csharp_style_pattern_local_over_anonymous_function = true:error                    # 'int f(int i) => i;' instead of 'Func<int, int> f = i => i;'
+csharp_style_prefer_index_operator = true:error                                    # 'var a = list[0];' instead of 'var a = list.ElementAt(0);'
+csharp_style_prefer_range_operator = true:error                                    # 'var sub = sentence[0..^4];' instead of 'var sub = sentence.Substring(0, sentence.Length - 4);'
+csharp_style_unused_value_assignment_preference = discard_variable:error           # '_ = DoSomething();' instead of 'var a = DoSomething();'
+csharp_style_unused_value_expression_statement_preference = discard_variable:error # '_ = DoSomething();' instead of 'var a = DoSomething();'
+csharp_style_prefer_method_group_conversion = true:error                           # 'Action<string> print = Console.WriteLine' instead of 'Action<string> print = message => Console.WriteLine(message)'
+
+# Expression-bodied members
+csharp_style_expression_bodied_methods = true:error         # 'public int A() => 1;' instead of 'public int A() { return 1; }'
+csharp_style_expression_bodied_constructors = false:error   # 'public A() { Value = 1; }' instead of 'public A() => Value = 1;'
+csharp_style_expression_bodied_operators = true:error       # 'public static A operator +(A a, B b) => new A();' instead of 'public static A operator +(A a, B b) { return new A(); }'
+csharp_style_expression_bodied_properties = true:error      # 'public int A => 1;' instead of 'public int A { get { return 1; } }'
+csharp_style_expression_bodied_indexers = true:error        # 'public int this[int i] => 1;' instead of 'public int this[int i] { get { return 1; } }'
+csharp_style_expression_bodied_accessors = true:error       # 'public int A { get => 1; }' instead of 'public int A { get { return 1; } }'
+csharp_style_expression_bodied_lambdas = true:error         # 'Func<int> a = () => 1;' instead of 'Func<int> a = () => { return 1; };'
+csharp_style_expression_bodied_local_functions = true:error # 'void A() => 1;' instead of 'void A() { return 1; }'
+
+# Pattern matching preferences
+csharp_style_pattern_matching_over_as_with_null_check = true:error # 'if (obj is Person person) {}' instead of 'var person = obj as Person; if (person != null) {}'
+csharp_style_pattern_matching_over_is_with_cast_check = true:error # 'if (obj is Person person) {}' instead of 'if (obj is Person) { var person = (Person)obj; }'
+csharp_style_prefer_not_pattern = true:error                       # 'if (obj is not null) {}' instead of 'if (obj != null) {}'
+csharp_style_prefer_pattern_matching = true:error                  # 'if (obj is string text) {}' instead of 'if (obj is string) { var text = (string)obj; }'
+csharp_style_prefer_switch_expression = true:error                 # 'var result = obj switch { 1 => "one" };' instead of 'string result; switch (obj) { case 1: result = "one"; break; }'
+
+# Null-checking preferences
+csharp_style_conditional_delegate_call = true:error # 'a?.Invoke()' instead of 'if (a != null) a.Invoke();'
+csharp_style_throw_expression = true:error          # 'this.s = s ?? throw new ArgumentNullException(nameof(s));' instead of 'if (s == null) { throw new ArgumentNullException(nameof(s)); }'
+
+# Enforce file scoped namespace declarations
+csharp_style_namespace_declarations = file_scoped:error
+
+# Enforce not use of primary constructors
+csharp_style_prefer_primary_constructors = false
+dotnet_diagnostic.IDE0290.severity = none
+resharper_convert_to_primary_constructor_highlighting = none
+
+# Enforce swap variables using tuple assignment
+csharp_style_prefer_tuple_swap = true:error
+
+# ------------------ #
+#     Diagnostic     #
+# ------------------ #
+
+dotnet_diagnostic.CA1047.severity = error # Do not declare protected member in sealed type
+dotnet_diagnostic.CA1050.severity = error # Declare types in namespaces
+dotnet_diagnostic.CA1725.severity = error # Parameters names should match declaration (like Interfaces ect...)
+dotnet_diagnostic.CA1828.severity = error # Do not use CountAsync() when AnyAsync() can be used
+dotnet_diagnostic.CA1836.severity = error # Prefer IsEmpty over Count
+dotnet_diagnostic.CA2011.severity = error # Do not assign property within its setter
+dotnet_diagnostic.CA2016.severity = error # Forward CancellationToken to async methods
+dotnet_diagnostic.CA2207.severity = error # Initialize value type static fields inline
+
+# ------------------ #
+#     Formatting     #
+# ------------------ #
+
+# New line preferences
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+csharp_new_line_before_members_in_object_initializers = true
+csharp_new_line_before_members_in_anonymous_types = true
+csharp_new_line_between_query_expression_clauses = true
+
+# Indentation preferences
+csharp_indent_block_contents = true
+csharp_indent_braces = false
+csharp_indent_case_contents = true
+csharp_indent_case_contents_when_block = true
+csharp_indent_switch_labels = true
+csharp_indent_labels = one_less_than_current
+
+# Space preferences
+csharp_space_after_cast = false
+csharp_space_after_colon_in_inheritance_clause = true
+csharp_space_after_comma = true
+csharp_space_after_dot = false
+csharp_space_after_keywords_in_control_flow_statements = true
+csharp_space_after_semicolon_in_for_statement = true
+csharp_space_around_binary_operators = before_and_after
+csharp_space_around_declaration_statements = false
+csharp_space_before_colon_in_inheritance_clause = true
+csharp_space_before_comma = false
+csharp_space_before_dot = false
+csharp_space_before_open_square_brackets = false
+csharp_space_before_semicolon_in_for_statement = false
+csharp_space_between_empty_square_brackets = false
+csharp_space_between_method_call_empty_parameter_list_parentheses = false
+csharp_space_between_method_call_name_and_opening_parenthesis = false
+csharp_space_between_method_call_parameter_list_parentheses = false
+csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
+csharp_space_between_method_declaration_name_and_open_parenthesis = false
+csharp_space_between_method_declaration_parameter_list_parentheses = false
+csharp_space_between_parentheses = false
+csharp_space_between_square_brackets = false
+
+# Wrapping preferences
+csharp_preserve_single_line_blocks = false
+csharp_preserve_single_line_statements = true
+
+[*.{csproj,xml,yml,yaml,json}]
+indent_size = 2
+tab_width = 2
+insert_final_newline = false
+
+[*.{sh,bat,cmd,ps1}]
+indent_size = 2
+tab_width = 2
+
+[*.txt]
+indent_size = unset
+indent_style = unset
+insert_final_newline = false
+tab_width = unset
+trim_trailing_whitespace = false

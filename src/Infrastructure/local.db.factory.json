@@ -1,5 +1,0 @@
-{
-  "ConnectionStrings": {
-    "Database": "Host=localhost;Port=5432;Database=budget_db;Username=postgres;Password=postgrespw"
-  }
-}
