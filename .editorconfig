@@ -86,7 +86,7 @@ dotnet_style_object_initializer = true:error                                    
 dotnet_style_prefer_auto_properties = true:error                                   # 'public int A { get; set; }' instead of 'private int _a; public int A { get => _a; set => _a = value; }'
 dotnet_style_prefer_compound_assignment = true:error                               # 'a += b' instead of 'a = a + b'
 dotnet_style_prefer_conditional_expression_over_assignment = true:error            # 'a = b ? c : d' instead of 'if (b) a = c; else a = d;'
-dotnet_style_prefer_conditional_expression_over_return = true:error                # 'return b ? c : d' instead of 'if (b) return c; else return d;'
+dotnet_style_prefer_conditional_expression_over_return = false:error                # 'return b ? c : d' instead of 'if (b) return c; else return d;'
 dotnet_style_prefer_inferred_anonymous_type_member_names = true:error              # var obj = new { a, b }; instead of var obj = new { a = a, b = b };
 dotnet_style_prefer_inferred_tuple_names = true:error                              # var tuple = (age, name); instead of var tuple = (age: age, name: name);
 dotnet_style_prefer_is_null_check_over_reference_equality_method = true:error      # 'a is null' instead of 'object.ReferenceEquals(a, null)'
