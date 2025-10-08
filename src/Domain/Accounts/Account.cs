@@ -5,7 +5,8 @@ namespace Domain.Accounts;
 
 public sealed class Account : Entity
 {
-    private Account(string name, decimal balance)
+    private Account(string name, decimal balance, DateTimeOffset createdAt)
+        : base(createdAt)
     {
         Name = name;
         Balance = balance;
@@ -13,10 +14,10 @@ public sealed class Account : Entity
 
     public string Name { get; private set; }
     public decimal Balance { get; private set; }
-
     private readonly ICollection<AccountOperation> _operations = [];
+    public IReadOnlyList<AccountOperation> Operations => _operations.ToList().AsReadOnly();
 
-    public static ErrorOr<Account> Create(string name, decimal balance)
+    public static ErrorOr<Account> Create(string name, decimal balance, DateTimeOffset createdAt)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -28,24 +29,23 @@ public sealed class Account : Entity
             return AccountErrors.AccountNameTooLong;
         }
 
-        return new Account(name, balance);
+        return new Account(name, balance, createdAt);
     }
 
-    public ErrorOr<Success> AddOperation(string description, decimal amount) =>
+    public ErrorOr<Success> AddOperation(string description, decimal amount, DateTimeOffset createdAt) =>
         AccountOperation
-            .Create(Id, description, amount, Balance)
+            .Create(Id, description, amount, Balance, createdAt)
             .MatchFirst<ErrorOr<Success>>(
                 operation =>
                 {
                     _operations.Add(operation);
-                    UpdatedAt = DateTimeOffset.UtcNow;
                     Balance = operation.NextBalance;
                     return Result.Success;
                 },
                 error => error
             );
 
-    public ErrorOr<Success> Rename(string name)
+    public ErrorOr<Success> Rename(string name, DateTimeOffset updatedAt)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -58,7 +58,7 @@ public sealed class Account : Entity
         }
 
         Name = name;
-        UpdatedAt = DateTimeOffset.UtcNow;
+        UpdatedAt = updatedAt;
         return Result.Success;
     }
 }
