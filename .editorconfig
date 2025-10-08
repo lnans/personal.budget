@@ -98,8 +98,6 @@ csharp_style_inlined_variable_declaration = true:error                          
 csharp_style_pattern_local_over_anonymous_function = true:error                    # 'int f(int i) => i;' instead of 'Func<int, int> f = i => i;'
 csharp_style_prefer_index_operator = true:error                                    # 'var a = list[0];' instead of 'var a = list.ElementAt(0);'
 csharp_style_prefer_range_operator = true:error                                    # 'var sub = sentence[0..^4];' instead of 'var sub = sentence.Substring(0, sentence.Length - 4);'
-csharp_style_unused_value_assignment_preference = discard_variable:error           # '_ = DoSomething();' instead of 'var a = DoSomething();'
-csharp_style_unused_value_expression_statement_preference = discard_variable:error # '_ = DoSomething();' instead of 'var a = DoSomething();'
 csharp_style_prefer_method_group_conversion = true:error                           # 'Action<string> print = Console.WriteLine' instead of 'Action<string> print = message => Console.WriteLine(message)'
 
 # Expression-bodied members

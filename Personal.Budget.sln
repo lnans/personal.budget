@@ -17,6 +17,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.config\dotnet-tools.json = .config\dotnet-tools.json
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "src\Infrastructure\Infrastructure.csproj", "{2EFD58E5-E3B4-4F91-959D-E8D9F0D4F984}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "src\Application\Application.csproj", "{476E6484-2428-4823-96D0-131A5FA91B35}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,8 +31,18 @@ Global
 		{CFDBEC93-FC83-4DB5-B6C3-DAD2D37B1A0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFDBEC93-FC83-4DB5-B6C3-DAD2D37B1A0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CFDBEC93-FC83-4DB5-B6C3-DAD2D37B1A0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EFD58E5-E3B4-4F91-959D-E8D9F0D4F984}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EFD58E5-E3B4-4F91-959D-E8D9F0D4F984}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EFD58E5-E3B4-4F91-959D-E8D9F0D4F984}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EFD58E5-E3B4-4F91-959D-E8D9F0D4F984}.Release|Any CPU.Build.0 = Release|Any CPU
+		{476E6484-2428-4823-96D0-131A5FA91B35}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{476E6484-2428-4823-96D0-131A5FA91B35}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{476E6484-2428-4823-96D0-131A5FA91B35}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{476E6484-2428-4823-96D0-131A5FA91B35}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CFDBEC93-FC83-4DB5-B6C3-DAD2D37B1A0E} = {ADF8520C-2FF7-48D6-9B94-7065FB5AF3FB}
+		{2EFD58E5-E3B4-4F91-959D-E8D9F0D4F984} = {ADF8520C-2FF7-48D6-9B94-7065FB5AF3FB}
+		{476E6484-2428-4823-96D0-131A5FA91B35} = {ADF8520C-2FF7-48D6-9B94-7065FB5AF3FB}
 	EndGlobalSection
 EndGlobal
