@@ -10,7 +10,7 @@ public sealed class AccountOperation : Entity
     public decimal Amount { get; }
     public decimal PreviousBalance { get; }
     public decimal NextBalance { get; }
-    private Account Account { get; } = null!;
+    public Account Account { get; } = null!;
 
     private AccountOperation(
         Guid accountId,
@@ -46,7 +46,13 @@ public sealed class AccountOperation : Entity
             return AccountOperationErrors.AccountOperationDescriptionTooLong;
         }
 
-        return new AccountOperation(accountId, description, amount, previousBalance, createdAt);
+        return new AccountOperation(
+            accountId,
+            description,
+            amount,
+            previousBalance,
+            createdAt
+        );
     }
 
     public ErrorOr<Success> Rename(string description, DateTimeOffset updatedAt)

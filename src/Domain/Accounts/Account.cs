@@ -15,9 +15,14 @@ public sealed class Account : Entity
     public string Name { get; private set; }
     public decimal Balance { get; private set; }
     private readonly ICollection<AccountOperation> _operations = [];
-    public IReadOnlyList<AccountOperation> Operations => _operations.ToList().AsReadOnly();
+    public IReadOnlyList<AccountOperation> Operations =>
+        _operations.ToList().AsReadOnly();
 
-    public static ErrorOr<Account> Create(string name, decimal balance, DateTimeOffset createdAt)
+    public static ErrorOr<Account> Create(
+        string name,
+        decimal balance,
+        DateTimeOffset createdAt
+    )
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -32,7 +37,11 @@ public sealed class Account : Entity
         return new Account(name, balance, createdAt);
     }
 
-    public ErrorOr<Success> AddOperation(string description, decimal amount, DateTimeOffset createdAt) =>
+    public ErrorOr<Success> AddOperation(
+        string description,
+        decimal amount,
+        DateTimeOffset createdAt
+    ) =>
         AccountOperation
             .Create(Id, description, amount, Balance, createdAt)
             .MatchFirst<ErrorOr<Success>>(
