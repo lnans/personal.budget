@@ -27,8 +27,11 @@ public static class DependencyInjection
     private static void ConfigurePersistence(
         this IServiceCollection services,
         string connectionString
-    ) =>
+    )
+    {
         services.AddDbContext<IAppDbContext, AppDbContext>(config =>
             config.UseNpgsql(connectionString)
         );
+        services.AddScoped<AppDbContextInitializer>();
+    }
 }
