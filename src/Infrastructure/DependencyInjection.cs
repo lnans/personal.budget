@@ -15,7 +15,11 @@ public static class DependencyInjection
     )
     {
         var connectionString = configuration.GetConnectionString("Database");
-        Guard.Against.NullOrEmpty(connectionString, nameof(connectionString));
+        Guard.Against.NullOrEmpty(
+            connectionString,
+            nameof(connectionString),
+            "Connection string 'Database' is not found."
+        );
 
         services.ConfigurePersistence(connectionString);
     }
