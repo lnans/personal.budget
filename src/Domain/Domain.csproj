@@ -2,4 +2,7 @@
   <ItemGroup>
     <PackageReference Include="ErrorOr" />
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Domain.Tests" />
+  </ItemGroup>
 </Project>
