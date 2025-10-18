@@ -7,7 +7,7 @@ namespace Domain.Tests.AccountOperations;
 public class AccountOperationRenameTests
 {
     [Fact]
-    public void Rename_WithValidParameters_ShouldRenameAccountOperation()
+    public void AccountOperation_Rename_WithValidParameters_ShouldRenameAccountOperation()
     {
         // Arrange
         var operation = AccountOperationFixture.CreateValidAccountOperation();
@@ -24,7 +24,7 @@ public class AccountOperationRenameTests
     }
 
     [Fact]
-    public void Rename_WithEmptyDescription_ShouldReturnError()
+    public void AccountOperation_Rename_WithEmptyDescription_ShouldReturnError()
     {
         // Arrange
         var operation = AccountOperationFixture.CreateValidAccountOperation();
@@ -40,7 +40,7 @@ public class AccountOperationRenameTests
     }
 
     [Fact]
-    public void Rename_WithWhitespaceDescription_ShouldReturnError()
+    public void AccountOperation_Rename_WithWhitespaceDescription_ShouldReturnError()
     {
         // Arrange
         var operation = AccountOperationFixture.CreateValidAccountOperation();
@@ -56,7 +56,7 @@ public class AccountOperationRenameTests
     }
 
     [Fact]
-    public void Rename_WithTooLongDescription_ShouldReturnError()
+    public void AccountOperation_Rename_WithTooLongDescription_ShouldReturnError()
     {
         // Arrange
         var operation = AccountOperationFixture.CreateValidAccountOperation();
@@ -73,7 +73,7 @@ public class AccountOperationRenameTests
     }
 
     [Fact]
-    public void Rename_ShouldNotChangeAmountOrBalance()
+    public void AccountOperation_Rename_ShouldNotChangeAmountOrBalance()
     {
         // Arrange
         var operation = AccountOperationFixture.CreateValidAccountOperation("Original");

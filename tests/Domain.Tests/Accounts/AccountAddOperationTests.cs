@@ -7,7 +7,7 @@ namespace Domain.Tests.Accounts;
 public class AccountAddOperationTests
 {
     [Fact]
-    public void AddOperation_WithValidParameters_ShouldAddOperationAndUpdateBalance()
+    public void Account_AddOperation_WithValidParameters_ShouldAddOperationAndUpdateBalance()
     {
         // Arrange
         var account = AccountFixture.CreateValidAccount();
@@ -27,7 +27,7 @@ public class AccountAddOperationTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void AddOperation_WithNullOrWhitespaceDescription_ShouldReturnError(string? description)
+    public void Account_AddOperation_WithNullOrWhitespaceDescription_ShouldReturnError(string? description)
     {
         // Arrange
         var account = AccountFixture.CreateValidAccount();
@@ -43,7 +43,7 @@ public class AccountAddOperationTests
     }
 
     [Fact]
-    public void AddOperation_WithDescriptionTooLong_ShouldReturnError()
+    public void Account_AddOperation_WithDescriptionTooLong_ShouldReturnError()
     {
         // Arrange
         var account = AccountFixture.CreateValidAccount();

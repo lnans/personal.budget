@@ -7,7 +7,7 @@ namespace Domain.Tests.AccountOperations;
 public class AccountOperationCreateTests
 {
     [Fact]
-    public void Create_WithValidParameters_ShouldCreateAccountOperation()
+    public void AccountOperation_Create_WithValidParameters_ShouldCreateAccountOperation()
     {
         // Arrange
         var accountId = Guid.NewGuid();
@@ -37,7 +37,7 @@ public class AccountOperationCreateTests
     }
 
     [Fact]
-    public void Create_WithEmptyDescription_ShouldReturnError()
+    public void AccountOperation_Create_WithEmptyDescription_ShouldReturnError()
     {
         // Arrange
         var accountId = Guid.NewGuid();
@@ -60,7 +60,7 @@ public class AccountOperationCreateTests
     }
 
     [Fact]
-    public void Create_WithWhitespaceDescription_ShouldReturnError()
+    public void AccountOperation_Create_WithWhitespaceDescription_ShouldReturnError()
     {
         // Arrange
         var accountId = Guid.NewGuid();
@@ -83,7 +83,7 @@ public class AccountOperationCreateTests
     }
 
     [Fact]
-    public void Create_WithTooLongDescription_ShouldReturnError()
+    public void AccountOperation_Create_WithTooLongDescription_ShouldReturnError()
     {
         // Arrange
         var accountId = Guid.NewGuid();
@@ -106,7 +106,7 @@ public class AccountOperationCreateTests
     }
 
     [Fact]
-    public void Create_WithNegativeAmount_ShouldCreateOperationAndCalculateCorrectBalance()
+    public void AccountOperation_Create_WithNegativeAmount_ShouldCreateOperationAndCalculateCorrectBalance()
     {
         // Arrange
         var accountId = Guid.NewGuid();
@@ -132,7 +132,7 @@ public class AccountOperationCreateTests
     }
 
     [Fact]
-    public void Create_WithZeroAmount_ShouldCreateOperationWithSameBalance()
+    public void AccountOperation_Create_WithZeroAmount_ShouldCreateOperationWithSameBalance()
     {
         // Arrange
         var accountId = Guid.NewGuid();

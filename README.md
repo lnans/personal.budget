@@ -54,7 +54,7 @@ dotnet test
 Generate and view code coverage report:
 
 ```bash
-./coverage.sh
+./run-test.sh --coverage
 ```
 
 This script will:
