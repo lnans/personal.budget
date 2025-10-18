@@ -6,7 +6,7 @@ namespace Application;
 
 public static class DependencyInjection
 {
-    public static void AddApplicationServices(this IServiceCollection services, IConfigurationManager configuration) =>
+    public static void AddApplicationServices(this IServiceCollection services, IConfiguration configuration) =>
         services.AddMediatR(config =>
         {
             config.LicenseKey = configuration["MediatrLicenceKey"];
