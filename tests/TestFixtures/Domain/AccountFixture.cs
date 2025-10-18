@@ -1,10 +1,10 @@
 using Domain.Accounts;
 
-namespace Domain.Tests.Accounts;
+namespace TestFixtures.Domain;
 
-public abstract class AccountTestsBase : TestBase
+public static class AccountFixture
 {
-    protected static Account CreateValidAccount(
+    public static Account CreateValidAccount(
         string name = "Test Account",
         decimal initialBalance = 0m,
         DateTimeOffset? createdAt = null
@@ -13,6 +13,6 @@ public abstract class AccountTestsBase : TestBase
             .Create(name, initialBalance, createdAt ?? DateTimeOffset.UtcNow)
             .Value;
 
-    protected static string GenerateLongAccountName() =>
-        GenerateLongString(AccountConstants.MaxNameLength + 1);
+    public static string GenerateLongAccountName() =>
+        FixtureBase.GenerateLongString(AccountConstants.MaxNameLength + 1);
 }

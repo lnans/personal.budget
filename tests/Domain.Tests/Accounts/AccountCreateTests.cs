@@ -1,8 +1,10 @@
 using Domain.Accounts;
+using TestFixtures;
+using TestFixtures.Domain;
 
 namespace Domain.Tests.Accounts;
 
-public class AccountCreateTests : AccountTestsBase
+public class AccountCreateTests
 {
     [Fact]
     public void Create_WithValidParameters_ShouldCreateAccount()
@@ -10,7 +12,7 @@ public class AccountCreateTests : AccountTestsBase
         // Arrange
         const string accountName = "Test Account";
         const decimal initialBalance = 100m;
-        var createdAt = GetTestDate();
+        var createdAt = FixtureBase.GetTestDate();
 
         // Act
         var account = Account.Create(accountName, initialBalance, createdAt);
@@ -30,27 +32,27 @@ public class AccountCreateTests : AccountTestsBase
         // Arrange
         const string accountName = "";
         const decimal initialBalance = 100m;
-        var createdAt = GetTestDate();
+        var createdAt = FixtureBase.GetTestDate();
 
         // Act
         var account = Account.Create(accountName, initialBalance, createdAt);
 
         // Assert
-        AssertError(account, AccountErrors.AccountNameRequired);
+        FixtureBase.AssertError(account, AccountErrors.AccountNameRequired);
     }
 
     [Fact]
     public void Create_WithTooLongName_ShouldReturnError()
     {
         // Arrange
-        var accountName = GenerateLongAccountName();
+        var accountName = AccountFixture.GenerateLongAccountName();
         const decimal initialBalance = 100m;
-        var createdAt = GetTestDate();
+        var createdAt = FixtureBase.GetTestDate();
 
         // Act
         var account = Account.Create(accountName, initialBalance, createdAt);
 
         // Assert
-        AssertError(account, AccountErrors.AccountNameTooLong);
+        FixtureBase.AssertError(account, AccountErrors.AccountNameTooLong);
     }
 }
