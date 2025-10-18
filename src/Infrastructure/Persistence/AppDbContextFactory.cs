@@ -12,9 +12,6 @@ internal class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 
         optionsBuilder.UseNpgsql();
 
-        return new AppDbContext(
-            optionsBuilder.Options,
-            LoggerFactory.Create(_ => { })
-        );
+        return new AppDbContext(optionsBuilder.Options, LoggerFactory.Create(_ => { }));
     }
 }

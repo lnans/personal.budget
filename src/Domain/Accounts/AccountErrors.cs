@@ -5,10 +5,7 @@ namespace Domain.Accounts;
 public static class AccountErrors
 {
     public static Error AccountNameRequired =>
-        Error.Validation(
-            code: "Account.Name.Required",
-            description: "Account name is required."
-        );
+        Error.Validation(code: "Account.Name.Required", description: "Account name is required.");
 
     public static Error AccountNameTooLong =>
         Error.Validation(

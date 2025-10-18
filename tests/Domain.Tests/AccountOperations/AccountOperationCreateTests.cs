@@ -56,10 +56,7 @@ public class AccountOperationCreateTests
         );
 
         // Assert
-        FixtureBase.AssertError(
-            result,
-            AccountOperationErrors.AccountOperationDescriptionRequired
-        );
+        FixtureBase.AssertError(result, AccountOperationErrors.AccountOperationDescriptionRequired);
     }
 
     [Fact]
@@ -82,10 +79,7 @@ public class AccountOperationCreateTests
         );
 
         // Assert
-        FixtureBase.AssertError(
-            result,
-            AccountOperationErrors.AccountOperationDescriptionRequired
-        );
+        FixtureBase.AssertError(result, AccountOperationErrors.AccountOperationDescriptionRequired);
     }
 
     [Fact]
@@ -93,8 +87,7 @@ public class AccountOperationCreateTests
     {
         // Arrange
         var accountId = Guid.NewGuid();
-        var operationDescription =
-            AccountOperationFixture.GenerateLongOperationDescription();
+        var operationDescription = AccountOperationFixture.GenerateLongOperationDescription();
         const decimal operationAmount = 100m;
         const decimal previousBalance = 0m;
         var createdAt = FixtureBase.GetTestDate();
@@ -109,10 +102,7 @@ public class AccountOperationCreateTests
         );
 
         // Assert
-        FixtureBase.AssertError(
-            result,
-            AccountOperationErrors.AccountOperationDescriptionTooLong
-        );
+        FixtureBase.AssertError(result, AccountOperationErrors.AccountOperationDescriptionTooLong);
     }
 
     [Fact]

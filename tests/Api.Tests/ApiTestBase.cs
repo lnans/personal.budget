@@ -5,13 +5,11 @@ namespace Api.Tests;
 
 public class ApiTestBase(ApiTestFixture fixture) : IAsyncLifetime
 {
-    protected CancellationToken CancellationToken =>
-        TestContext.Current.CancellationToken;
+    protected CancellationToken CancellationToken => TestContext.Current.CancellationToken;
 
     protected HttpClient ApiClient => fixture.ApiClient;
 
-    protected IAppDbContext DbContext { get; set; } =
-        fixture.ScopedServiceProvider.GetRequiredService<IAppDbContext>();
+    protected IAppDbContext DbContext { get; set; } = fixture.ScopedServiceProvider.GetRequiredService<IAppDbContext>();
 
     public async ValueTask DisposeAsync() => await fixture.ResetDatabaseAsync();
 

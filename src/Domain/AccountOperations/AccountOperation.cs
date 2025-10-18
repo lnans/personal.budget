@@ -46,13 +46,7 @@ public sealed class AccountOperation : Entity
             return AccountOperationErrors.AccountOperationDescriptionTooLong;
         }
 
-        return new AccountOperation(
-            accountId,
-            description,
-            amount,
-            previousBalance,
-            createdAt
-        );
+        return new AccountOperation(accountId, description, amount, previousBalance, createdAt);
     }
 
     public ErrorOr<Success> Rename(string description, DateTimeOffset updatedAt)

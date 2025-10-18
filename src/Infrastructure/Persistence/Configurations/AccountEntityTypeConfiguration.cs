@@ -12,11 +12,7 @@ public class AccountEntityTypeConfiguration : IEntityTypeConfiguration<Account>
 
         builder.HasKey(x => x.Id).HasName("PK_Accounts_Id");
 
-        builder
-            .Property(account => account.Id)
-            .HasColumnName("Id")
-            .ValueGeneratedNever()
-            .IsRequired();
+        builder.Property(account => account.Id).HasColumnName("Id").ValueGeneratedNever().IsRequired();
 
         builder
             .Property(account => account.Name)
@@ -24,19 +20,10 @@ public class AccountEntityTypeConfiguration : IEntityTypeConfiguration<Account>
             .HasMaxLength(AccountConstants.MaxNameLength)
             .IsRequired();
 
-        builder
-            .Property(account => account.Balance)
-            .HasColumnName("Balance")
-            .IsRequired();
+        builder.Property(account => account.Balance).HasColumnName("Balance").IsRequired();
 
-        builder
-            .Property(account => account.CreatedAt)
-            .HasColumnName("CreatedAt")
-            .IsRequired();
+        builder.Property(account => account.CreatedAt).HasColumnName("CreatedAt").IsRequired();
 
-        builder
-            .Property(account => account.UpdatedAt)
-            .HasColumnName("UpdatedAt")
-            .IsRequired();
+        builder.Property(account => account.UpdatedAt).HasColumnName("UpdatedAt").IsRequired();
     }
 }

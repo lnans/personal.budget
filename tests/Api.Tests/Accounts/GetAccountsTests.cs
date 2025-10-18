@@ -16,13 +16,8 @@ public class GetAccountsTests : ApiTestBase
     public async Task GetAccounts_ReturnsEmptyList_WhenNoAccountsExist()
     {
         // Act
-        var response = await ApiClient.GetAsync(
-            Endpoint,
-            CancellationToken.None
-        );
-        var result = await response.Content.ReadFromJsonAsync<
-            List<GetAccountsResponse>
-        >(CancellationToken);
+        var response = await ApiClient.GetAsync(Endpoint, CancellationToken.None);
+        var result = await response.Content.ReadFromJsonAsync<List<GetAccountsResponse>>(CancellationToken);
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -41,27 +36,21 @@ public class GetAccountsTests : ApiTestBase
 
         // Act
         var response = await ApiClient.GetAsync(Endpoint, CancellationToken);
-        var result = await response.Content.ReadFromJsonAsync<
-            List<GetAccountsResponse>
-        >(CancellationToken);
+        var result = await response.Content.ReadFromJsonAsync<List<GetAccountsResponse>>(CancellationToken);
 
         // Assert
         response.EnsureSuccessStatusCode();
         result.ShouldNotBeNull();
         result.Count.ShouldBe(2);
 
-        var resultAccount1 = result.FirstOrDefault(account =>
-            account.Id == account1.Id
-        );
+        var resultAccount1 = result.FirstOrDefault(account => account.Id == account1.Id);
         resultAccount1.ShouldNotBeNull();
         resultAccount1.Name.ShouldBe(account1.Name);
         resultAccount1.Balance.ShouldBe(account1.Balance);
         resultAccount1.CreatedAt.ShouldBe(account1.CreatedAt);
         resultAccount1.UpdatedAt.ShouldBe(account1.UpdatedAt);
 
-        var resultAccount2 = result.FirstOrDefault(account =>
-            account.Id == account2.Id
-        );
+        var resultAccount2 = result.FirstOrDefault(account => account.Id == account2.Id);
         resultAccount2.ShouldNotBeNull();
         resultAccount2.Name.ShouldBe(account2.Name);
         resultAccount2.Balance.ShouldBe(account2.Balance);

@@ -12,14 +12,11 @@ public static class EndpointsExtensions
         var endPointsInterface = typeof(IEndPoints);
         var endPointsClasses = typeof(Program)
             .Assembly.GetTypes()
-            .Where(type =>
-                type.IsClass && endPointsInterface.IsAssignableFrom(type)
-            );
+            .Where(type => type.IsClass && endPointsInterface.IsAssignableFrom(type));
 
         foreach (var endPointsClass in endPointsClasses)
         {
-            var instance = (IEndPoints)
-                Activator.CreateInstance(endPointsClass)!;
+            var instance = (IEndPoints)Activator.CreateInstance(endPointsClass)!;
             instance.MapEndpoints(app);
         }
     }

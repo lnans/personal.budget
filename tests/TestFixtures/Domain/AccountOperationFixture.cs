@@ -11,17 +11,9 @@ public static class AccountOperationFixture
         DateTimeOffset? createdAt = null
     ) =>
         AccountOperation
-            .Create(
-                Guid.NewGuid(),
-                description,
-                amount,
-                previousBalance,
-                createdAt ?? FixtureBase.GetTestDate()
-            )
+            .Create(Guid.NewGuid(), description, amount, previousBalance, createdAt ?? FixtureBase.GetTestDate())
             .Value;
 
     public static string GenerateLongOperationDescription() =>
-        FixtureBase.GenerateLongString(
-            AccountOperationConstants.MaxDescriptionLength + 1
-        );
+        FixtureBase.GenerateLongString(AccountOperationConstants.MaxDescriptionLength + 1);
 }
