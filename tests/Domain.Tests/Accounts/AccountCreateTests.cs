@@ -7,7 +7,7 @@ namespace Domain.Tests.Accounts;
 public class AccountCreateTests
 {
     [Fact]
-    public void Create_WithValidParameters_ShouldCreateAccount()
+    public void Account_Create_WithValidParameters_ShouldCreateAccount()
     {
         // Arrange
         const string accountName = "Test Account";
@@ -27,7 +27,7 @@ public class AccountCreateTests
     }
 
     [Fact]
-    public void Create_WithEmptyName_ShouldReturnError()
+    public void Account_Create_WithEmptyName_ShouldReturnError()
     {
         // Arrange
         const string accountName = "";
@@ -42,7 +42,7 @@ public class AccountCreateTests
     }
 
     [Fact]
-    public void Create_WithTooLongName_ShouldReturnError()
+    public void Account_Create_WithTooLongName_ShouldReturnError()
     {
         // Arrange
         var accountName = AccountFixture.GenerateLongAccountName();

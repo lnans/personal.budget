@@ -7,7 +7,7 @@ namespace Domain.Tests.Accounts;
 public class AccountRenameTests
 {
     [Fact]
-    public void Rename_WithValidParameters_ShouldRenameAccount()
+    public void Account_Rename_WithValidParameters_ShouldRenameAccount()
     {
         // Arrange
         var account = AccountFixture.CreateValidAccount();
@@ -24,7 +24,7 @@ public class AccountRenameTests
     }
 
     [Fact]
-    public void Rename_WithEmptyName_ShouldReturnError()
+    public void Account_Rename_WithEmptyName_ShouldReturnError()
     {
         // Arrange
         var account = AccountFixture.CreateValidAccount();
@@ -38,7 +38,7 @@ public class AccountRenameTests
     }
 
     [Fact]
-    public void Rename_WithTooLongName_ShouldReturnError()
+    public void Account_Rename_WithTooLongName_ShouldReturnError()
     {
         // Arrange
         var account = AccountFixture.CreateValidAccount();
