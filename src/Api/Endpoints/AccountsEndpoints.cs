@@ -21,15 +21,9 @@ public class AccountsEndpoints : IEndPoints
             .WithTags(Tag);
     }
 
-    private static async Task<IResult> GetAccounts(
-        IMediator mediator,
-        CancellationToken cancellationToken
-    )
+    private static async Task<IResult> GetAccounts(IMediator mediator, CancellationToken cancellationToken)
     {
-        var response = await mediator.Send(
-            new GetAccountsQuery(),
-            cancellationToken
-        );
+        var response = await mediator.Send(new GetAccountsQuery(), cancellationToken);
 
         return Results.Ok(response);
     }

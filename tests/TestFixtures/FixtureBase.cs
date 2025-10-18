@@ -20,9 +20,7 @@ public static class FixtureBase
         result.FirstError.Description.ShouldBe(expectedError.Description);
     }
 
-    public static void AssertSuccess(ErrorOr<Success> result) =>
-        result.IsError.ShouldBeFalse();
+    public static void AssertSuccess(ErrorOr<Success> result) => result.IsError.ShouldBeFalse();
 
-    public static DateTimeOffset GetTestDate(int daysOffset = 0) =>
-        DateTimeOffset.UtcNow.AddDays(daysOffset);
+    public static DateTimeOffset GetTestDate(int daysOffset = 0) => DateTimeOffset.UtcNow.AddDays(daysOffset);
 }

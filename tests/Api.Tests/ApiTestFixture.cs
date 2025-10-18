@@ -34,30 +34,21 @@ public class ApiTestFixture
             .WithUsername(DbUser)
             .WithPassword(DbPassword)
             .WithPortBinding(DbPort, true)
-            .WithWaitStrategy(
-                Wait.ForUnixContainer().UntilExternalTcpPortIsAvailable(DbPort)
-            )
+            .WithWaitStrategy(Wait.ForUnixContainer().UntilExternalTcpPortIsAvailable(DbPort))
             .Build();
 
         _dbTestContainer.StartAsync().Wait();
         var dbConnectionString = _dbTestContainer.GetConnectionString();
 
-        _webApplicationFactory =
-            new WebApplicationFactory<IApiAssemblyMarker>().WithWebHostBuilder(
-                builder =>
-                    builder.ConfigureServices(services =>
-                    {
-                        services.RemoveAll(
-                            typeof(DbContextOptions<AppDbContext>)
-                        );
-                        services.AddDbContext<IAppDbContext, AppDbContext>(
-                            options => options.UseNpgsql(dbConnectionString)
-                        );
-                    })
-            );
+        _webApplicationFactory = new WebApplicationFactory<IApiAssemblyMarker>().WithWebHostBuilder(builder =>
+            builder.ConfigureServices(services =>
+            {
+                services.RemoveAll(typeof(DbContextOptions<AppDbContext>));
+                services.AddDbContext<IAppDbContext, AppDbContext>(options => options.UseNpgsql(dbConnectionString));
+            })
+        );
 
-        using var dbContext =
-            ScopedServiceProvider.GetRequiredService<AppDbContext>();
+        using var dbContext = ScopedServiceProvider.GetRequiredService<AppDbContext>();
         dbContext.Database.Migrate();
 
         ApiClient = _webApplicationFactory.CreateClient();
@@ -80,11 +71,9 @@ public class ApiTestFixture
 
     public HttpClient ApiClient { get; }
 
-    public IServiceProvider ScopedServiceProvider =>
-        _webApplicationFactory.Services.CreateScope().ServiceProvider;
+    public IServiceProvider ScopedServiceProvider => _webApplicationFactory.Services.CreateScope().ServiceProvider;
 
-    public async Task ResetDatabaseAsync() =>
-        await _respawner.ResetAsync(_dbConnection);
+    public async Task ResetDatabaseAsync() => await _respawner.ResetAsync(_dbConnection);
 
     public async Task DisposeAsync()
     {

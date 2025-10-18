@@ -4,8 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Accounts.Queries.GetAccounts;
 
-public sealed class GetAccountsHandler
-    : IRequestHandler<GetAccountsQuery, List<GetAccountsResponse>>
+public sealed class GetAccountsHandler : IRequestHandler<GetAccountsQuery, List<GetAccountsResponse>>
 {
     private readonly IAppDbContext _dbContext;
 

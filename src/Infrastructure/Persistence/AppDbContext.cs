@@ -15,31 +15,21 @@ internal class AppDbContext : DbContext, IAppDbContext
     public DbSet<Account> Accounts => Set<Account>();
     public DbSet<AccountOperation> AccountOperations => Set<AccountOperation>();
 
-    public AppDbContext(
-        DbContextOptions<AppDbContext> options,
-        ILoggerFactory loggerFactory
-    )
+    public AppDbContext(DbContextOptions<AppDbContext> options, ILoggerFactory loggerFactory)
         : base(options)
     {
         _loggerFactory = loggerFactory;
     }
 
-    protected override void OnConfiguring(
-        DbContextOptionsBuilder optionsBuilder
-    )
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseLoggerFactory(_loggerFactory);
-        optionsBuilder.LogTo(
-            _ => { },
-            [CoreEventId.QueryExecutionPlanned, CoreEventId.ContextInitialized]
-        );
+        optionsBuilder.LogTo(_ => { }, [CoreEventId.QueryExecutionPlanned, CoreEventId.ContextInitialized]);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(
-            Assembly.GetExecutingAssembly()
-        );
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         base.OnModelCreating(modelBuilder);
     }
 }

@@ -9,10 +9,7 @@ namespace Infrastructure;
 
 public static class DependencyInjection
 {
-    public static void AddInfrastructureServices(
-        this IServiceCollection services,
-        IConfiguration configuration
-    )
+    public static void AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("Database");
         Guard.Against.NullOrEmpty(
@@ -24,14 +21,9 @@ public static class DependencyInjection
         services.ConfigurePersistence(connectionString);
     }
 
-    private static void ConfigurePersistence(
-        this IServiceCollection services,
-        string connectionString
-    )
+    private static void ConfigurePersistence(this IServiceCollection services, string connectionString)
     {
-        services.AddDbContext<IAppDbContext, AppDbContext>(config =>
-            config.UseNpgsql(connectionString)
-        );
+        services.AddDbContext<IAppDbContext, AppDbContext>(config => config.UseNpgsql(connectionString));
         services.AddScoped<AppDbContextInitializer>();
     }
 }

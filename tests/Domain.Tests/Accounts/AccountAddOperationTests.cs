@@ -15,11 +15,7 @@ public class AccountAddOperationTests
         const decimal operationAmount = 10m;
 
         // Act
-        var result = account.AddOperation(
-            "Test Operation",
-            operationAmount,
-            updatedAt
-        );
+        var result = account.AddOperation("Test Operation", operationAmount, updatedAt);
 
         // Assert
         FixtureBase.AssertSuccess(result);
@@ -31,9 +27,7 @@ public class AccountAddOperationTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void AddOperation_WithNullOrWhitespaceDescription_ShouldReturnError(
-        string? description
-    )
+    public void AddOperation_WithNullOrWhitespaceDescription_ShouldReturnError(string? description)
     {
         // Arrange
         var account = AccountFixture.CreateValidAccount();
@@ -43,10 +37,7 @@ public class AccountAddOperationTests
         var result = account.AddOperation(description!, 10m, updatedAt);
 
         // Assert
-        FixtureBase.AssertError(
-            result,
-            AccountOperationErrors.AccountOperationDescriptionRequired
-        );
+        FixtureBase.AssertError(result, AccountOperationErrors.AccountOperationDescriptionRequired);
         account.Balance.ShouldBe(0m);
         account.Operations.Count.ShouldBe(0);
     }
@@ -57,17 +48,13 @@ public class AccountAddOperationTests
         // Arrange
         var account = AccountFixture.CreateValidAccount();
         var updatedAt = FixtureBase.GetTestDate(1);
-        var longDescription =
-            AccountOperationFixture.GenerateLongOperationDescription();
+        var longDescription = AccountOperationFixture.GenerateLongOperationDescription();
 
         // Act
         var result = account.AddOperation(longDescription, 10m, updatedAt);
 
         // Assert
-        FixtureBase.AssertError(
-            result,
-            AccountOperationErrors.AccountOperationDescriptionTooLong
-        );
+        FixtureBase.AssertError(result, AccountOperationErrors.AccountOperationDescriptionTooLong);
         account.Balance.ShouldBe(0m);
         account.Operations.Count.ShouldBe(0);
     }

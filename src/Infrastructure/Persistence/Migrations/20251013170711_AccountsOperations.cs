@@ -16,23 +16,10 @@ namespace Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(
-                        type: "character varying(20)",
-                        maxLength: 20,
-                        nullable: false
-                    ),
-                    Balance = table.Column<decimal>(
-                        type: "numeric",
-                        nullable: false
-                    ),
-                    CreatedAt = table.Column<DateTimeOffset>(
-                        type: "timestamp with time zone",
-                        nullable: false
-                    ),
-                    UpdatedAt = table.Column<DateTimeOffset>(
-                        type: "timestamp with time zone",
-                        nullable: false
-                    ),
+                    Name = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    Balance = table.Column<decimal>(type: "numeric", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -45,35 +32,13 @@ namespace Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    AccountId = table.Column<Guid>(
-                        type: "uuid",
-                        nullable: false
-                    ),
-                    Description = table.Column<string>(
-                        type: "character varying(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
-                    Amount = table.Column<decimal>(
-                        type: "numeric",
-                        nullable: false
-                    ),
-                    PreviousBalance = table.Column<decimal>(
-                        type: "numeric",
-                        nullable: false
-                    ),
-                    NextBalance = table.Column<decimal>(
-                        type: "numeric",
-                        nullable: false
-                    ),
-                    CreatedAt = table.Column<DateTimeOffset>(
-                        type: "timestamp with time zone",
-                        nullable: false
-                    ),
-                    UpdatedAt = table.Column<DateTimeOffset>(
-                        type: "timestamp with time zone",
-                        nullable: false
-                    ),
+                    AccountId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Description = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    PreviousBalance = table.Column<decimal>(type: "numeric", nullable: false),
+                    NextBalance = table.Column<decimal>(type: "numeric", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                 },
                 constraints: table =>
                 {

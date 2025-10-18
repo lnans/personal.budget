@@ -35,10 +35,7 @@ public class AccountOperationRenameTests
         var result = operation.Rename("", updatedAt);
 
         // Assert
-        FixtureBase.AssertError(
-            result,
-            AccountOperationErrors.AccountOperationDescriptionRequired
-        );
+        FixtureBase.AssertError(result, AccountOperationErrors.AccountOperationDescriptionRequired);
         operation.Description.ShouldBe(originalDescription);
     }
 
@@ -54,10 +51,7 @@ public class AccountOperationRenameTests
         var result = operation.Rename("   ", updatedAt);
 
         // Assert
-        FixtureBase.AssertError(
-            result,
-            AccountOperationErrors.AccountOperationDescriptionRequired
-        );
+        FixtureBase.AssertError(result, AccountOperationErrors.AccountOperationDescriptionRequired);
         operation.Description.ShouldBe(originalDescription);
     }
 
@@ -68,17 +62,13 @@ public class AccountOperationRenameTests
         var operation = AccountOperationFixture.CreateValidAccountOperation();
         var updatedAt = FixtureBase.GetTestDate(1);
         var originalDescription = operation.Description;
-        var newDescription =
-            AccountOperationFixture.GenerateLongOperationDescription();
+        var newDescription = AccountOperationFixture.GenerateLongOperationDescription();
 
         // Act
         var result = operation.Rename(newDescription, updatedAt);
 
         // Assert
-        FixtureBase.AssertError(
-            result,
-            AccountOperationErrors.AccountOperationDescriptionTooLong
-        );
+        FixtureBase.AssertError(result, AccountOperationErrors.AccountOperationDescriptionTooLong);
         operation.Description.ShouldBe(originalDescription);
     }
 
@@ -86,9 +76,7 @@ public class AccountOperationRenameTests
     public void Rename_ShouldNotChangeAmountOrBalance()
     {
         // Arrange
-        var operation = AccountOperationFixture.CreateValidAccountOperation(
-            "Original"
-        );
+        var operation = AccountOperationFixture.CreateValidAccountOperation("Original");
         var originalAmount = operation.Amount;
         var originalPreviousBalance = operation.PreviousBalance;
         var originalNextBalance = operation.NextBalance;

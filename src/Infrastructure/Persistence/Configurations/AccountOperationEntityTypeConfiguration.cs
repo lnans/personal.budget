@@ -4,16 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Persistence.Configurations;
 
-public class AccountOperationEntityTypeConfiguration
-    : IEntityTypeConfiguration<AccountOperation>
+public class AccountOperationEntityTypeConfiguration : IEntityTypeConfiguration<AccountOperation>
 {
     public void Configure(EntityTypeBuilder<AccountOperation> builder)
     {
         builder.ToTable("AccountOperations");
 
-        builder
-            .HasKey(accountOperation => accountOperation.Id)
-            .HasName("PK_AccountOperations_Id");
+        builder.HasKey(accountOperation => accountOperation.Id).HasName("PK_AccountOperations_Id");
 
         builder
             .Property(accountOperation => accountOperation.Id)
@@ -35,29 +32,17 @@ public class AccountOperationEntityTypeConfiguration
             .HasMaxLength(AccountOperationConstants.MaxDescriptionLength)
             .IsRequired();
 
-        builder
-            .Property(accountOperation => accountOperation.Amount)
-            .HasColumnName("Amount")
-            .IsRequired();
+        builder.Property(accountOperation => accountOperation.Amount).HasColumnName("Amount").IsRequired();
 
         builder
             .Property(accountOperation => accountOperation.PreviousBalance)
             .HasColumnName("PreviousBalance")
             .IsRequired();
 
-        builder
-            .Property(accountOperation => accountOperation.NextBalance)
-            .HasColumnName("NextBalance")
-            .IsRequired();
+        builder.Property(accountOperation => accountOperation.NextBalance).HasColumnName("NextBalance").IsRequired();
 
-        builder
-            .Property(accountOperation => accountOperation.CreatedAt)
-            .HasColumnName("CreatedAt")
-            .IsRequired();
+        builder.Property(accountOperation => accountOperation.CreatedAt).HasColumnName("CreatedAt").IsRequired();
 
-        builder
-            .Property(accountOperation => accountOperation.UpdatedAt)
-            .HasColumnName("UpdatedAt")
-            .IsRequired();
+        builder.Property(accountOperation => accountOperation.UpdatedAt).HasColumnName("UpdatedAt").IsRequired();
     }
 }
