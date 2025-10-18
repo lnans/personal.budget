@@ -1,10 +1,10 @@
 using Domain.AccountOperations;
 
-namespace Domain.Tests.AccountOperations;
+namespace TestFixtures.Domain;
 
-public abstract class AccountOperationTestsBase : TestBase
+public static class AccountOperationFixture
 {
-    protected static AccountOperation CreateValidAccountOperation(
+    public static AccountOperation CreateValidAccountOperation(
         string description = "Test Operation",
         decimal amount = 100m,
         decimal previousBalance = 0m,
@@ -16,10 +16,12 @@ public abstract class AccountOperationTestsBase : TestBase
                 description,
                 amount,
                 previousBalance,
-                createdAt ?? GetTestDate()
+                createdAt ?? FixtureBase.GetTestDate()
             )
             .Value;
 
-    protected static string GenerateLongOperationDescription() =>
-        GenerateLongString(AccountOperationConstants.MaxDescriptionLength + 1);
+    public static string GenerateLongOperationDescription() =>
+        FixtureBase.GenerateLongString(
+            AccountOperationConstants.MaxDescriptionLength + 1
+        );
 }

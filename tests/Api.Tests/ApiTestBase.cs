@@ -5,6 +5,9 @@ namespace Api.Tests;
 
 public class ApiTestBase(ApiTestFixture fixture) : IAsyncLifetime
 {
+    protected CancellationToken CancellationToken =>
+        TestContext.Current.CancellationToken;
+
     protected HttpClient ApiClient => fixture.ApiClient;
 
     protected IAppDbContext DbContext { get; set; } =

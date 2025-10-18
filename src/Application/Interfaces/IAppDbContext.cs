@@ -8,4 +8,5 @@ public interface IAppDbContext
 {
     DbSet<Account> Accounts { get; }
     DbSet<AccountOperation> AccountOperations { get; }
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

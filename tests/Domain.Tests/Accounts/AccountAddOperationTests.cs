@@ -1,15 +1,17 @@
 using Domain.AccountOperations;
+using TestFixtures;
+using TestFixtures.Domain;
 
 namespace Domain.Tests.Accounts;
 
-public class AccountAddOperationTests : AccountTestsBase
+public class AccountAddOperationTests
 {
     [Fact]
     public void AddOperation_WithValidParameters_ShouldAddOperationAndUpdateBalance()
     {
         // Arrange
-        var account = CreateValidAccount();
-        var updatedAt = GetTestDate(1);
+        var account = AccountFixture.CreateValidAccount();
+        var updatedAt = FixtureBase.GetTestDate(1);
         const decimal operationAmount = 10m;
 
         // Act
@@ -20,7 +22,7 @@ public class AccountAddOperationTests : AccountTestsBase
         );
 
         // Assert
-        AssertSuccess(result);
+        FixtureBase.AssertSuccess(result);
         account.Balance.ShouldBe(operationAmount);
         account.Operations.Count.ShouldBe(1);
     }
@@ -34,14 +36,14 @@ public class AccountAddOperationTests : AccountTestsBase
     )
     {
         // Arrange
-        var account = CreateValidAccount();
-        var updatedAt = GetTestDate(1);
+        var account = AccountFixture.CreateValidAccount();
+        var updatedAt = FixtureBase.GetTestDate(1);
 
         // Act
         var result = account.AddOperation(description!, 10m, updatedAt);
 
         // Assert
-        AssertError(
+        FixtureBase.AssertError(
             result,
             AccountOperationErrors.AccountOperationDescriptionRequired
         );
@@ -53,17 +55,16 @@ public class AccountAddOperationTests : AccountTestsBase
     public void AddOperation_WithDescriptionTooLong_ShouldReturnError()
     {
         // Arrange
-        var account = CreateValidAccount();
-        var updatedAt = GetTestDate(1);
-        var longDescription = GenerateLongString(
-            AccountOperationConstants.MaxDescriptionLength + 1
-        );
+        var account = AccountFixture.CreateValidAccount();
+        var updatedAt = FixtureBase.GetTestDate(1);
+        var longDescription =
+            AccountOperationFixture.GenerateLongOperationDescription();
 
         // Act
         var result = account.AddOperation(longDescription, 10m, updatedAt);
 
         // Assert
-        AssertError(
+        FixtureBase.AssertError(
             result,
             AccountOperationErrors.AccountOperationDescriptionTooLong
         );

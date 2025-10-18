@@ -1,8 +1,10 @@
 using Domain.AccountOperations;
+using TestFixtures;
+using TestFixtures.Domain;
 
 namespace Domain.Tests.AccountOperations;
 
-public class AccountOperationCreateTests : AccountOperationTestsBase
+public class AccountOperationCreateTests
 {
     [Fact]
     public void Create_WithValidParameters_ShouldCreateAccountOperation()
@@ -12,7 +14,7 @@ public class AccountOperationCreateTests : AccountOperationTestsBase
         const string operationDescription = "Test Operation";
         const decimal operationAmount = 100m;
         const decimal previousBalance = 50m;
-        var createdAt = GetTestDate();
+        var createdAt = FixtureBase.GetTestDate();
 
         // Act
         var result = AccountOperation.Create(
@@ -42,7 +44,7 @@ public class AccountOperationCreateTests : AccountOperationTestsBase
         const string operationDescription = "";
         const decimal operationAmount = 100m;
         const decimal previousBalance = 0m;
-        var createdAt = GetTestDate();
+        var createdAt = FixtureBase.GetTestDate();
 
         // Act
         var result = AccountOperation.Create(
@@ -54,7 +56,7 @@ public class AccountOperationCreateTests : AccountOperationTestsBase
         );
 
         // Assert
-        AssertError(
+        FixtureBase.AssertError(
             result,
             AccountOperationErrors.AccountOperationDescriptionRequired
         );
@@ -68,7 +70,7 @@ public class AccountOperationCreateTests : AccountOperationTestsBase
         const string operationDescription = "   ";
         const decimal operationAmount = 100m;
         const decimal previousBalance = 0m;
-        var createdAt = GetTestDate();
+        var createdAt = FixtureBase.GetTestDate();
 
         // Act
         var result = AccountOperation.Create(
@@ -80,7 +82,7 @@ public class AccountOperationCreateTests : AccountOperationTestsBase
         );
 
         // Assert
-        AssertError(
+        FixtureBase.AssertError(
             result,
             AccountOperationErrors.AccountOperationDescriptionRequired
         );
@@ -91,10 +93,11 @@ public class AccountOperationCreateTests : AccountOperationTestsBase
     {
         // Arrange
         var accountId = Guid.NewGuid();
-        var operationDescription = GenerateLongOperationDescription();
+        var operationDescription =
+            AccountOperationFixture.GenerateLongOperationDescription();
         const decimal operationAmount = 100m;
         const decimal previousBalance = 0m;
-        var createdAt = GetTestDate();
+        var createdAt = FixtureBase.GetTestDate();
 
         // Act
         var result = AccountOperation.Create(
@@ -106,7 +109,7 @@ public class AccountOperationCreateTests : AccountOperationTestsBase
         );
 
         // Assert
-        AssertError(
+        FixtureBase.AssertError(
             result,
             AccountOperationErrors.AccountOperationDescriptionTooLong
         );
@@ -120,7 +123,7 @@ public class AccountOperationCreateTests : AccountOperationTestsBase
         const string operationDescription = "Withdrawal";
         const decimal operationAmount = -50m;
         const decimal previousBalance = 100m;
-        var createdAt = GetTestDate();
+        var createdAt = FixtureBase.GetTestDate();
 
         // Act
         var result = AccountOperation.Create(
@@ -146,7 +149,7 @@ public class AccountOperationCreateTests : AccountOperationTestsBase
         const string operationDescription = "Zero operation";
         const decimal operationAmount = 0m;
         const decimal previousBalance = 100m;
-        var createdAt = GetTestDate();
+        var createdAt = FixtureBase.GetTestDate();
 
         // Act
         var result = AccountOperation.Create(
