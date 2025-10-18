@@ -15,8 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE = LICENSE
 		README.md = README.md
 		.config\dotnet-tools.json = .config\dotnet-tools.json
-		coverage.sh = coverage.sh
 		tests\settings.coverage.xml = tests\settings.coverage.xml
+		run-test.sh = run-test.sh
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "src\Infrastructure\Infrastructure.csproj", "{2EFD58E5-E3B4-4F91-959D-E8D9F0D4F984}"
