@@ -16,6 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 		.config\dotnet-tools.json = .config\dotnet-tools.json
 		coverage.sh = coverage.sh
+		tests\settings.coverage.xml = tests\settings.coverage.xml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "src\Infrastructure\Infrastructure.csproj", "{2EFD58E5-E3B4-4F91-959D-E8D9F0D4F984}"
@@ -27,6 +28,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Tests", "tests\Domain.Tests\Domain.Tests.csproj", "{D2EB30C7-7646-47CD-B287-BF6F3782F4FC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "src\Api\Api.csproj", "{D6FAE5EC-01BF-4B88-8F5D-B23F7AC1BAC2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Tests", "tests\Api.Tests\Api.Tests.csproj", "{C4194B00-8DAF-44D6-AA91-7847B4DAC9EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,6 +57,10 @@ Global
 		{D6FAE5EC-01BF-4B88-8F5D-B23F7AC1BAC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6FAE5EC-01BF-4B88-8F5D-B23F7AC1BAC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D6FAE5EC-01BF-4B88-8F5D-B23F7AC1BAC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4194B00-8DAF-44D6-AA91-7847B4DAC9EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4194B00-8DAF-44D6-AA91-7847B4DAC9EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4194B00-8DAF-44D6-AA91-7847B4DAC9EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4194B00-8DAF-44D6-AA91-7847B4DAC9EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CFDBEC93-FC83-4DB5-B6C3-DAD2D37B1A0E} = {ADF8520C-2FF7-48D6-9B94-7065FB5AF3FB}
@@ -61,5 +68,6 @@ Global
 		{476E6484-2428-4823-96D0-131A5FA91B35} = {ADF8520C-2FF7-48D6-9B94-7065FB5AF3FB}
 		{D2EB30C7-7646-47CD-B287-BF6F3782F4FC} = {F460C98E-35EC-486F-A0A2-377D9659998A}
 		{D6FAE5EC-01BF-4B88-8F5D-B23F7AC1BAC2} = {ADF8520C-2FF7-48D6-9B94-7065FB5AF3FB}
+		{C4194B00-8DAF-44D6-AA91-7847B4DAC9EF} = {F460C98E-35EC-486F-A0A2-377D9659998A}
 	EndGlobalSection
 EndGlobal

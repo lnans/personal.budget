@@ -1,4 +1,5 @@
 using System.Reflection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;
@@ -6,9 +7,14 @@ namespace Application;
 public static class DependencyInjection
 {
     public static void AddApplicationServices(
-        this IServiceCollection services
+        this IServiceCollection services,
+        IConfigurationManager configuration
     ) =>
         services.AddMediatR(config =>
-            config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly())
-        );
+        {
+            config.LicenseKey = configuration["MediatrLicenceKey"];
+            config.RegisterServicesFromAssembly(
+                Assembly.GetExecutingAssembly()
+            );
+        });
 }

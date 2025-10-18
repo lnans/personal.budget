@@ -1,3 +1,5 @@
+using Api;
+using Api.Configurations;
 using Application;
 using Infrastructure;
 using Infrastructure.Persistence;
@@ -5,14 +7,26 @@ using Infrastructure.Persistence;
 var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
+var services = builder.Services;
 
-builder.Services.AddApplicationServices();
-builder.Services.AddInfrastructureServices(configuration);
+services.AddApiServices();
+services.AddApplicationServices(configuration);
+services.AddInfrastructureServices(configuration);
 
 var app = builder.Build();
 
-await app.Services.InitialiseDatabaseAsync();
+app.UseDeveloperExceptionPage();
+app.UseCors(config =>
+{
+    config.AllowAnyHeader();
+    config.AllowAnyOrigin();
+    config.AllowAnyMethod();
+    config.WithExposedHeaders("Content-Disposition");
+});
 
-app.MapGet("/", () => "Hello World!");
+app.MapOpenApiEndpoints();
+app.MapApiEndpoints();
+
+await app.Services.InitialiseDatabaseAsync();
 
 app.Run();
