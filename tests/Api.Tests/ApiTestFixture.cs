@@ -1,15 +1,9 @@
 using System.Data.Common;
 using Api.Tests;
-using Application.Interfaces;
-using DotNet.Testcontainers;
 using DotNet.Testcontainers.Builders;
 using Infrastructure.Persistence;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Npgsql;
 using Respawn;
@@ -29,7 +23,7 @@ public class ApiTestFixture
     private readonly PostgreSqlContainer _dbTestContainer;
     private readonly DbConnection _dbConnection;
     private readonly Respawner _respawner;
-    private readonly WebApplicationFactory<IApiAssemblyMarker> _webApplicationFactory;
+    private readonly ApiFactory _webApplicationFactory;
 
     public ApiTestFixture()
     {
@@ -45,17 +39,7 @@ public class ApiTestFixture
         _dbTestContainer.StartAsync().Wait();
         var dbConnectionString = _dbTestContainer.GetConnectionString();
 
-        _webApplicationFactory = new WebApplicationFactory<IApiAssemblyMarker>().WithWebHostBuilder(builder =>
-            builder
-                .ConfigureServices(services =>
-                {
-                    services.RemoveAll(typeof(DbContextOptions<AppDbContext>));
-                    services.AddDbContext<IAppDbContext, AppDbContext>(options =>
-                        options.UseNpgsql(dbConnectionString)
-                    );
-                })
-                .ConfigureLogging(logging => logging.ClearProviders())
-        );
+        _webApplicationFactory = new ApiFactory(dbConnectionString);
 
         using var dbContext = ScopedServiceProvider.GetRequiredService<AppDbContext>();
         dbContext.Database.Migrate();
@@ -86,6 +70,7 @@ public class ApiTestFixture
 
     public async Task DisposeAsync()
     {
+        await _dbConnection.CloseAsync();
         await _dbTestContainer.StopAsync();
         await _dbTestContainer.DisposeAsync();
 
