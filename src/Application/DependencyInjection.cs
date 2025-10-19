@@ -1,4 +1,5 @@
 using System.Reflection;
+using Application.Behaviors;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,5 +12,6 @@ public static class DependencyInjection
         {
             config.LicenseKey = configuration["MediatrLicenceKey"];
             config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+            config.AddOpenRequestPreProcessor(typeof(LoggingBehavior<>));
         });
 }
