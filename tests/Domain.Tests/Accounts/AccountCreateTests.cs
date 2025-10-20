@@ -20,6 +20,7 @@ public class AccountCreateTests
 
         // Assert
         account.IsError.ShouldBeFalse();
+        account.Value.UserId.ShouldBe(user.Id);
         account.Value.Name.ShouldBe(accountName);
         account.Value.Balance.ShouldBe(initialBalance);
         account.Value.Operations.ShouldBeEmpty();
