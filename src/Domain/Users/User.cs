@@ -46,4 +46,7 @@ public sealed class User : Entity
 
         return Result.Success;
     }
+
+    public string GenerateAuthToken(IAuthTokenGenerator authTokenGenerator) =>
+        authTokenGenerator.GenerateToken(Id, Login);
 }
