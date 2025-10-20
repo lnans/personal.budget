@@ -28,6 +28,7 @@ public static class DependencyInjection
 
         services.AddDbContext<IAppDbContext, AppDbContext>(config => config.UseNpgsql(connectionString));
         services.AddScoped<AppDbContextInitializer>();
+        services.AddSingleton(TimeProvider.System);
     }
 
     private static void ConfigureAuthentication(this IServiceCollection services) =>
