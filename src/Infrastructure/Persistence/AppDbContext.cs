@@ -2,6 +2,7 @@ using System.Reflection;
 using Application.Interfaces;
 using Domain.AccountOperations;
 using Domain.Accounts;
+using Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
@@ -12,6 +13,7 @@ internal class AppDbContext : DbContext, IAppDbContext
 {
     private readonly ILoggerFactory _loggerFactory;
 
+    public DbSet<User> Users => Set<User>();
     public DbSet<Account> Accounts => Set<Account>();
     public DbSet<AccountOperation> AccountOperations => Set<AccountOperation>();
 

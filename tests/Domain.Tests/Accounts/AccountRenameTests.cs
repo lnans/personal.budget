@@ -10,7 +10,8 @@ public class AccountRenameTests
     public void Account_Rename_WithValidParameters_ShouldRenameAccount()
     {
         // Arrange
-        var account = AccountFixture.CreateValidAccount();
+        var user = UserFixture.CreateValidUser();
+        var account = AccountFixture.CreateValidAccount(user.Id);
         var updatedAt = FixtureBase.GetTestDate(1);
         const string newName = "Renamed Account";
 
@@ -27,7 +28,8 @@ public class AccountRenameTests
     public void Account_Rename_WithEmptyName_ShouldReturnError()
     {
         // Arrange
-        var account = AccountFixture.CreateValidAccount();
+        var user = UserFixture.CreateValidUser();
+        var account = AccountFixture.CreateValidAccount(user.Id);
         var updatedAt = FixtureBase.GetTestDate(1);
 
         // Act
@@ -41,7 +43,8 @@ public class AccountRenameTests
     public void Account_Rename_WithTooLongName_ShouldReturnError()
     {
         // Arrange
-        var account = AccountFixture.CreateValidAccount();
+        var user = UserFixture.CreateValidUser();
+        var account = AccountFixture.CreateValidAccount(user.Id);
         var updatedAt = FixtureBase.GetTestDate(1);
         var newName = AccountFixture.GenerateLongAccountName();
 

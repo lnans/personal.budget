@@ -1,5 +1,6 @@
 using System.Data.Common;
 using Api.Tests;
+using Domain.Users;
 using DotNet.Testcontainers.Builders;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,9 @@ public class ApiTestFixture
     private const string DbUser = "postgres";
     private const string DbPassword = "$trongP4ssword";
     private const int DbPort = 5432;
+
+    private const string DefaultUserLogin = "testuser";
+    private const string DefaultUserPassword = "TestPassword123!";
 
     private readonly PostgreSqlContainer _dbTestContainer;
     private readonly DbConnection _dbConnection;
@@ -44,6 +48,12 @@ public class ApiTestFixture
         using var dbContext = ScopedServiceProvider.GetRequiredService<AppDbContext>();
         dbContext.Database.Migrate();
 
+        var passwordHasher = ScopedServiceProvider.GetRequiredService<IPasswordHasher>();
+        var userPasswordHash = passwordHasher.Hash(DefaultUserPassword);
+        User = User.Create(DefaultUserLogin, userPasswordHash, DateTimeOffset.UtcNow).Value;
+        dbContext.Users.Add(User);
+        dbContext.SaveChanges();
+
         ApiClient = _webApplicationFactory.CreateClient();
 
         _dbConnection = new NpgsqlConnection(dbConnectionString);
@@ -65,6 +75,10 @@ public class ApiTestFixture
     public HttpClient ApiClient { get; }
 
     public IServiceProvider ScopedServiceProvider => _webApplicationFactory.Services.CreateScope().ServiceProvider;
+
+    public User User { get; }
+
+    public string UserPassword { get; } = DefaultUserPassword;
 
     public async Task ResetDatabaseAsync() => await _respawner.ResetAsync(_dbConnection);
 

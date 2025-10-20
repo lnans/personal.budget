@@ -29,8 +29,8 @@ public class GetAccountsTests : ApiTestBase
     public async Task GetAccounts_ReturnsAccountsList_WhenAccountsExist()
     {
         // Arrange
-        var account1 = AccountFixture.CreateValidAccount();
-        var account2 = AccountFixture.CreateValidAccount();
+        var account1 = AccountFixture.CreateValidAccount(User.Id);
+        var account2 = AccountFixture.CreateValidAccount(User.Id);
         DbContext.Accounts.AddRange(account1, account2);
         await DbContext.SaveChangesAsync(CancellationToken.None);
 
