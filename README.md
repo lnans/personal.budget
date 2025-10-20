@@ -8,13 +8,21 @@
 
 ## Technology Stack
 
--   **.NET 10.0** (RC) - Latest .NET framework
--   **Entity Framework Core 10.0** - ORM with PostgreSQL provider
+-   **.NET 9.0** - Latest .NET framework
+-   **Entity Framework Core 9.0** - ORM with PostgreSQL provider
 -   **PostgreSQL** - Primary database
+-   **MediatR** - Mediator pattern implementation
+-   **Scalar** - ASP.NET Core utilities for API endpoints documentation
 -   **ErrorOr** - Functional error handling library
+-   **Ardalis.GuardClauses** - Guard clauses for input validation
 -   **xUnit v3** - Testing framework
--   **Shouldly** - Assertion library
 -   **Microsoft Testing Platform** - Native test runner with code coverage support
+-   **Shouldly** - Assertion library
+-   **Testcontainers** - Containerization for testing
+-   **Serilog** - Logging library
+-   **NSubstitute** - Mocking library
+-   **Respawn** - Database reset library
+-   **ReportGenerator** - Code coverage report generator
 
 ## Architecture
 
@@ -22,31 +30,48 @@ This project follows **Clean Architecture** principles with clear separation of 
 
 ```
 src/
-├── Domain/           # Domain business rules
-├── Application/      # Application layer
-└── Infrastructure/   # External concerns (DB, etc.)
+├── Api/
+│   ├── Configurations/ # API configurations
+│   ├── Endpoints/      # API endpoints
+│   ├── Middleware/     # API middleware
+├── Domain/             # Domain business rules and entities
+├── Application/
+│   ├── Interfaces/     # Application interfaces
+│   ├── Behaviors/      # Application behaviors
+│   ├── Features/       # Application features
+└── Infrastructure/
+    ├── Persistence/    # Persistence implementation
+    └── Authentication/ # Authentication implementation
 ```
+
+> NB: But with pragmatic approach about EF Core, which is referenced in the Application layer.
 
 ### Layers
 
--   **Domain**: Contains core business logic, entities, and domain errors. No dependencies on other layers.
+-   **Api**: Contains API configurations, endpoints, and middleware. Depends on Application and Infrastructure.
 -   **Application**: Defines application-specific business rules and interfaces. Depends only on Domain.
+-   **Domain**: Contains core business logic, entities, and domain errors. No dependencies on other layers.
 -   **Infrastructure**: Implements external concerns like database access. Depends on Application and Domain.
 
 ## Prerequisites
 
--   [.NET 10.0 SDK (RC)](https://dotnet.microsoft.com/download/dotnet/10.0) or later
+-   [.NET 9.0 SDK](https://dotnet.microsoft.com/download/dotnet/9.0) or later
 -   [PostgreSQL](https://www.postgresql.org/download/) database server
--   (Optional) [.NET Tools](https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools) for code formatting
+-   [Docker](https://www.docker.com/products/docker-desktop/) for containerization
+-   (Optional) [.NET Tools](https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools) for code formatting and EF Core tools for migrations
 
 ## Getting Started
 
-```bash
-git clone https://github.com/lnans/personal.budget.git
-cd personal.budget
+To run the API, you need to have a PostgreSQL database server running. You can use Docker to run a PostgreSQL container:
 
-dotnet build
-dotnet test
+```bash
+docker run -d --name budget-postgres -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgrespw -e POSTGRES_DB=budget-sqldb postgres
+```
+
+Then, you can run the API:
+
+```bash
+dotnet run --project src/Api/Api.csproj
 ```
 
 ## Code Coverage
@@ -90,7 +115,3 @@ The project uses centralized package management:
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-**Note**: This project uses .NET 10.0 RC, which is a pre-release version. Ensure you have the correct SDK version installed as specified in `global.json`.
