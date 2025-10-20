@@ -13,6 +13,8 @@ try
     var configuration = builder.Configuration;
     var services = builder.Services;
 
+    configuration.AddEnvironmentVariables();
+
     builder.Host.UseSerilog(
         (ctx, sv, config) => config.ReadFrom.Configuration(ctx.Configuration).ReadFrom.Services(sv)
     );
