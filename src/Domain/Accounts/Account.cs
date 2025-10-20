@@ -1,23 +1,28 @@
 using Domain.AccountOperations;
+using Domain.Users;
 using ErrorOr;
 
 namespace Domain.Accounts;
 
 public sealed class Account : Entity
 {
-    private Account(string name, decimal balance, DateTimeOffset createdAt)
+    public Guid UserId { get; }
+    public string Name { get; private set; }
+    public decimal Balance { get; private set; }
+
+    public User User { get; } = null!;
+    private readonly ICollection<AccountOperation> _operations = [];
+    public IReadOnlyList<AccountOperation> Operations => _operations.ToList().AsReadOnly();
+
+    private Account(Guid userId, string name, decimal balance, DateTimeOffset createdAt)
         : base(createdAt)
     {
+        UserId = userId;
         Name = name;
         Balance = balance;
     }
 
-    public string Name { get; private set; }
-    public decimal Balance { get; private set; }
-    private readonly ICollection<AccountOperation> _operations = [];
-    public IReadOnlyList<AccountOperation> Operations => _operations.ToList().AsReadOnly();
-
-    public static ErrorOr<Account> Create(string name, decimal balance, DateTimeOffset createdAt)
+    public static ErrorOr<Account> Create(Guid userId, string name, decimal balance, DateTimeOffset createdAt)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -29,7 +34,7 @@ public sealed class Account : Entity
             return AccountErrors.AccountNameTooLong;
         }
 
-        return new Account(name, balance, createdAt);
+        return new Account(userId, name, balance, createdAt);
     }
 
     public ErrorOr<Success> AddOperation(string description, decimal amount, DateTimeOffset createdAt) =>

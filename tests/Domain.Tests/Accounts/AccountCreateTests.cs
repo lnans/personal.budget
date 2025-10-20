@@ -12,10 +12,11 @@ public class AccountCreateTests
         // Arrange
         const string accountName = "Test Account";
         const decimal initialBalance = 100m;
+        var user = UserFixture.CreateValidUser();
         var createdAt = FixtureBase.GetTestDate();
 
         // Act
-        var account = Account.Create(accountName, initialBalance, createdAt);
+        var account = Account.Create(user.Id, accountName, initialBalance, createdAt);
 
         // Assert
         account.IsError.ShouldBeFalse();
@@ -32,10 +33,11 @@ public class AccountCreateTests
         // Arrange
         const string accountName = "";
         const decimal initialBalance = 100m;
+        var user = UserFixture.CreateValidUser();
         var createdAt = FixtureBase.GetTestDate();
 
         // Act
-        var account = Account.Create(accountName, initialBalance, createdAt);
+        var account = Account.Create(user.Id, accountName, initialBalance, createdAt);
 
         // Assert
         FixtureBase.AssertError(account, AccountErrors.AccountNameRequired);
@@ -45,12 +47,13 @@ public class AccountCreateTests
     public void Account_Create_WithTooLongName_ShouldReturnError()
     {
         // Arrange
-        var accountName = AccountFixture.GenerateLongAccountName();
         const decimal initialBalance = 100m;
+        var user = UserFixture.CreateValidUser();
+        var accountName = AccountFixture.GenerateLongAccountName();
         var createdAt = FixtureBase.GetTestDate();
 
         // Act
-        var account = Account.Create(accountName, initialBalance, createdAt);
+        var account = Account.Create(user.Id, accountName, initialBalance, createdAt);
 
         // Assert
         FixtureBase.AssertError(account, AccountErrors.AccountNameTooLong);

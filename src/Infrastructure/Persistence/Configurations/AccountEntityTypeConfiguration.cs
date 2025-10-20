@@ -22,6 +22,14 @@ public class AccountEntityTypeConfiguration : IEntityTypeConfiguration<Account>
 
         builder.Property(account => account.Balance).HasColumnName("Balance").IsRequired();
 
+        builder
+            .HasOne(account => account.User)
+            .WithMany(user => user.Accounts)
+            .HasForeignKey(account => account.UserId)
+            .HasConstraintName("FK_Accounts_Users_UserId")
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.Property(account => account.CreatedAt).HasColumnName("CreatedAt").IsRequired();
 
         builder.Property(account => account.UpdatedAt).HasColumnName("UpdatedAt").IsRequired();

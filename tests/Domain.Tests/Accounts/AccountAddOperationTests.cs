@@ -10,7 +10,8 @@ public class AccountAddOperationTests
     public void Account_AddOperation_WithValidParameters_ShouldAddOperationAndUpdateBalance()
     {
         // Arrange
-        var account = AccountFixture.CreateValidAccount();
+        var user = UserFixture.CreateValidUser();
+        var account = AccountFixture.CreateValidAccount(user.Id);
         var updatedAt = FixtureBase.GetTestDate(1);
         const decimal operationAmount = 10m;
 
@@ -30,7 +31,8 @@ public class AccountAddOperationTests
     public void Account_AddOperation_WithNullOrWhitespaceDescription_ShouldReturnError(string? description)
     {
         // Arrange
-        var account = AccountFixture.CreateValidAccount();
+        var user = UserFixture.CreateValidUser();
+        var account = AccountFixture.CreateValidAccount(user.Id);
         var updatedAt = FixtureBase.GetTestDate(1);
 
         // Act
@@ -46,7 +48,8 @@ public class AccountAddOperationTests
     public void Account_AddOperation_WithDescriptionTooLong_ShouldReturnError()
     {
         // Arrange
-        var account = AccountFixture.CreateValidAccount();
+        var user = UserFixture.CreateValidUser();
+        var account = AccountFixture.CreateValidAccount(user.Id);
         var updatedAt = FixtureBase.GetTestDate(1);
         var longDescription = AccountOperationFixture.GenerateLongOperationDescription();
 

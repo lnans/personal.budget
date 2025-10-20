@@ -1,5 +1,7 @@
 using Application.Interfaces;
 using Ardalis.GuardClauses;
+using Domain.Users;
+using Infrastructure.Authentication;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +13,12 @@ public static class DependencyInjection
 {
     public static void AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
+        services.ConfigurePersistence(configuration);
+        services.ConfigureAuthentication();
+    }
+
+    private static void ConfigurePersistence(this IServiceCollection services, IConfiguration configuration)
+    {
         var connectionString = configuration.GetConnectionString("Database");
         Guard.Against.NullOrEmpty(
             connectionString,
@@ -18,12 +26,10 @@ public static class DependencyInjection
             "Connection string 'Database' is not found."
         );
 
-        services.ConfigurePersistence(connectionString);
-    }
-
-    private static void ConfigurePersistence(this IServiceCollection services, string connectionString)
-    {
         services.AddDbContext<IAppDbContext, AppDbContext>(config => config.UseNpgsql(connectionString));
         services.AddScoped<AppDbContextInitializer>();
     }
+
+    private static void ConfigureAuthentication(this IServiceCollection services) =>
+        services.AddSingleton<IPasswordHasher, PasswordHasher>();
 }
