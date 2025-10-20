@@ -3,7 +3,7 @@ using Domain.Users;
 
 namespace Infrastructure.Authentication;
 
-public class PasswordHasher : IPasswordHasher
+internal class PasswordHasher : IPasswordHasher
 {
     private const int SaltSize = 16; // 128 bits
     private const int HashSize = 32; // 256 bits
