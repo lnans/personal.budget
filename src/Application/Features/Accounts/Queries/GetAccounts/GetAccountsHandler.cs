@@ -7,10 +7,12 @@ namespace Application.Features.Accounts.Queries.GetAccounts;
 public sealed class GetAccountsHandler : IRequestHandler<GetAccountsQuery, List<GetAccountsResponse>>
 {
     private readonly IAppDbContext _dbContext;
+    private readonly IAuthContext _authContext;
 
-    public GetAccountsHandler(IAppDbContext dbContext)
+    public GetAccountsHandler(IAppDbContext dbContext, IAuthContext authContext)
     {
         _dbContext = dbContext;
+        _authContext = authContext;
     }
 
     public async Task<List<GetAccountsResponse>> Handle(
@@ -18,7 +20,8 @@ public sealed class GetAccountsHandler : IRequestHandler<GetAccountsQuery, List<
         CancellationToken cancellationToken
     ) =>
         await _dbContext
-            .Accounts.Select(account => new GetAccountsResponse(
+            .Accounts.Where(account => account.UserId == _authContext.CurrentUserId)
+            .Select(account => new GetAccountsResponse(
                 account.Id,
                 account.Name,
                 account.Balance,

@@ -5,7 +5,7 @@ using Domain.Users;
 using Microsoft.IdentityModel.Tokens;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
-namespace Infrastructure.Authentication;
+namespace Api.Authentication;
 
 internal class AuthTokenGenerator : IAuthTokenGenerator
 {

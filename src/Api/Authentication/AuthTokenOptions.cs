@@ -1,4 +1,4 @@
-namespace Infrastructure.Authentication;
+namespace Api.Authentication;
 
 public class AuthTokenOptions
 {
