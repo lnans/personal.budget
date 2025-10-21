@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Scalar.AspNetCore;
 
 namespace Api;
 
@@ -77,6 +78,8 @@ public static class DependencyInjection
 
     private static void ConfigureOpenApi(this IServiceCollection services) =>
         services.AddOpenApi(config =>
+        {
+            config.AddScalarTransformers();
             config.AddDocumentTransformer(
                 (document, _, _) =>
                 {
@@ -110,6 +113,6 @@ public static class DependencyInjection
                     };
                     return Task.CompletedTask;
                 }
-            )
-        );
+            );
+        });
 }

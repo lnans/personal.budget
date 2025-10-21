@@ -12,6 +12,7 @@
 -   **Entity Framework Core 9.0** - ORM with PostgreSQL provider
 -   **PostgreSQL** - Primary database
 -   **MediatR** - Mediator pattern implementation
+-   **FluentValidation** - Validation library
 -   **Scalar** - ASP.NET Core utilities for API endpoints documentation
 -   **ErrorOr** - Functional error handling library
 -   **Ardalis.GuardClauses** - Guard clauses for input validation

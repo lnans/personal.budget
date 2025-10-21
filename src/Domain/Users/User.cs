@@ -37,9 +37,9 @@ public sealed class User : Entity
         return new User(login, passwordHash, createdAt);
     }
 
-    public ErrorOr<Success> VerifyPassword(string passwordHashToVerify, IPasswordHasher passwordHasher)
+    public ErrorOr<Success> VerifyPassword(string password, IPasswordHasher passwordHasher)
     {
-        if (string.IsNullOrEmpty(passwordHashToVerify) || !passwordHasher.Verify(passwordHashToVerify, PasswordHash))
+        if (string.IsNullOrEmpty(password) || !passwordHasher.Verify(password, PasswordHash))
         {
             return UserErrors.UserInvalidCredentials;
         }
