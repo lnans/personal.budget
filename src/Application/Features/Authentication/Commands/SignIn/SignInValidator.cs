@@ -2,9 +2,9 @@ using Application.Extensions;
 using Domain.Users;
 using FluentValidation;
 
-namespace Application.Features.Authentication.Queries.SignIn;
+namespace Application.Features.Authentication.Commands.SignIn;
 
-public class SignInValidator : AbstractValidator<SignInQuery>
+public class SignInValidator : AbstractValidator<SignInCommand>
 {
     public SignInValidator()
     {

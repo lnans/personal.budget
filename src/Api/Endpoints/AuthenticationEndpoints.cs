@@ -1,6 +1,6 @@
 using Api.Configurations;
 using Api.Errors;
-using Application.Features.Authentication.Queries.SignIn;
+using Application.Features.Authentication.Commands.SignIn;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,11 +29,11 @@ public class AuthenticationEndpoints : IEndPoints
     private static async Task<IResult> SignIn(
         HttpContext context,
         IMediator mediator,
-        [FromBody] SignInQuery query,
+        [FromBody] SignInCommand command,
         CancellationToken cancellationToken
     )
     {
-        var result = await mediator.Send(query, cancellationToken);
+        var result = await mediator.Send(command, cancellationToken);
         return result.MatchFirst(Results.Ok, error => Results.Problem(error.ToProblemDetails(context)));
     }
 }
