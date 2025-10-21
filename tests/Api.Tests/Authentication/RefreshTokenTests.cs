@@ -9,8 +9,7 @@ namespace Api.Tests.Authentication;
 [Collection(ApiTestCollection.CollectionName)]
 public class RefreshTokenTests : ApiTestBase
 {
-    private const string Endpoint = "/auth/refresh-token";
-    private const string SignInEndpoint = "/auth/sign-in";
+    private const string Endpoint = "/auth/refresh";
 
     public RefreshTokenTests(ApiTestFixture factory)
         : base(factory) { }
