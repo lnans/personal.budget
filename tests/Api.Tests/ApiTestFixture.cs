@@ -35,6 +35,7 @@ public class ApiTestFixture
     public User User { get; private set; } = null!;
     public string UserPassword { get; } = DefaultUserPassword;
     public string UserToken { get; private set; } = null!;
+    public string UserRefreshToken { get; private set; } = null!;
 
     public ApiTestFixture()
     {
@@ -100,6 +101,7 @@ public class ApiTestFixture
         var authTokenGenerator = ScopedServiceProvider.GetRequiredService<IAuthTokenGenerator>();
         User = User.Create(DefaultUserLogin, _cachedPasswordHash, DateTimeOffset.UtcNow).Value;
         UserToken = User.GenerateAuthToken(authTokenGenerator);
+        UserRefreshToken = User.GenerateRefreshToken(authTokenGenerator);
         dbContext.Users.Add(User);
         dbContext.SaveChanges();
     }

@@ -29,6 +29,23 @@ public class SignInTests : ApiTestBase
         result.ShouldBeSuccessful();
         result.Response.ShouldNotBeNull();
         result.Response.Bearer.ShouldNotBeNullOrWhiteSpace();
+        result.Response.RefreshToken.ShouldNotBeNullOrWhiteSpace();
+    }
+
+    [Fact]
+    public async Task SignIn_ReturnsTokens_WithDifferentValues()
+    {
+        // Arrange
+        var query = new SignInCommand { Login = User.Login, Password = UserPassword };
+
+        // Act
+        var response = await ApiClient.PostAsJsonAsync(Endpoint, query, CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<SignInResponse>(CancellationToken);
+
+        // Assert
+        result.ShouldBeSuccessful();
+        result.Response.ShouldNotBeNull();
+        result.Response.Bearer.ShouldNotBe(result.Response.RefreshToken);
     }
 
     [Fact]

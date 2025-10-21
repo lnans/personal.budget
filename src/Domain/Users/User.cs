@@ -49,4 +49,7 @@ public sealed class User : Entity
 
     public string GenerateAuthToken(IAuthTokenGenerator authTokenGenerator) =>
         authTokenGenerator.GenerateToken(Id, Login);
+
+    public string GenerateRefreshToken(IAuthTokenGenerator authTokenGenerator) =>
+        authTokenGenerator.GenerateRefreshToken(Id);
 }

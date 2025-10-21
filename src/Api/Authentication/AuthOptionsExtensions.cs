@@ -34,6 +34,11 @@ public static class AuthOptionsExtensions
             nameof(authOptions.SecretKey),
             "'Auth:SecretKey' must be at least 32 characters long."
         );
+        Guard.Against.Zero(
+            authOptions.RefreshTokenExpirationDays,
+            nameof(authOptions.RefreshTokenExpirationDays),
+            "'Auth:RefreshTokenExpirationDays' is not found in the configuration."
+        );
         return authOptions;
     }
 }
