@@ -107,45 +107,12 @@ public static class Problems
             Extensions = { ["traceId"] = httpContext.TraceIdentifier },
         };
 
-        if (exception is null)
+        if (exception is not null)
         {
-            return details;
-        }
-
-        details.Extensions["exception"] = exception.GetType().Name;
-        var lines = FormatStackTrace(exception.StackTrace);
-        if (lines.Length > 0)
-        {
-            details.Extensions["stackTrace"] = lines;
-        }
-
-        if (exception.InnerException is null)
-        {
-            return details;
-        }
-
-        var inner = exception.InnerException;
-        details.Extensions["innerException"] = inner.GetType().Name;
-        var innerLines = FormatStackTrace(inner.StackTrace);
-        if (innerLines.Length > 0)
-        {
-            details.Extensions["innerStackTrace"] = innerLines;
+            ProblemExceptionBuilder.AddExceptionDetails(details, exception);
         }
 
         return details;
-
-        static string[] FormatStackTrace(string? stackTrace)
-        {
-            if (string.IsNullOrWhiteSpace(stackTrace))
-            {
-                return [];
-            }
-
-            return stackTrace
-                .Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries)
-                .Select(l => l.Trim())
-                .ToArray();
-        }
     }
 
     public static ProblemDetails ToProblemDetails(this Error error, HttpContext context) =>

@@ -19,7 +19,11 @@
               <Exclude>
                 <Source>.*\.generated\.cs$</Source>
                 <Source>.*/Program\.cs$</Source>
-                <Source>.*/Persistence/.*\.cs$</Source>
+                <Source>.*DependencyInjection\.cs$</Source>
+                <Source>.*/Api/Configurations/.*</Source>
+                <Source>.*/Api/Errors/.*</Source>
+                <Source>.*/Application/Behaviors/.*</Source>
+                <Source>.*/Infrastructure/Persistence/.*\.cs$</Source>
               </Exclude>
             </Sources>
           </CodeCoverage>

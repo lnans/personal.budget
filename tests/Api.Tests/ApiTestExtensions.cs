@@ -47,4 +47,49 @@ public static class ApiTestExtensions
             throw new InvalidOperationException("Expected ProblemDetails but got successful response.");
         }
     }
+
+    public static void ShouldHaveValidationError(this ProblemDetails problem, string fieldName, string errorCode)
+    {
+        if (problem is null)
+        {
+            throw new InvalidOperationException("ProblemDetails is null.");
+        }
+
+        if (!problem.Extensions.TryGetValue("errors", out var errorsObj) || errorsObj is not JsonElement errorsJson)
+        {
+            throw new InvalidOperationException("ProblemDetails does not contain validation errors.");
+        }
+
+        var fieldErrors = errorsJson.EnumerateObject().FirstOrDefault(p => p.Name == fieldName);
+        if (fieldErrors.Value.ValueKind == JsonValueKind.Undefined)
+        {
+            var availableFields = string.Join(", ", errorsJson.EnumerateObject().Select(p => p.Name));
+            throw new InvalidOperationException(
+                $"Field '{fieldName}' not found in validation errors. Available fields: {availableFields}"
+            );
+        }
+
+        var hasError = fieldErrors.Value.EnumerateArray().Any(e => e.GetProperty("code").GetString() == errorCode);
+        if (!hasError)
+        {
+            var availableCodes = string.Join(
+                ", ",
+                fieldErrors.Value.EnumerateArray().Select(e => e.GetProperty("code").GetString())
+            );
+            throw new InvalidOperationException(
+                $"Error code '{errorCode}' not found for field '{fieldName}'. Available codes: {availableCodes}"
+            );
+        }
+    }
+
+    public static void ShouldHaveValidationErrors(
+        this ProblemDetails problem,
+        params (string FieldName, string ErrorCode)[] expectedErrors
+    )
+    {
+        foreach (var (fieldName, errorCode) in expectedErrors)
+        {
+            problem.ShouldHaveValidationError(fieldName, errorCode);
+        }
+    }
 }
