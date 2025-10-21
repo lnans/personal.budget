@@ -4,9 +4,9 @@ using ErrorOr;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Features.Authentication.Queries.SignIn;
+namespace Application.Features.Authentication.Commands.SignIn;
 
-public sealed class SignInHandler : IRequestHandler<SignInQuery, ErrorOr<SignInResponse>>
+public sealed class SignInHandler : IRequestHandler<SignInCommand, ErrorOr<SignInResponse>>
 {
     private readonly IAppDbContext _dbContext;
     private readonly IPasswordHasher _passwordHasher;
@@ -23,15 +23,15 @@ public sealed class SignInHandler : IRequestHandler<SignInQuery, ErrorOr<SignInR
         _authTokenGenerator = authTokenGenerator;
     }
 
-    public async Task<ErrorOr<SignInResponse>> Handle(SignInQuery request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<SignInResponse>> Handle(SignInCommand command, CancellationToken cancellationToken)
     {
-        var user = await _dbContext.Users.FirstOrDefaultAsync(user => user.Login == request.Login, cancellationToken);
+        var user = await _dbContext.Users.FirstOrDefaultAsync(user => user.Login == command.Login, cancellationToken);
         if (user is null)
         {
             return UserErrors.UserInvalidCredentials;
         }
 
-        var passwordCheckResult = user.VerifyPassword(request.Password, _passwordHasher);
+        var passwordCheckResult = user.VerifyPassword(command.Password, _passwordHasher);
         if (passwordCheckResult.IsError)
         {
             return UserErrors.UserInvalidCredentials;
