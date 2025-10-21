@@ -114,15 +114,4 @@ public static class Problems
 
         return details;
     }
-
-    public static ProblemDetails ToProblemDetails(this Error error, HttpContext context) =>
-        error.Type switch
-        {
-            ErrorType.Validation => Validation(context, error.Metadata),
-            ErrorType.Conflict => Conflict(context, error.Description),
-            ErrorType.NotFound => NotFound(context, error.Description),
-            ErrorType.Forbidden => Forbidden(context),
-            ErrorType.Unauthorized => Unauthorized(context),
-            _ => Failure(context, error.Description),
-        };
 }

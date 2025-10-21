@@ -1,5 +1,5 @@
 using Api.Configurations;
-using Api.Errors;
+using Api.Extensions;
 using Application.Features.Authentication.Commands.RefreshToken;
 using Application.Features.Authentication.Commands.SignIn;
 using MediatR;
@@ -46,7 +46,7 @@ public class AuthenticationEndpoints : IEndPoints
     )
     {
         var result = await mediator.Send(command, cancellationToken);
-        return result.MatchFirst(Results.Ok, error => Results.Problem(error.ToProblemDetails(context)));
+        return result.ToOkResultOrProblem(context);
     }
 
     private static async Task<IResult> RefreshToken(
@@ -57,6 +57,6 @@ public class AuthenticationEndpoints : IEndPoints
     )
     {
         var result = await mediator.Send(command, cancellationToken);
-        return result.MatchFirst(Results.Ok, error => Results.Problem(error.ToProblemDetails(context)));
+        return result.ToOkResultOrProblem(context);
     }
 }
