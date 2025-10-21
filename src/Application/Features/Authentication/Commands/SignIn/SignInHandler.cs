@@ -38,6 +38,7 @@ public sealed class SignInHandler : IRequestHandler<SignInCommand, ErrorOr<SignI
         }
 
         var bearer = user.GenerateAuthToken(_authTokenGenerator);
-        return new SignInResponse(bearer);
+        var refreshToken = user.GenerateRefreshToken(_authTokenGenerator);
+        return new SignInResponse(bearer, refreshToken);
     }
 }

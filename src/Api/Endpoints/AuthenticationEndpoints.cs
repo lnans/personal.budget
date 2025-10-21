@@ -1,5 +1,6 @@
 using Api.Configurations;
 using Api.Errors;
+using Application.Features.Authentication.Commands.RefreshToken;
 using Application.Features.Authentication.Commands.SignIn;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -24,12 +25,34 @@ public class AuthenticationEndpoints : IEndPoints
             .WithName(nameof(SignIn))
             .WithTags(Tag)
             .AllowAnonymous();
+
+        group
+            .MapPost("/refresh-token", RefreshToken)
+            .WithDescription("Refresh an access token using a refresh token")
+            .WithSummary("Refresh token")
+            .Produces<RefreshTokenResponse>()
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .WithName(nameof(RefreshToken))
+            .WithTags(Tag)
+            .AllowAnonymous();
     }
 
     private static async Task<IResult> SignIn(
         HttpContext context,
         IMediator mediator,
         [FromBody] SignInCommand command,
+        CancellationToken cancellationToken
+    )
+    {
+        var result = await mediator.Send(command, cancellationToken);
+        return result.MatchFirst(Results.Ok, error => Results.Problem(error.ToProblemDetails(context)));
+    }
+
+    private static async Task<IResult> RefreshToken(
+        HttpContext context,
+        IMediator mediator,
+        [FromBody] RefreshTokenCommand command,
         CancellationToken cancellationToken
     )
     {

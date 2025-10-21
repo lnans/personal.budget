@@ -12,6 +12,7 @@ public class ApiTestBase(ApiTestFixture fixture) : IAsyncLifetime
     protected User User => fixture.User;
     protected string UserToken => fixture.UserToken;
     protected string UserPassword => fixture.UserPassword;
+    protected string UserRefreshToken => fixture.UserRefreshToken;
 
     public async ValueTask DisposeAsync() => await fixture.ResetDatabaseAsync();
 
