@@ -16,7 +16,7 @@ public class AuthenticationEndpoints : IEndPoints
         var group = app.MapGroup("/auth").RequireAuthorization();
 
         group
-            .MapPost("/sign-in", SignIn)
+            .MapPost("/signin", SignIn)
             .WithDescription("Sign in and get an authentication token")
             .WithSummary("Sign in")
             .Produces<SignInResponse>()
@@ -27,7 +27,7 @@ public class AuthenticationEndpoints : IEndPoints
             .AllowAnonymous();
 
         group
-            .MapPost("/refresh-token", RefreshToken)
+            .MapPost("/refresh", RefreshToken)
             .WithDescription("Refresh an access token using a refresh token")
             .WithSummary("Refresh token")
             .Produces<RefreshTokenResponse>()

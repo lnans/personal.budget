@@ -10,7 +10,7 @@ namespace Api.Tests.Authentication;
 [Collection(ApiTestCollection.CollectionName)]
 public class SignInTests : ApiTestBase
 {
-    private const string Endpoint = "/auth/sign-in";
+    private const string Endpoint = "/auth/signin";
 
     public SignInTests(ApiTestFixture factory)
         : base(factory) { }
