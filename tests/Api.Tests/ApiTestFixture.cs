@@ -28,6 +28,13 @@ public class ApiTestFixture
     private readonly DbConnection _dbConnection;
     private readonly Respawner _respawner;
     private readonly ApiFactory _webApplicationFactory;
+    private readonly string _cachedPasswordHash;
+
+    public HttpClient ApiClient { get; }
+    public IServiceProvider ScopedServiceProvider => _webApplicationFactory.Services.CreateScope().ServiceProvider;
+    public User User { get; private set; } = null!;
+    public string UserPassword { get; } = DefaultUserPassword;
+    public string UserToken { get; private set; } = null!;
 
     public ApiTestFixture()
     {
@@ -45,16 +52,13 @@ public class ApiTestFixture
 
         _webApplicationFactory = new ApiFactory(dbConnectionString);
 
+        // Hash password once and cache it for all tests
+        var passwordHasher = ScopedServiceProvider.GetRequiredService<IPasswordHasher>();
+        _cachedPasswordHash = passwordHasher.Hash(DefaultUserPassword);
+
         using var dbContext = ScopedServiceProvider.GetRequiredService<AppDbContext>();
         dbContext.Database.Migrate();
-
-        var authTokenGenerator = ScopedServiceProvider.GetRequiredService<IAuthTokenGenerator>();
-        var passwordHasher = ScopedServiceProvider.GetRequiredService<IPasswordHasher>();
-        var userPasswordHash = passwordHasher.Hash(DefaultUserPassword);
-        User = User.Create(DefaultUserLogin, userPasswordHash, DateTimeOffset.UtcNow).Value;
-        UserToken = User.GenerateAuthToken(authTokenGenerator);
-        dbContext.Users.Add(User);
-        dbContext.SaveChanges();
+        InitUser(dbContext);
 
         ApiClient = _webApplicationFactory.CreateClient();
 
@@ -74,17 +78,12 @@ public class ApiTestFixture
             .GetResult();
     }
 
-    public HttpClient ApiClient { get; }
-
-    public IServiceProvider ScopedServiceProvider => _webApplicationFactory.Services.CreateScope().ServiceProvider;
-
-    public User User { get; }
-
-    public string UserPassword { get; } = DefaultUserPassword;
-
-    public string UserToken { get; }
-
-    public async Task ResetDatabaseAsync() => await _respawner.ResetAsync(_dbConnection);
+    public async Task ResetDatabaseAsync()
+    {
+        await _respawner.ResetAsync(_dbConnection);
+        await using var dbContext = ScopedServiceProvider.GetRequiredService<AppDbContext>();
+        InitUser(dbContext);
+    }
 
     public async Task DisposeAsync()
     {
@@ -94,5 +93,14 @@ public class ApiTestFixture
 
         ApiClient.Dispose();
         await _webApplicationFactory.DisposeAsync();
+    }
+
+    private void InitUser(AppDbContext dbContext)
+    {
+        var authTokenGenerator = ScopedServiceProvider.GetRequiredService<IAuthTokenGenerator>();
+        User = User.Create(DefaultUserLogin, _cachedPasswordHash, DateTimeOffset.UtcNow).Value;
+        UserToken = User.GenerateAuthToken(authTokenGenerator);
+        dbContext.Users.Add(User);
+        dbContext.SaveChanges();
     }
 }
