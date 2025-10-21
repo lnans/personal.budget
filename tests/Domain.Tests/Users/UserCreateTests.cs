@@ -97,7 +97,7 @@ public class UserCreateTests
         var user = User.Create(login, passwordHash, createdAt);
 
         // Assert
-        FixtureBase.AssertError(user, UserErrors.UserPasswordHashRequired);
+        FixtureBase.AssertError(user, UserErrors.UserPasswordRequired);
     }
 
     [Fact]
@@ -112,7 +112,7 @@ public class UserCreateTests
         var user = User.Create(login, passwordHash, createdAt);
 
         // Assert
-        FixtureBase.AssertError(user, UserErrors.UserPasswordHashRequired);
+        FixtureBase.AssertError(user, UserErrors.UserPasswordRequired);
     }
 
     [Fact]
@@ -127,7 +127,7 @@ public class UserCreateTests
         var user = User.Create(login, passwordHash!, createdAt);
 
         // Assert
-        FixtureBase.AssertError(user, UserErrors.UserPasswordHashRequired);
+        FixtureBase.AssertError(user, UserErrors.UserPasswordRequired);
     }
 
     [Fact]

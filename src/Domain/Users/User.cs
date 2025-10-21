@@ -31,7 +31,7 @@ public sealed class User : Entity
 
         if (string.IsNullOrWhiteSpace(passwordHash))
         {
-            return UserErrors.UserPasswordHashRequired;
+            return UserErrors.UserPasswordRequired;
         }
 
         return new User(login, passwordHash, createdAt);

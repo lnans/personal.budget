@@ -10,7 +10,7 @@ public class AccountsEndpoints : IEndPoints
 
     public void MapEndpoints(WebApplication app)
     {
-        var group = app.MapGroup("/accounts");
+        var group = app.MapGroup("/accounts").RequireAuthorization();
 
         group
             .MapGet("", GetAccounts)
