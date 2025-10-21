@@ -7,6 +7,6 @@ public static class OpenApiConfiguration
     public static void MapOpenApiEndpoints(this WebApplication app)
     {
         app.MapOpenApi().AllowAnonymous();
-        app.MapScalarApiReference("/docs").AllowAnonymous();
+        app.MapScalarApiReference("/docs", config => config.Title = "Budget.Api").AllowAnonymous();
     }
 }

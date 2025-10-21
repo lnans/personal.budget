@@ -48,9 +48,11 @@ public class ApiTestFixture
         using var dbContext = ScopedServiceProvider.GetRequiredService<AppDbContext>();
         dbContext.Database.Migrate();
 
+        var authTokenGenerator = ScopedServiceProvider.GetRequiredService<IAuthTokenGenerator>();
         var passwordHasher = ScopedServiceProvider.GetRequiredService<IPasswordHasher>();
         var userPasswordHash = passwordHasher.Hash(DefaultUserPassword);
         User = User.Create(DefaultUserLogin, userPasswordHash, DateTimeOffset.UtcNow).Value;
+        UserToken = User.GenerateAuthToken(authTokenGenerator);
         dbContext.Users.Add(User);
         dbContext.SaveChanges();
 
@@ -79,6 +81,8 @@ public class ApiTestFixture
     public User User { get; }
 
     public string UserPassword { get; } = DefaultUserPassword;
+
+    public string UserToken { get; }
 
     public async Task ResetDatabaseAsync() => await _respawner.ResetAsync(_dbConnection);
 

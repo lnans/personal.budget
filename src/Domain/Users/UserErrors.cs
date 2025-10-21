@@ -13,8 +13,8 @@ public static class UserErrors
             description: $"User login must not exceed {UserConstants.MaxLoginLength} characters."
         );
 
-    public static Error UserPasswordHashRequired =>
-        Error.Validation(code: "User.PasswordHash.Required", description: "User password hash is required.");
+    public static Error UserPasswordRequired =>
+        Error.Validation(code: "User.Password.Required", description: "User password is required.");
 
     public static Error UserInvalidCredentials =>
         Error.Validation(code: "User.InvalidCredentials", description: "Invalid user credentials.");

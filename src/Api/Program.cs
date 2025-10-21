@@ -19,13 +19,13 @@ try
         (ctx, sv, config) => config.ReadFrom.Configuration(ctx.Configuration).ReadFrom.Services(sv)
     );
 
-    services.AddApiServices();
+    services.AddApiServices(configuration);
     services.AddApplicationServices(configuration);
     services.AddInfrastructureServices(configuration);
 
     var app = builder.Build();
 
-    app.UseDeveloperExceptionPage();
+    app.UseExceptionHandling();
     app.UseCors(config =>
     {
         config.AllowAnyHeader();
@@ -33,6 +33,9 @@ try
         config.AllowAnyMethod();
         config.WithExposedHeaders("Content-Disposition");
     });
+
+    app.UseAuthentication();
+    app.UseAuthorization();
 
     app.MapOpenApiEndpoints();
     app.MapApiEndpoints();
