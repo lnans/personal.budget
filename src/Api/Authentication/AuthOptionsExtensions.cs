@@ -1,7 +1,6 @@
 using Ardalis.GuardClauses;
-using Microsoft.Extensions.Configuration;
 
-namespace Infrastructure.Authentication;
+namespace Api.Authentication;
 
 public static class AuthOptionsExtensions
 {

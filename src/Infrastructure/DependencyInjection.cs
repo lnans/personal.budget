@@ -14,7 +14,7 @@ public static class DependencyInjection
     public static void AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.ConfigurePersistence(configuration);
-        services.ConfigureAuthentication(configuration);
+        services.ConfigureAuthentication();
     }
 
     private static void ConfigurePersistence(this IServiceCollection services, IConfiguration configuration)
@@ -31,12 +31,6 @@ public static class DependencyInjection
         services.AddSingleton(TimeProvider.System);
     }
 
-    private static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
-    {
-        var authOptions = configuration.GetAuthTokenOptions();
-
+    private static void ConfigureAuthentication(this IServiceCollection services) =>
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
-        services.AddSingleton<IAuthTokenGenerator, AuthTokenGenerator>();
-        services.AddSingleton(authOptions);
-    }
 }

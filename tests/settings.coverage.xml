@@ -20,6 +20,7 @@
                 <Source>.*\.generated\.cs$</Source>
                 <Source>.*/Program\.cs$</Source>
                 <Source>.*DependencyInjection\.cs$</Source>
+                <Source>.*/Api/Authentication/.*</Source>
                 <Source>.*/Api/Configurations/.*</Source>
                 <Source>.*/Api/Errors/.*</Source>
                 <Source>.*/Application/Behaviors/.*</Source>

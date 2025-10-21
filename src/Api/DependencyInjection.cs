@@ -1,5 +1,8 @@
 using System.Text;
+using Api.Authentication;
 using Api.Errors;
+using Application.Interfaces;
+using Domain.Users;
 using Infrastructure.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
@@ -22,12 +25,17 @@ public static class DependencyInjection
 
     private static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
+        var authOptions = configuration.GetAuthTokenOptions();
+        services.AddHttpContextAccessor();
+        services.AddSingleton<IAuthTokenGenerator, AuthTokenGenerator>();
+        services.AddScoped<IAuthContext, AuthContext>();
+        services.AddSingleton(authOptions);
+        services.AddSingleton(TimeProvider.System);
+
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                var authOptions = configuration.GetAuthTokenOptions();
-
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
