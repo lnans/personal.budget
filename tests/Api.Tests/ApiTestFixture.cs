@@ -79,8 +79,9 @@ public class ApiTestFixture
             .GetResult();
     }
 
-    public async Task ResetDatabaseAsync()
+    public async Task ResetFixtureStateAsync()
     {
+        ApiClient.DefaultRequestHeaders.Authorization = null;
         await _respawner.ResetAsync(_dbConnection);
         await using var dbContext = ScopedServiceProvider.GetRequiredService<AppDbContext>();
         InitUser(dbContext);

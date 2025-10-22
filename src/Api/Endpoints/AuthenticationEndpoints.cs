@@ -2,6 +2,7 @@ using Api.Configurations;
 using Api.Extensions;
 using Application.Features.Authentication.Commands.RefreshToken;
 using Application.Features.Authentication.Commands.SignIn;
+using Application.Features.Authentication.Queries.GetCurrentUser;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +15,16 @@ public class AuthenticationEndpoints : IEndPoints
     public void MapEndpoints(WebApplication app)
     {
         var group = app.MapGroup("/auth").RequireAuthorization();
+
+        group
+            .MapGet("", GetCurrentUser)
+            .WithDescription("Get the authenticated user details")
+            .WithSummary("Get current user")
+            .Produces<GetCurrentUserResponse>()
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithName(nameof(GetCurrentUser))
+            .WithTags(Tag);
 
         group
             .MapPost("/signin", SignIn)
@@ -36,6 +47,16 @@ public class AuthenticationEndpoints : IEndPoints
             .WithName(nameof(RefreshToken))
             .WithTags(Tag)
             .AllowAnonymous();
+    }
+
+    private static async Task<IResult> GetCurrentUser(
+        HttpContext context,
+        IMediator mediator,
+        CancellationToken cancellationToken
+    )
+    {
+        var result = await mediator.Send(new GetCurrentUserQuery(), cancellationToken);
+        return result.ToOkResultOrProblem(context);
     }
 
     private static async Task<IResult> SignIn(

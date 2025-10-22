@@ -24,4 +24,6 @@ public static class UserErrors
 
     public static Error UserInvalidRefreshToken =>
         Error.Unauthorized(code: "User.InvalidRefreshToken", description: "Invalid or expired refresh token.");
+
+    public static Error UserNotFound => Error.NotFound(code: "User.NotFound", description: "User not found.");
 }
