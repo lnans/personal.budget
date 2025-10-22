@@ -15,4 +15,7 @@ public static class AccountOperationErrors
             code: "AccountOperation.Description.TooLong",
             description: $"Account operation description must not exceed {AccountOperationConstants.MaxDescriptionLength} characters."
         );
+
+    public static Error AccountOperationNotFound =>
+        Error.NotFound(code: "AccountOperation.NotFound", description: "Account operation not found.");
 }
