@@ -25,7 +25,13 @@ public sealed class CreateAccountHandler : IRequestHandler<CreateAccountCommand,
     {
         var createdAt = _timeProvider.GetUtcNow();
 
-        var accountResult = Account.Create(_authContext.CurrentUserId, command.Name, command.InitialBalance, createdAt);
+        var accountResult = Account.Create(
+            _authContext.CurrentUserId,
+            command.Name,
+            command.Type,
+            command.InitialBalance,
+            createdAt
+        );
 
         if (accountResult.IsError)
         {
@@ -40,6 +46,7 @@ public sealed class CreateAccountHandler : IRequestHandler<CreateAccountCommand,
         return new CreateAccountResponse(
             account.Id,
             account.Name,
+            account.Type,
             account.Balance,
             account.CreatedAt,
             account.UpdatedAt

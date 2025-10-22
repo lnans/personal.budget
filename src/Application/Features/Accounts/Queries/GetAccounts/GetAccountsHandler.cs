@@ -24,6 +24,7 @@ public sealed class GetAccountsHandler : IRequestHandler<GetAccountsQuery, List<
             .Select(account => new GetAccountsResponse(
                 account.Id,
                 account.Name,
+                account.Type,
                 account.Balance,
                 account.CreatedAt,
                 account.UpdatedAt

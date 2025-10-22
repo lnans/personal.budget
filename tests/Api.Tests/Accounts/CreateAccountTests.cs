@@ -16,7 +16,12 @@ public class CreateAccountTests : ApiTestBase
     public async Task CreateAccount_WithValidData_ShouldCreateAccount()
     {
         // Arrange
-        var command = new CreateAccountCommand { Name = "Test Account", InitialBalance = 100m };
+        var command = new CreateAccountCommand
+        {
+            Name = "Test Account",
+            Type = AccountType.Checking,
+            InitialBalance = 100m,
+        };
 
         // Act
         var response = await ApiClient.LoggedAs(UserToken).PostAsJsonAsync(Endpoint, command, CancellationToken);
@@ -26,6 +31,7 @@ public class CreateAccountTests : ApiTestBase
         result.ShouldBeSuccessful();
         result.Response.ShouldNotBeNull();
         result.Response.Name.ShouldBe(command.Name);
+        result.Response.Type.ShouldBe(command.Type);
         result.Response.Balance.ShouldBe(command.InitialBalance);
         result.Response.Id.ShouldNotBe(Guid.Empty);
 
@@ -37,7 +43,12 @@ public class CreateAccountTests : ApiTestBase
     public async Task CreateAccount_WithEmptyName_ShouldReturnValidationError()
     {
         // Arrange
-        var command = new CreateAccountCommand { Name = "", InitialBalance = 100m };
+        var command = new CreateAccountCommand
+        {
+            Name = "",
+            Type = AccountType.Checking,
+            InitialBalance = 100m,
+        };
 
         // Act
         var response = await ApiClient.LoggedAs(UserToken).PostAsJsonAsync(Endpoint, command, CancellationToken);
@@ -57,6 +68,7 @@ public class CreateAccountTests : ApiTestBase
         var command = new CreateAccountCommand
         {
             Name = new string('a', AccountConstants.MaxNameLength + 1),
+            Type = AccountType.Checking,
             InitialBalance = 100m,
         };
 
@@ -75,7 +87,12 @@ public class CreateAccountTests : ApiTestBase
     public async Task CreateAccount_WithNegativeBalance_ShouldCreateAccount()
     {
         // Arrange
-        var command = new CreateAccountCommand { Name = "Test Account", InitialBalance = -50m };
+        var command = new CreateAccountCommand
+        {
+            Name = "Test Account",
+            Type = AccountType.Savings,
+            InitialBalance = -50m,
+        };
 
         // Act
         var response = await ApiClient.LoggedAs(UserToken).PostAsJsonAsync(Endpoint, command, CancellationToken);
@@ -85,6 +102,7 @@ public class CreateAccountTests : ApiTestBase
         result.ShouldBeSuccessful();
         result.Response.ShouldNotBeNull();
         result.Response.Name.ShouldBe(command.Name);
+        result.Response.Type.ShouldBe(command.Type);
         result.Response.Balance.ShouldBe(command.InitialBalance);
     }
 
@@ -92,7 +110,12 @@ public class CreateAccountTests : ApiTestBase
     public async Task CreateAccount_ShouldPersistInDatabase()
     {
         // Arrange
-        var command = new CreateAccountCommand { Name = "Persistent Account", InitialBalance = 200m };
+        var command = new CreateAccountCommand
+        {
+            Name = "Persistent Account",
+            Type = AccountType.Savings,
+            InitialBalance = 200m,
+        };
 
         // Act
         var response = await ApiClient.LoggedAs(UserToken).PostAsJsonAsync(Endpoint, command, CancellationToken);
@@ -105,9 +128,34 @@ public class CreateAccountTests : ApiTestBase
         var accountInDb = await DbContext.Accounts.FindAsync([result.Response.Id], CancellationToken);
         accountInDb.ShouldNotBeNull();
         accountInDb.Name.ShouldBe(command.Name);
+        accountInDb.Type.ShouldBe(command.Type);
         accountInDb.Balance.ShouldBe(command.InitialBalance);
         accountInDb.UserId.ShouldBe(User.Id);
         accountInDb.CreatedAt.ShouldBeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(1));
         accountInDb.UpdatedAt.ShouldBe(accountInDb.CreatedAt);
+    }
+
+    [Fact]
+    public async Task CreateAccount_WithInvalidAccountType_ShouldReturnValidationError()
+    {
+        // Arrange
+        var json = """
+            {
+                "name": "Test Account",
+                "type": 999,
+                "initialBalance": 100
+            }
+            """;
+        var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+        // Act
+        var response = await ApiClient.LoggedAs(UserToken).PostAsync(Endpoint, content, CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<CreateAccountResponse>(CancellationToken);
+
+        // Assert
+        result.ShouldBeProblem();
+        result.Problem.ShouldNotBeNull();
+        result.Problem.Status.ShouldBe(400);
+        result.Problem.ShouldHaveValidationError("Type", AccountErrors.AccountTypeUnknown.Code);
     }
 }
