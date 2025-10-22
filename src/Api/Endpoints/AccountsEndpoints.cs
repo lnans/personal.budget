@@ -1,5 +1,6 @@
 using Api.Configurations;
 using Api.Extensions;
+using Application.Features.Accounts.Commands.AddOperation;
 using Application.Features.Accounts.Commands.CreateAccount;
 using Application.Features.Accounts.Commands.PatchAccount;
 using Application.Features.Accounts.Queries.GetAccounts;
@@ -45,6 +46,17 @@ public class AccountsEndpoints : IEndPoints
             .ProducesProblem(StatusCodes.Status404NotFound)
             .WithName(nameof(PatchAccount))
             .WithTags(Tag);
+
+        group
+            .MapPost("{id:guid}/operations", AddOperation)
+            .WithDescription("Add an operation to an account")
+            .WithSummary("Add operation")
+            .Produces<AddOperationResponse>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithName(nameof(AddOperation))
+            .WithTags(Tag);
     }
 
     private static async Task<IResult> GetAccounts(IMediator mediator, CancellationToken cancellationToken)
@@ -74,6 +86,19 @@ public class AccountsEndpoints : IEndPoints
     )
     {
         command.Id = id;
+        var result = await mediator.Send(command, cancellationToken);
+        return result.ToOkResultOrProblem(context);
+    }
+
+    private static async Task<IResult> AddOperation(
+        HttpContext context,
+        IMediator mediator,
+        Guid id,
+        [FromBody] AddOperationCommand command,
+        CancellationToken cancellationToken
+    )
+    {
+        command.AccountId = id;
         var result = await mediator.Send(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }
