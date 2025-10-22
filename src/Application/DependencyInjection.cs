@@ -11,6 +11,8 @@ public static class DependencyInjection
 {
     public static void AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddSingleton(TimeProvider.System);
+
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
         services.AddMediatR(config =>

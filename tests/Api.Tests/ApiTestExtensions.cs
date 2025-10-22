@@ -92,4 +92,17 @@ public static class ApiTestExtensions
             problem.ShouldHaveValidationError(fieldName, errorCode);
         }
     }
+
+    public static void ShouldBeCloseTo(this DateTimeOffset actual, DateTimeOffset expected, TimeSpan? tolerance = null)
+    {
+        var actualTolerance = tolerance ?? TimeSpan.FromSeconds(1);
+        var difference = (actual - expected).Duration();
+
+        if (difference >= actualTolerance)
+        {
+            throw new InvalidOperationException(
+                $"Expected {actual:O} to be close to {expected:O} (within {actualTolerance}), but difference was {difference}"
+            );
+        }
+    }
 }
