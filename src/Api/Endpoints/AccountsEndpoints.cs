@@ -1,6 +1,7 @@
 using Api.Configurations;
 using Api.Extensions;
 using Application.Features.Accounts.Commands.CreateAccount;
+using Application.Features.Accounts.Commands.PatchAccount;
 using Application.Features.Accounts.Queries.GetAccounts;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +34,17 @@ public class AccountsEndpoints : IEndPoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .WithName(nameof(CreateAccount))
             .WithTags(Tag);
+
+        group
+            .MapPatch("{id:guid}", PatchAccount)
+            .WithDescription("Update an account name")
+            .WithSummary("Update account")
+            .Produces<PatchAccountResponse>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithName(nameof(PatchAccount))
+            .WithTags(Tag);
     }
 
     private static async Task<IResult> GetAccounts(IMediator mediator, CancellationToken cancellationToken)
@@ -49,6 +61,19 @@ public class AccountsEndpoints : IEndPoints
         CancellationToken cancellationToken
     )
     {
+        var result = await mediator.Send(command, cancellationToken);
+        return result.ToOkResultOrProblem(context);
+    }
+
+    private static async Task<IResult> PatchAccount(
+        HttpContext context,
+        IMediator mediator,
+        Guid id,
+        [FromBody] PatchAccountCommand command,
+        CancellationToken cancellationToken
+    )
+    {
+        command.Id = id;
         var result = await mediator.Send(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }
