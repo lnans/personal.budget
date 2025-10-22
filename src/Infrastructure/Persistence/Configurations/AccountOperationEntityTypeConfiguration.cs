@@ -44,5 +44,9 @@ public class AccountOperationEntityTypeConfiguration : IEntityTypeConfiguration<
         builder.Property(accountOperation => accountOperation.CreatedAt).HasColumnName("CreatedAt").IsRequired();
 
         builder.Property(accountOperation => accountOperation.UpdatedAt).HasColumnName("UpdatedAt").IsRequired();
+
+        builder.Property(accountOperation => accountOperation.DeletedAt).HasColumnName("DeletedAt").IsRequired(false);
+
+        builder.HasQueryFilter(accountOperation => accountOperation.DeletedAt == null);
     }
 }

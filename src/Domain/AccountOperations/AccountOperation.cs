@@ -65,4 +65,10 @@ public sealed class AccountOperation : Entity
         UpdatedAt = updatedAt;
         return Result.Success;
     }
+
+    internal void Delete(DateTimeOffset deletedAt)
+    {
+        DeletedAt = deletedAt;
+        UpdatedAt = deletedAt;
+    }
 }

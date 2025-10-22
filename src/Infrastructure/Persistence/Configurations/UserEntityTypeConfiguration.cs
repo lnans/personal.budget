@@ -25,5 +25,9 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
         builder.Property(user => user.CreatedAt).HasColumnName("CreatedAt").IsRequired();
 
         builder.Property(user => user.UpdatedAt).HasColumnName("UpdatedAt").IsRequired();
+
+        builder.Property(user => user.DeletedAt).HasColumnName("DeletedAt").IsRequired(false);
+
+        builder.HasQueryFilter(user => user.DeletedAt == null);
     }
 }
