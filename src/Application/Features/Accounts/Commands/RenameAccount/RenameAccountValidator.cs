@@ -2,11 +2,11 @@ using Application.Extensions;
 using Domain.Accounts;
 using FluentValidation;
 
-namespace Application.Features.Accounts.Commands.PatchAccount;
+namespace Application.Features.Accounts.Commands.RenameAccount;
 
-public class PatchAccountValidator : AbstractValidator<PatchAccountCommand>
+public class RenameAccountValidator : AbstractValidator<RenameAccountCommand>
 {
-    public PatchAccountValidator()
+    public RenameAccountValidator()
     {
         RuleFor(q => q.Name)
             .NotEmpty()
