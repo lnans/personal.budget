@@ -47,6 +47,7 @@ public sealed class RenameAccountHandler : IRequestHandler<RenameAccountCommand,
         return new RenameAccountResponse(
             account.Id,
             account.Name,
+            account.Type,
             account.Balance,
             account.CreatedAt,
             account.UpdatedAt

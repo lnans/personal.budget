@@ -11,17 +11,19 @@ public class AccountCreateTests
     {
         // Arrange
         const string accountName = "Test Account";
+        const AccountType accountType = AccountType.Checking;
         const decimal initialBalance = 100m;
         var user = UserFixture.CreateValidUser();
         var createdAt = FixtureBase.GetTestDate();
 
         // Act
-        var account = Account.Create(user.Id, accountName, initialBalance, createdAt);
+        var account = Account.Create(user.Id, accountName, accountType, initialBalance, createdAt);
 
         // Assert
         account.IsError.ShouldBeFalse();
         account.Value.UserId.ShouldBe(user.Id);
         account.Value.Name.ShouldBe(accountName);
+        account.Value.Type.ShouldBe(accountType);
         account.Value.Balance.ShouldBe(initialBalance);
         account.Value.Operations.ShouldBeEmpty();
         account.Value.CreatedAt.ShouldBe(createdAt);
@@ -33,12 +35,13 @@ public class AccountCreateTests
     {
         // Arrange
         const string accountName = "";
+        const AccountType accountType = AccountType.Checking;
         const decimal initialBalance = 100m;
         var user = UserFixture.CreateValidUser();
         var createdAt = FixtureBase.GetTestDate();
 
         // Act
-        var account = Account.Create(user.Id, accountName, initialBalance, createdAt);
+        var account = Account.Create(user.Id, accountName, accountType, initialBalance, createdAt);
 
         // Assert
         FixtureBase.AssertError(account, AccountErrors.AccountNameRequired);
@@ -49,12 +52,13 @@ public class AccountCreateTests
     {
         // Arrange
         const decimal initialBalance = 100m;
+        const AccountType accountType = AccountType.Checking;
         var user = UserFixture.CreateValidUser();
         var accountName = AccountFixture.GenerateLongAccountName();
         var createdAt = FixtureBase.GetTestDate();
 
         // Act
-        var account = Account.Create(user.Id, accountName, initialBalance, createdAt);
+        var account = Account.Create(user.Id, accountName, accountType, initialBalance, createdAt);
 
         // Assert
         FixtureBase.AssertError(account, AccountErrors.AccountNameTooLong);

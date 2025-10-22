@@ -1,7 +1,6 @@
 using System.Net.Http.Json;
 using Application.Features.Accounts.Commands.AddOperation;
 using Domain.AccountOperations;
-using Domain.Accounts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using TestFixtures.Domain;
@@ -20,7 +19,7 @@ public class AddOperationTests : ApiTestBase
     public async Task AddOperation_WithValidPositiveAmount_ShouldAddOperationAndUpdateBalance()
     {
         // Arrange
-        var account = AccountFixture.CreateValidAccount(User.Id, "Test Account", 100m);
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
@@ -42,6 +41,7 @@ public class AddOperationTests : ApiTestBase
         result.Response.ShouldNotBeNull();
         result.Response.Id.ShouldBe(account.Id);
         result.Response.Name.ShouldBe("Test Account");
+        result.Response.Type.ShouldBe(account.Type);
         result.Response.Balance.ShouldBe(600m); // 100 + 500
     }
 
@@ -49,7 +49,7 @@ public class AddOperationTests : ApiTestBase
     public async Task AddOperation_WithValidNegativeAmount_ShouldAddOperationAndUpdateBalance()
     {
         // Arrange
-        var account = AccountFixture.CreateValidAccount(User.Id, "Test Account", 100m);
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
@@ -70,6 +70,7 @@ public class AddOperationTests : ApiTestBase
         result.ShouldBeSuccessful();
         result.Response.ShouldNotBeNull();
         result.Response.Id.ShouldBe(account.Id);
+        result.Response.Type.ShouldBe(account.Type);
         result.Response.Balance.ShouldBe(50m); // 100 - 50
     }
 
@@ -77,7 +78,7 @@ public class AddOperationTests : ApiTestBase
     public async Task AddOperation_WithZeroAmount_ShouldAddOperation()
     {
         // Arrange
-        var account = AccountFixture.CreateValidAccount(User.Id, "Test Account", 100m);
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
@@ -97,6 +98,7 @@ public class AddOperationTests : ApiTestBase
         // Assert
         result.ShouldBeSuccessful();
         result.Response.ShouldNotBeNull();
+        result.Response.Type.ShouldBe(account.Type);
         result.Response.Balance.ShouldBe(100m);
     }
 
@@ -104,7 +106,7 @@ public class AddOperationTests : ApiTestBase
     public async Task AddOperation_WithEmptyDescription_ShouldReturnValidationError()
     {
         // Arrange
-        var account = AccountFixture.CreateValidAccount(User.Id, "Test Account", 100m);
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
@@ -135,7 +137,7 @@ public class AddOperationTests : ApiTestBase
     public async Task AddOperation_WithTooLongDescription_ShouldReturnValidationError()
     {
         // Arrange
-        var account = AccountFixture.CreateValidAccount(User.Id, "Test Account", 100m);
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
@@ -190,7 +192,7 @@ public class AddOperationTests : ApiTestBase
     public async Task AddOperation_ShouldPersistOperationInDatabase()
     {
         // Arrange
-        var account = AccountFixture.CreateValidAccount(User.Id, "Test Account", 100m);
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
@@ -232,7 +234,7 @@ public class AddOperationTests : ApiTestBase
     public async Task AddOperation_WithMultipleOperations_ShouldUpdateBalanceCorrectly()
     {
         // Arrange
-        var account = AccountFixture.CreateValidAccount(User.Id, "Test Account", 100m);
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
@@ -270,6 +272,7 @@ public class AddOperationTests : ApiTestBase
         // Assert
         result.ShouldBeSuccessful();
         result.Response.ShouldNotBeNull();
+        result.Response.Type.ShouldBe(account.Type);
         result.Response.Balance.ShouldBe(220m); // 100 + 50 - 30 + 100
 
         var accountInDb = await DbContext
@@ -286,7 +289,7 @@ public class AddOperationTests : ApiTestBase
     public async Task AddOperation_WithNegativeBalanceResult_ShouldSucceed()
     {
         // Arrange
-        var account = AccountFixture.CreateValidAccount(User.Id, "Test Account", 50m);
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 50m);
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
@@ -306,6 +309,7 @@ public class AddOperationTests : ApiTestBase
         // Assert
         result.ShouldBeSuccessful();
         result.Response.ShouldNotBeNull();
+        result.Response.Type.ShouldBe(account.Type);
         result.Response.Balance.ShouldBe(-50m);
     }
 }

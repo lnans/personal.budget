@@ -13,5 +13,8 @@ public static class AccountErrors
             description: $"Account name must not exceed {AccountConstants.MaxNameLength} characters."
         );
 
+    public static Error AccountTypeUnknown =>
+        Error.Validation(code: "Account.AccountType.Unknown", description: "Account type is not valid.");
+
     public static Error AccountNotFound => Error.NotFound(code: "Account.NotFound", description: "Account not found.");
 }

@@ -47,6 +47,7 @@ public sealed class AddOperationHandler : IRequestHandler<AddOperationCommand, E
         return new AddOperationResponse(
             account.Id,
             account.Name,
+            account.Type,
             account.Balance,
             account.CreatedAt,
             account.UpdatedAt
