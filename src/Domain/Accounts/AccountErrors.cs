@@ -12,4 +12,6 @@ public static class AccountErrors
             code: "Account.Name.TooLong",
             description: $"Account name must not exceed {AccountConstants.MaxNameLength} characters."
         );
+
+    public static Error AccountNotFound => Error.NotFound(code: "Account.NotFound", description: "Account not found.");
 }
