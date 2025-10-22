@@ -400,12 +400,13 @@ public class RenameAccountOperationTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        account.AddOperation("Operation 1", 10m, DateTimeOffset.UtcNow);
-        account.AddOperation("Operation 2", 20m, DateTimeOffset.UtcNow);
-        account.AddOperation("Operation 3", 30m, DateTimeOffset.UtcNow);
+        var now = DateTimeOffset.UtcNow;
+        account.AddOperation("Operation 1", 10m, now);
+        account.AddOperation("Operation 2", 20m, now.AddMilliseconds(10));
+        account.AddOperation("Operation 3", 30m, now.AddMilliseconds(20));
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var targetOperation = account.Operations.ElementAt(1); // Second operation
+        var targetOperation = account.Operations.OrderBy(o => o.CreatedAt).ElementAt(1); // Second operation
 
         var renameCommand = new RenameAccountOperationCommand
         {

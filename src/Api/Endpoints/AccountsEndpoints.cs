@@ -5,6 +5,7 @@ using Application.Features.Accounts.Commands.CreateAccount;
 using Application.Features.Accounts.Commands.DeleteAccount;
 using Application.Features.Accounts.Commands.RenameAccount;
 using Application.Features.Accounts.Commands.RenameAccountOperation;
+using Application.Features.Accounts.Commands.UpdateOperationAmount;
 using Application.Features.Accounts.Queries.GetAccounts;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -72,6 +73,17 @@ public class AccountsEndpoints : IEndPoints
             .WithTags(Tag);
 
         group
+            .MapPut("{accountId:guid}/operations/{operationId:guid}/amount", UpdateOperationAmount)
+            .WithDescription("Update an account operation amount")
+            .WithSummary("Update operation amount")
+            .Produces<UpdateOperationAmountResponse>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithName(nameof(UpdateOperationAmount))
+            .WithTags(Tag);
+
+        group
             .MapDelete("{id:guid}", DeleteAccount)
             .WithDescription("Delete an account (soft delete)")
             .WithSummary("Delete account")
@@ -133,6 +145,21 @@ public class AccountsEndpoints : IEndPoints
         Guid accountId,
         Guid operationId,
         [FromBody] RenameAccountOperationCommand command,
+        CancellationToken cancellationToken
+    )
+    {
+        command.AccountId = accountId;
+        command.OperationId = operationId;
+        var result = await mediator.Send(command, cancellationToken);
+        return result.ToOkResultOrProblem(context);
+    }
+
+    private static async Task<IResult> UpdateOperationAmount(
+        HttpContext context,
+        IMediator mediator,
+        Guid accountId,
+        Guid operationId,
+        [FromBody] UpdateOperationAmountCommand command,
         CancellationToken cancellationToken
     )
     {
