@@ -1,6 +1,6 @@
-namespace Application.Features.Accounts.Commands.PatchAccount;
+namespace Application.Features.Accounts.Commands.RenameAccount;
 
-public sealed record PatchAccountResponse(
+public sealed record RenameAccountResponse(
     Guid Id,
     string Name,
     decimal Balance,

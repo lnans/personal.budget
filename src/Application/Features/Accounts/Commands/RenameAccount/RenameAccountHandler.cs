@@ -4,23 +4,23 @@ using ErrorOr;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Features.Accounts.Commands.PatchAccount;
+namespace Application.Features.Accounts.Commands.RenameAccount;
 
-public sealed class PatchAccountHandler : IRequestHandler<PatchAccountCommand, ErrorOr<PatchAccountResponse>>
+public sealed class RenameAccountHandler : IRequestHandler<RenameAccountCommand, ErrorOr<RenameAccountResponse>>
 {
     private readonly IAppDbContext _dbContext;
     private readonly IAuthContext _authContext;
     private readonly TimeProvider _timeProvider;
 
-    public PatchAccountHandler(IAppDbContext dbContext, IAuthContext authContext, TimeProvider timeProvider)
+    public RenameAccountHandler(IAppDbContext dbContext, IAuthContext authContext, TimeProvider timeProvider)
     {
         _dbContext = dbContext;
         _authContext = authContext;
         _timeProvider = timeProvider;
     }
 
-    public async Task<ErrorOr<PatchAccountResponse>> Handle(
-        PatchAccountCommand command,
+    public async Task<ErrorOr<RenameAccountResponse>> Handle(
+        RenameAccountCommand command,
         CancellationToken cancellationToken
     )
     {
@@ -44,7 +44,7 @@ public sealed class PatchAccountHandler : IRequestHandler<PatchAccountCommand, E
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return new PatchAccountResponse(
+        return new RenameAccountResponse(
             account.Id,
             account.Name,
             account.Balance,
