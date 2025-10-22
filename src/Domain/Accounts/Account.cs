@@ -75,6 +75,35 @@ public sealed class Account : Entity
         return Result.Success;
     }
 
+    public ErrorOr<Success> UpdateOperationAmount(Guid operationId, decimal newAmount, DateTimeOffset updatedAt)
+    {
+        var operation = _operations.FirstOrDefault(o => o.Id == operationId);
+        if (operation is null)
+        {
+            return AccountOperationErrors.AccountOperationNotFound;
+        }
+
+        operation.UpdateAmount(newAmount, updatedAt);
+
+        // Get all operations after this one
+        var subsequentOperations = _operations
+            .Where(o => o.CreatedAt > operation.CreatedAt)
+            .OrderBy(o => o.CreatedAt)
+            .ToList();
+
+        // Cascade the balance update to all subsequent operations
+        var currentBalance = operation.NextBalance;
+        foreach (var subsequentOperation in subsequentOperations)
+        {
+            subsequentOperation.UpdateBalances(currentBalance, updatedAt);
+            currentBalance = subsequentOperation.NextBalance;
+        }
+
+        Balance = subsequentOperations.Any() ? currentBalance : operation.NextBalance;
+
+        return Result.Success;
+    }
+
     public ErrorOr<Success> Delete(DateTimeOffset deletedAt)
     {
         if (DeletedAt is not null)
@@ -85,7 +114,6 @@ public sealed class Account : Entity
         DeletedAt = deletedAt;
         UpdatedAt = deletedAt;
 
-        // Cascade soft delete to all operations
         foreach (var operation in _operations)
         {
             operation.Delete(deletedAt);

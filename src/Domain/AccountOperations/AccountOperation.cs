@@ -7,9 +7,9 @@ public sealed class AccountOperation : Entity
 {
     public Guid AccountId { get; }
     public string Description { get; private set; }
-    public decimal Amount { get; }
-    public decimal PreviousBalance { get; }
-    public decimal NextBalance { get; }
+    public decimal Amount { get; private set; }
+    public decimal PreviousBalance { get; private set; }
+    public decimal NextBalance { get; private set; }
     public Account Account { get; } = null!;
 
     private AccountOperation(
@@ -64,6 +64,20 @@ public sealed class AccountOperation : Entity
         Description = description;
         UpdatedAt = updatedAt;
         return Result.Success;
+    }
+
+    internal void UpdateAmount(decimal newAmount, DateTimeOffset updatedAt)
+    {
+        Amount = newAmount;
+        NextBalance = PreviousBalance + newAmount;
+        UpdatedAt = updatedAt;
+    }
+
+    internal void UpdateBalances(decimal newPreviousBalance, DateTimeOffset updatedAt)
+    {
+        PreviousBalance = newPreviousBalance;
+        NextBalance = newPreviousBalance + Amount;
+        UpdatedAt = updatedAt;
     }
 
     internal void Delete(DateTimeOffset deletedAt)
