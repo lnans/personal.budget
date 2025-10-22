@@ -31,7 +31,7 @@ public class ApiTestFixture
     private readonly string _cachedPasswordHash;
 
     public HttpClient ApiClient { get; }
-    public IServiceProvider ScopedServiceProvider => _webApplicationFactory.Services.CreateScope().ServiceProvider;
+    public IServiceProvider Services => _webApplicationFactory.Services;
     public User User { get; private set; } = null!;
     public string UserPassword { get; } = DefaultUserPassword;
     public string UserToken { get; private set; } = null!;
@@ -52,12 +52,13 @@ public class ApiTestFixture
         var dbConnectionString = _dbTestContainer.GetConnectionString();
 
         _webApplicationFactory = new ApiFactory(dbConnectionString);
+        using var scope = _webApplicationFactory.Services.CreateScope();
 
         // Hash password once and cache it for all tests
-        var passwordHasher = ScopedServiceProvider.GetRequiredService<IPasswordHasher>();
+        var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
         _cachedPasswordHash = passwordHasher.Hash(DefaultUserPassword);
 
-        using var dbContext = ScopedServiceProvider.GetRequiredService<AppDbContext>();
+        using var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         dbContext.Database.Migrate();
         InitUser(dbContext);
 
@@ -83,7 +84,8 @@ public class ApiTestFixture
     {
         ApiClient.DefaultRequestHeaders.Authorization = null;
         await _respawner.ResetAsync(_dbConnection);
-        await using var dbContext = ScopedServiceProvider.GetRequiredService<AppDbContext>();
+        using var scope = _webApplicationFactory.Services.CreateScope();
+        await using var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         InitUser(dbContext);
     }
 
@@ -99,7 +101,7 @@ public class ApiTestFixture
 
     private void InitUser(AppDbContext dbContext)
     {
-        var authTokenGenerator = ScopedServiceProvider.GetRequiredService<IAuthTokenGenerator>();
+        var authTokenGenerator = Services.GetRequiredService<IAuthTokenGenerator>();
         User = User.Create(DefaultUserLogin, _cachedPasswordHash, DateTimeOffset.UtcNow).Value;
         UserToken = User.GenerateAuthToken(authTokenGenerator);
         UserRefreshToken = User.GenerateRefreshToken(authTokenGenerator);

@@ -2,6 +2,7 @@ using Api.Configurations;
 using Api.Extensions;
 using Application.Features.Accounts.Commands.AddOperation;
 using Application.Features.Accounts.Commands.CreateAccount;
+using Application.Features.Accounts.Commands.DeleteAccount;
 using Application.Features.Accounts.Commands.RenameAccount;
 using Application.Features.Accounts.Queries.GetAccounts;
 using MediatR;
@@ -57,6 +58,17 @@ public class AccountsEndpoints : IEndPoints
             .ProducesProblem(StatusCodes.Status404NotFound)
             .WithName(nameof(AddOperation))
             .WithTags(Tag);
+
+        group
+            .MapDelete("{id:guid}", DeleteAccount)
+            .WithDescription("Delete an account (soft delete)")
+            .WithSummary("Delete account")
+            .Produces<DeleteAccountResponse>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithName(nameof(DeleteAccount))
+            .WithTags(Tag);
     }
 
     private static async Task<IResult> GetAccounts(IMediator mediator, CancellationToken cancellationToken)
@@ -99,6 +111,18 @@ public class AccountsEndpoints : IEndPoints
     )
     {
         command.AccountId = id;
+        var result = await mediator.Send(command, cancellationToken);
+        return result.ToOkResultOrProblem(context);
+    }
+
+    private static async Task<IResult> DeleteAccount(
+        HttpContext context,
+        IMediator mediator,
+        Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        var command = new DeleteAccountCommand { Id = id };
         var result = await mediator.Send(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }

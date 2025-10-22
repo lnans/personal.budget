@@ -74,4 +74,23 @@ public sealed class Account : Entity
         UpdatedAt = updatedAt;
         return Result.Success;
     }
+
+    public ErrorOr<Success> Delete(DateTimeOffset deletedAt)
+    {
+        if (DeletedAt is not null)
+        {
+            return AccountErrors.AccountAlreadyDeleted;
+        }
+
+        DeletedAt = deletedAt;
+        UpdatedAt = deletedAt;
+
+        // Cascade soft delete to all operations
+        foreach (var operation in _operations)
+        {
+            operation.Delete(deletedAt);
+        }
+
+        return Result.Success;
+    }
 }

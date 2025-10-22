@@ -17,4 +17,7 @@ public static class AccountErrors
         Error.Validation(code: "Account.AccountType.Unknown", description: "Account type is not valid.");
 
     public static Error AccountNotFound => Error.NotFound(code: "Account.NotFound", description: "Account not found.");
+
+    public static Error AccountAlreadyDeleted =>
+        Error.Validation(code: "Account.AlreadyDeleted", description: "Account is already deleted.");
 }
