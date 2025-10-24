@@ -1,6 +1,6 @@
-namespace Application.Features.Accounts.Commands.UpdateOperationAmount;
+namespace Application.Features.Accounts.Commands.UpdateAccountOperationAmount;
 
-public sealed record UpdateOperationAmountResponse(
+public sealed record UpdateAccountOperationAmountResponse(
     Guid Id,
     Guid AccountId,
     string Description,
