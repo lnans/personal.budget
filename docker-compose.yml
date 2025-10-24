@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: budget-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespw
+      POSTGRES_DB: budget-sqldb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: budget-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+
+      - ConnectionStrings__Database=Server=postgres;Database=budget-sqldb;User Id=postgres;Password=postgrespw;
+
+      - Auth__SecretKey=${JWT_SECRET_KEY:-your-super-secret-key-change-this-in-production-min-32-chars}
+      - Auth__Issuer=budget.api
+      - Auth__Audience=budget.users
+      - Auth__ExpirationMinutes=60
+      - Auth__RefreshTokenExpirationDays=7
+
+      # Default User Credentials
+      - BUDGET_USER=${BUDGET_USER:-admin}
+      - BUDGET_PASSWORD=${BUDGET_PASSWORD:-admin}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+    driver: local

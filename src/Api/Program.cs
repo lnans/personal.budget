@@ -40,6 +40,10 @@ try
     app.MapOpenApiEndpoints();
     app.MapApiEndpoints();
 
+    app.MapGet("/health", () => Results.Ok(new { status = "Healthy", timestamp = DateTime.UtcNow }))
+        .WithName("HealthCheck")
+        .WithOpenApi();
+
     await app.Services.InitialiseDatabaseAsync();
 
     app.Run();

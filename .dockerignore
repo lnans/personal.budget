@@ -1,0 +1,55 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Build outputs
+**/bin/
+**/obj/
+**/out/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+**/.DS_Store
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.sln.DotSettings.user
+
+# Tests
+**/TestResults/
+**/*.Tests/
+tests/
+
+# Documentation
+*.md
+doc/
+docs/
+
+# Misc
+*.log
+*.tmp
+*.bak
+*.cache
+LICENSE
+README.md
+run-test.sh
+format.sh
+
+# Environment files
+.env
+.env.*
+!.env.example
+
