@@ -1,5 +1,5 @@
 using System.Net.Http.Json;
-using Application.Features.Accounts.Commands.UpdateOperationAmount;
+using Application.Features.Accounts.Commands.UpdateAccountOperationAmount;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using TestFixtures.Domain;
@@ -7,15 +7,15 @@ using TestFixtures.Domain;
 namespace Api.Tests.Accounts;
 
 [Collection(ApiTestCollection.CollectionName)]
-public class UpdateOperationAmountTests : ApiTestBase
+public class UpdateAccountOperationAmountTests : ApiTestBase
 {
     private const string BaseEndpoint = "/accounts";
 
-    public UpdateOperationAmountTests(ApiTestFixture factory)
+    public UpdateAccountOperationAmountTests(ApiTestFixture factory)
         : base(factory) { }
 
     [Fact]
-    public async Task UpdateOperationAmount_WithValidAmount_ShouldUpdateOperationAndAccountBalance()
+    public async Task UpdateAccountOperationAmount_WithValidAmount_ShouldUpdateOperationAndAccountBalance()
     {
         // Arrange
         var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
@@ -24,7 +24,7 @@ public class UpdateOperationAmountTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var operationId = account.Operations.First().Id;
-        var updateCommand = new UpdateOperationAmountCommand { Amount = 75m };
+        var updateCommand = new UpdateAccountOperationAmountCommand { Amount = 75m };
 
         // Act
         var response = await ApiClient
@@ -34,7 +34,7 @@ public class UpdateOperationAmountTests : ApiTestBase
                 updateCommand,
                 CancellationToken
             );
-        var result = await response.ReadResponseOrProblemAsync<UpdateOperationAmountResponse>(CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationAmountResponse>(CancellationToken);
 
         // Assert
         result.ShouldBeSuccessful();
@@ -53,7 +53,7 @@ public class UpdateOperationAmountTests : ApiTestBase
     }
 
     [Fact]
-    public async Task UpdateOperationAmount_WithNegativeAmount_ShouldUpdateCorrectly()
+    public async Task UpdateAccountOperationAmount_WithNegativeAmount_ShouldUpdateCorrectly()
     {
         // Arrange
         var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
@@ -62,7 +62,7 @@ public class UpdateOperationAmountTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var operationId = account.Operations.First().Id;
-        var updateCommand = new UpdateOperationAmountCommand { Amount = -30m };
+        var updateCommand = new UpdateAccountOperationAmountCommand { Amount = -30m };
 
         // Act
         var response = await ApiClient
@@ -72,7 +72,7 @@ public class UpdateOperationAmountTests : ApiTestBase
                 updateCommand,
                 CancellationToken
             );
-        var result = await response.ReadResponseOrProblemAsync<UpdateOperationAmountResponse>(CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationAmountResponse>(CancellationToken);
 
         // Assert
         result.ShouldBeSuccessful();
@@ -87,7 +87,7 @@ public class UpdateOperationAmountTests : ApiTestBase
     }
 
     [Fact]
-    public async Task UpdateOperationAmount_WithMultipleOperations_ShouldCascadeBalanceChanges()
+    public async Task UpdateAccountOperationAmount_WithMultipleOperations_ShouldCascadeBalanceChanges()
     {
         // Arrange
         var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
@@ -103,7 +103,7 @@ public class UpdateOperationAmountTests : ApiTestBase
 
         // Update the first operation (should cascade to all subsequent operations)
         var firstOperationId = account.Operations.OrderBy(o => o.CreatedAt).First().Id;
-        var updateCommand = new UpdateOperationAmountCommand { Amount = 100m }; // Changed from 50 to 100
+        var updateCommand = new UpdateAccountOperationAmountCommand { Amount = 100m }; // Changed from 50 to 100
 
         // Act
         var response = await ApiClient
@@ -113,7 +113,7 @@ public class UpdateOperationAmountTests : ApiTestBase
                 updateCommand,
                 CancellationToken
             );
-        var result = await response.ReadResponseOrProblemAsync<UpdateOperationAmountResponse>(CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationAmountResponse>(CancellationToken);
 
         // Assert
         result.ShouldBeSuccessful();
@@ -146,7 +146,7 @@ public class UpdateOperationAmountTests : ApiTestBase
     }
 
     [Fact]
-    public async Task UpdateOperationAmount_UpdateMiddleOperation_ShouldCascadeToSubsequentOperations()
+    public async Task UpdateAccountOperationAmount_UpdateMiddleOperation_ShouldCascadeToSubsequentOperations()
     {
         // Arrange
         var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
@@ -161,7 +161,7 @@ public class UpdateOperationAmountTests : ApiTestBase
 
         // Update the middle operation
         var middleOperationId = operations[1].Id;
-        var updateCommand = new UpdateOperationAmountCommand { Amount = 80m }; // Changed from 30 to 80
+        var updateCommand = new UpdateAccountOperationAmountCommand { Amount = 80m }; // Changed from 30 to 80
 
         // Act
         await ApiClient
@@ -200,7 +200,7 @@ public class UpdateOperationAmountTests : ApiTestBase
     }
 
     [Fact]
-    public async Task UpdateOperationAmount_UpdateLastOperation_ShouldNotAffectOthers()
+    public async Task UpdateAccountOperationAmount_UpdateLastOperation_ShouldNotAffectOthers()
     {
         // Arrange
         var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
@@ -214,7 +214,7 @@ public class UpdateOperationAmountTests : ApiTestBase
 
         // Update the last operation
         var lastOperationId = operations[1].Id;
-        var updateCommand = new UpdateOperationAmountCommand { Amount = 100m }; // Changed from 30 to 100
+        var updateCommand = new UpdateAccountOperationAmountCommand { Amount = 100m }; // Changed from 30 to 100
 
         // Act
         await ApiClient
@@ -248,7 +248,7 @@ public class UpdateOperationAmountTests : ApiTestBase
     }
 
     [Fact]
-    public async Task UpdateOperationAmount_WithZeroAmount_ShouldUpdateCorrectly()
+    public async Task UpdateAccountOperationAmount_WithZeroAmount_ShouldUpdateCorrectly()
     {
         // Arrange
         var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
@@ -257,7 +257,7 @@ public class UpdateOperationAmountTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var operationId = account.Operations.First().Id;
-        var updateCommand = new UpdateOperationAmountCommand { Amount = 0m };
+        var updateCommand = new UpdateAccountOperationAmountCommand { Amount = 0m };
 
         // Act
         var response = await ApiClient
@@ -267,7 +267,7 @@ public class UpdateOperationAmountTests : ApiTestBase
                 updateCommand,
                 CancellationToken
             );
-        var result = await response.ReadResponseOrProblemAsync<UpdateOperationAmountResponse>(CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationAmountResponse>(CancellationToken);
 
         // Assert
         result.ShouldBeSuccessful();
@@ -282,7 +282,7 @@ public class UpdateOperationAmountTests : ApiTestBase
     }
 
     [Fact]
-    public async Task UpdateOperationAmount_WithNonExistentOperation_ShouldReturnNotFound()
+    public async Task UpdateAccountOperationAmount_WithNonExistentOperation_ShouldReturnNotFound()
     {
         // Arrange
         var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
@@ -290,7 +290,7 @@ public class UpdateOperationAmountTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var nonExistentOperationId = Guid.NewGuid();
-        var updateCommand = new UpdateOperationAmountCommand { Amount = 100m };
+        var updateCommand = new UpdateAccountOperationAmountCommand { Amount = 100m };
 
         // Act
         var response = await ApiClient
@@ -300,7 +300,7 @@ public class UpdateOperationAmountTests : ApiTestBase
                 updateCommand,
                 CancellationToken
             );
-        var result = await response.ReadResponseOrProblemAsync<UpdateOperationAmountResponse>(CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationAmountResponse>(CancellationToken);
 
         // Assert
         result.ShouldBeProblem();
@@ -309,12 +309,12 @@ public class UpdateOperationAmountTests : ApiTestBase
     }
 
     [Fact]
-    public async Task UpdateOperationAmount_WithNonExistentAccount_ShouldReturnNotFound()
+    public async Task UpdateAccountOperationAmount_WithNonExistentAccount_ShouldReturnNotFound()
     {
         // Arrange
         var nonExistentAccountId = Guid.NewGuid();
         var nonExistentOperationId = Guid.NewGuid();
-        var updateCommand = new UpdateOperationAmountCommand { Amount = 100m };
+        var updateCommand = new UpdateAccountOperationAmountCommand { Amount = 100m };
 
         // Act
         var response = await ApiClient
@@ -324,7 +324,7 @@ public class UpdateOperationAmountTests : ApiTestBase
                 updateCommand,
                 CancellationToken
             );
-        var result = await response.ReadResponseOrProblemAsync<UpdateOperationAmountResponse>(CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationAmountResponse>(CancellationToken);
 
         // Assert
         result.ShouldBeProblem();
@@ -333,7 +333,7 @@ public class UpdateOperationAmountTests : ApiTestBase
     }
 
     [Fact]
-    public async Task UpdateOperationAmount_FromAnotherUserAccount_ShouldReturnNotFound()
+    public async Task UpdateAccountOperationAmount_FromAnotherUserAccount_ShouldReturnNotFound()
     {
         // Arrange
         var otherUser = UserFixture.CreateValidUser(login: "otheruser");
@@ -349,7 +349,7 @@ public class UpdateOperationAmountTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var operationId = otherAccount.Operations.First().Id;
-        var updateCommand = new UpdateOperationAmountCommand { Amount = 100m };
+        var updateCommand = new UpdateAccountOperationAmountCommand { Amount = 100m };
 
         // Act - Try to update operation from another user's account
         var response = await ApiClient
@@ -359,7 +359,7 @@ public class UpdateOperationAmountTests : ApiTestBase
                 updateCommand,
                 CancellationToken
             );
-        var result = await response.ReadResponseOrProblemAsync<UpdateOperationAmountResponse>(CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationAmountResponse>(CancellationToken);
 
         // Assert
         result.ShouldBeProblem();

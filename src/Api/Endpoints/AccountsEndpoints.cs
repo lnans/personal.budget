@@ -5,7 +5,7 @@ using Application.Features.Accounts.Commands.CreateAccount;
 using Application.Features.Accounts.Commands.DeleteAccount;
 using Application.Features.Accounts.Commands.RenameAccount;
 using Application.Features.Accounts.Commands.RenameAccountOperation;
-using Application.Features.Accounts.Commands.UpdateOperationAmount;
+using Application.Features.Accounts.Commands.UpdateAccountOperationAmount;
 using Application.Features.Accounts.Queries.GetAccounts;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -73,14 +73,14 @@ public class AccountsEndpoints : IEndPoints
             .WithTags(Tag);
 
         group
-            .MapPut("{accountId:guid}/operations/{operationId:guid}/amount", UpdateOperationAmount)
+            .MapPut("{accountId:guid}/operations/{operationId:guid}/amount", UpdateAccountOperationAmount)
             .WithDescription("Update an account operation amount")
             .WithSummary("Update operation amount")
-            .Produces<UpdateOperationAmountResponse>(StatusCodes.Status200OK)
+            .Produces<UpdateAccountOperationAmountResponse>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .WithName(nameof(UpdateOperationAmount))
+            .WithName(nameof(UpdateAccountOperationAmount))
             .WithTags(Tag);
 
         group
@@ -154,12 +154,12 @@ public class AccountsEndpoints : IEndPoints
         return result.ToOkResultOrProblem(context);
     }
 
-    private static async Task<IResult> UpdateOperationAmount(
+    private static async Task<IResult> UpdateAccountOperationAmount(
         HttpContext context,
         IMediator mediator,
         Guid accountId,
         Guid operationId,
-        [FromBody] UpdateOperationAmountCommand command,
+        [FromBody] UpdateAccountOperationAmountCommand command,
         CancellationToken cancellationToken
     )
     {

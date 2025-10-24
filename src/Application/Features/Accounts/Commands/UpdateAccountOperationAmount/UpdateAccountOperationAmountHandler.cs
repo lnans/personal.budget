@@ -5,24 +5,28 @@ using ErrorOr;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Features.Accounts.Commands.UpdateOperationAmount;
+namespace Application.Features.Accounts.Commands.UpdateAccountOperationAmount;
 
-public sealed class UpdateOperationAmountHandler
-    : IRequestHandler<UpdateOperationAmountCommand, ErrorOr<UpdateOperationAmountResponse>>
+public sealed class UpdateAccountOperationAmountHandler
+    : IRequestHandler<UpdateAccountOperationAmountCommand, ErrorOr<UpdateAccountOperationAmountResponse>>
 {
     private readonly IAppDbContext _dbContext;
     private readonly IAuthContext _authContext;
     private readonly TimeProvider _timeProvider;
 
-    public UpdateOperationAmountHandler(IAppDbContext dbContext, IAuthContext authContext, TimeProvider timeProvider)
+    public UpdateAccountOperationAmountHandler(
+        IAppDbContext dbContext,
+        IAuthContext authContext,
+        TimeProvider timeProvider
+    )
     {
         _dbContext = dbContext;
         _authContext = authContext;
         _timeProvider = timeProvider;
     }
 
-    public async Task<ErrorOr<UpdateOperationAmountResponse>> Handle(
-        UpdateOperationAmountCommand command,
+    public async Task<ErrorOr<UpdateAccountOperationAmountResponse>> Handle(
+        UpdateAccountOperationAmountCommand command,
         CancellationToken cancellationToken
     )
     {
@@ -69,7 +73,7 @@ public sealed class UpdateOperationAmountHandler
 
         var operation = account.Operations.First(o => o.Id == command.OperationId);
 
-        return new UpdateOperationAmountResponse(
+        return new UpdateAccountOperationAmountResponse(
             operation.Id,
             operation.AccountId,
             operation.Description,
