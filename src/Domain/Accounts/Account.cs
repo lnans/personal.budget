@@ -104,6 +104,39 @@ public sealed class Account : Entity
         return Result.Success;
     }
 
+    public ErrorOr<Success> DeleteOperation(Guid operationId, DateTimeOffset deletedAt)
+    {
+        var operation = _operations.FirstOrDefault(o => o.Id == operationId);
+        if (operation is null)
+        {
+            return AccountOperationErrors.AccountOperationNotFound;
+        }
+
+        // Mark the operation as deleted
+        operation.Delete(deletedAt);
+
+        // Get all operations after this one
+        var subsequentOperations = _operations
+            .Where(o => o.CreatedAt > operation.CreatedAt && o.DeletedAt is null)
+            .OrderBy(o => o.CreatedAt)
+            .ToList();
+
+        // Recalculate balances for subsequent operations
+        // The new previous balance for the first subsequent operation is the operation's previous balance
+        var currentBalance = operation.PreviousBalance;
+        foreach (var subsequentOperation in subsequentOperations)
+        {
+            subsequentOperation.UpdateBalances(currentBalance, deletedAt);
+            currentBalance = subsequentOperation.NextBalance;
+        }
+
+        // Update account balance to the last operation's next balance, or the starting balance if no operations remain
+        Balance = subsequentOperations.Any() ? currentBalance : operation.PreviousBalance;
+        UpdatedAt = deletedAt;
+
+        return Result.Success;
+    }
+
     public ErrorOr<Success> Delete(DateTimeOffset deletedAt)
     {
         if (DeletedAt is not null)

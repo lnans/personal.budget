@@ -82,6 +82,7 @@ public sealed class AccountOperation : Entity
 
     internal void Delete(DateTimeOffset deletedAt)
     {
+        NextBalance = PreviousBalance; // Operation no longer contributes to balance
         DeletedAt = deletedAt;
         UpdatedAt = deletedAt;
     }
