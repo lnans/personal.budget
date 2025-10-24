@@ -3,6 +3,7 @@ using Api.Extensions;
 using Application.Features.Accounts.Commands.AddOperation;
 using Application.Features.Accounts.Commands.CreateAccount;
 using Application.Features.Accounts.Commands.DeleteAccount;
+using Application.Features.Accounts.Commands.DeleteAccountOperation;
 using Application.Features.Accounts.Commands.RenameAccount;
 using Application.Features.Accounts.Commands.RenameAccountOperation;
 using Application.Features.Accounts.Commands.UpdateAccountOperationAmount;
@@ -81,6 +82,17 @@ public class AccountsEndpoints : IEndPoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .WithName(nameof(UpdateAccountOperationAmount))
+            .WithTags(Tag);
+
+        group
+            .MapDelete("{accountId:guid}/operations/{operationId:guid}", DeleteAccountOperation)
+            .WithDescription("Delete an account operation (soft delete)")
+            .WithSummary("Delete operation")
+            .Produces<DeleteAccountOperationResponse>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithName(nameof(DeleteAccountOperation))
             .WithTags(Tag);
 
         group
@@ -165,6 +177,19 @@ public class AccountsEndpoints : IEndPoints
     {
         command.AccountId = accountId;
         command.OperationId = operationId;
+        var result = await mediator.Send(command, cancellationToken);
+        return result.ToOkResultOrProblem(context);
+    }
+
+    private static async Task<IResult> DeleteAccountOperation(
+        HttpContext context,
+        IMediator mediator,
+        Guid accountId,
+        Guid operationId,
+        CancellationToken cancellationToken
+    )
+    {
+        var command = new DeleteAccountOperationCommand { AccountId = accountId, OperationId = operationId };
         var result = await mediator.Send(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }
