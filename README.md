@@ -61,7 +61,33 @@ src/
 -   [Docker](https://www.docker.com/products/docker-desktop/) for containerization
 -   (Optional) [.NET Tools](https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools) for code formatting and EF Core tools for migrations
 
-## Getting Started
+## Run the project
+
+This project uses Docker Compose to run the project. To run the project, you need to have Docker Compose installed.
+
+```bash
+# Build and start all services
+docker-compose up --build
+
+# Run in detached mode
+docker-compose up -d --build
+
+# View logs
+docker-compose logs -f api
+
+# Stop services
+docker-compose down
+
+# Stop and remove volumes (⚠️ destroys database)
+docker-compose down -v
+```
+
+-   API: http://localhost:8080
+-   API Documentation: http://localhost:8080/docs
+-   Default User: admin
+-   Default Password: admin
+
+## Development
 
 To run the API, you need to have a PostgreSQL database server running. You can use Docker to run a PostgreSQL container:
 
