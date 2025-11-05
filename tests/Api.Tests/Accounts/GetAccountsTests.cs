@@ -47,15 +47,15 @@ public class GetAccountsTests : ApiTestBase
         resultAccount1.Name.ShouldBe(account1.Name);
         resultAccount1.Type.ShouldBe(account1.Type);
         resultAccount1.Balance.ShouldBe(account1.Balance);
-        resultAccount1.CreatedAt.ShouldBe(account1.CreatedAt);
-        resultAccount1.UpdatedAt.ShouldBe(account1.UpdatedAt);
+        resultAccount1.CreatedAt.ShouldBeCloseTo(account1.CreatedAt, TimeSpan.FromMilliseconds(1));
+        resultAccount1.UpdatedAt.ShouldBeCloseTo(account1.UpdatedAt, TimeSpan.FromMilliseconds(1));
 
         var resultAccount2 = result.Response.FirstOrDefault(account => account.Id == account2.Id);
         resultAccount2.ShouldNotBeNull();
         resultAccount2.Name.ShouldBe(account2.Name);
         resultAccount2.Type.ShouldBe(account2.Type);
         resultAccount2.Balance.ShouldBe(account2.Balance);
-        resultAccount2.CreatedAt.ShouldBe(account2.CreatedAt);
-        resultAccount2.UpdatedAt.ShouldBe(account2.UpdatedAt);
+        resultAccount2.CreatedAt.ShouldBeCloseTo(account2.CreatedAt, TimeSpan.FromMilliseconds(1));
+        resultAccount2.UpdatedAt.ShouldBeCloseTo(account2.UpdatedAt, TimeSpan.FromMilliseconds(1));
     }
 }

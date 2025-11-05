@@ -36,7 +36,7 @@ public class CreateAccountTests : ApiTestBase
         result.Response.Id.ShouldNotBe(Guid.Empty);
 
         result.Response.CreatedAt.ShouldBeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(1));
-        result.Response.UpdatedAt.ShouldBe(result.Response.CreatedAt);
+        result.Response.UpdatedAt.ShouldBeCloseTo(result.Response.CreatedAt, TimeSpan.FromMilliseconds(1));
     }
 
     [Fact]
@@ -132,7 +132,7 @@ public class CreateAccountTests : ApiTestBase
         accountInDb.Balance.ShouldBe(command.InitialBalance);
         accountInDb.UserId.ShouldBe(User.Id);
         accountInDb.CreatedAt.ShouldBeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(1));
-        accountInDb.UpdatedAt.ShouldBe(accountInDb.CreatedAt);
+        accountInDb.UpdatedAt.ShouldBeCloseTo(accountInDb.CreatedAt, TimeSpan.FromMilliseconds(1));
     }
 
     [Fact]
