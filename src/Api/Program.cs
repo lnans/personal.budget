@@ -3,6 +3,7 @@ using Api.Configurations;
 using Application;
 using Infrastructure;
 using Infrastructure.Persistence;
+using Microsoft.AspNetCore.HttpOverrides;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateBootstrapLogger();
@@ -24,6 +25,15 @@ try
     services.AddInfrastructureServices(configuration);
 
     var app = builder.Build();
+
+    // Configure forwarded headers for reverse proxy (nginx with SSL)
+    app.UseForwardedHeaders(
+        new ForwardedHeadersOptions
+        {
+            ForwardedHeaders =
+                ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost,
+        }
+    );
 
     app.UseExceptionHandling();
     app.UseCors(config =>
