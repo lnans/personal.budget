@@ -91,6 +91,30 @@ public static class DependencyInjection
             config.AddDocumentTransformer(
                 (document, _, _) =>
                 {
+                    var httpsUrls = document
+                        .Servers.Where(s => s.Url.StartsWith("https:", StringComparison.OrdinalIgnoreCase))
+                        .Select(s => s.Url)
+                        .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+                    var serversToAdd = new List<OpenApiServer>();
+
+                    foreach (
+                        var httpsUrl in from server in document.Servers.ToList()
+                        where server.Url.StartsWith("http:", StringComparison.OrdinalIgnoreCase)
+                        select server.Url.Replace("http:", "https:") into httpsUrl
+                        where !httpsUrls.Contains(httpsUrl)
+                        select httpsUrl
+                    )
+                    {
+                        serversToAdd.Add(new OpenApiServer { Url = httpsUrl });
+                        httpsUrls.Add(httpsUrl);
+                    }
+
+                    foreach (var httpsServer in serversToAdd)
+                    {
+                        document.Servers.Add(httpsServer);
+                    }
+
                     document.Components ??= new OpenApiComponents();
                     document.Components.SecuritySchemes ??= new Dictionary<string, OpenApiSecurityScheme>();
 
