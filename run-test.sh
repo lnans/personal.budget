@@ -1,9 +1,15 @@
+#!/bin/bash
+set -e
+
 dotnet tool restore
 COVERAGE_HTML=false
+CI_MODE=false
 for arg in "$@"; do
   if [ "$arg" = "--coverage" ]; then
     COVERAGE_HTML=true
-    break
+  fi
+  if [ "$arg" = "--ci" ]; then
+    CI_MODE=true
   fi
 done
 COVERAGE_ARGS="--coverage \
@@ -19,5 +25,7 @@ dotnet run --project tests/Api.Tests/Api.Tests.csproj -- $COVERAGE_ARGS
 
 if [ $? -eq 0 ] && [ "$COVERAGE_HTML" = true ]; then
     dotnet ReportGenerator -reports:tests/**/coverage.cobertura.xml -targetdir:.coverage
-    open .coverage/index.html
+    if [ "$CI_MODE" = false ]; then
+        open .coverage/index.html
+    fi
 fi

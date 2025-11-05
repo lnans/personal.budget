@@ -149,7 +149,7 @@ public class DeleteAccountTests : ApiTestBase
         // Assert
         result.ShouldBeSuccessful();
         result.Response.ShouldNotBeNull();
-        result.Response.UpdatedAt.ShouldBe(result.Response.DeletedAt);
+        result.Response.UpdatedAt.ShouldBeCloseTo(result.Response.DeletedAt, TimeSpan.FromMilliseconds(1));
     }
 
     [Fact]

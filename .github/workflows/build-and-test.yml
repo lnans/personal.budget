@@ -1,0 +1,55 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    env:
+      TESTCONTAINERS_RYUK_DISABLED: true
+      DOCKER_BUILDKIT: 1
+
+    steps:
+      - name: "[Init] Checkout code"
+        uses: actions/checkout@v4
+
+      - name: "[Init] Setup .NET"
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+          global-json-file: global.json
+
+      - name: "[Check] Check code formatting"
+        run: |
+          set -e
+          ./format.sh
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::Code formatting issues detected. Please run ./format.sh locally and commit the changes."
+            git diff
+            exit 1
+          fi
+
+      - name: "[Build] Restore dependencies"
+        run: dotnet restore Personal.Budget.sln
+
+      - name: "[Build] Build solution"
+        run: dotnet build Personal.Budget.sln --configuration Release --no-restore
+
+      - name: "[Test] Run tests"
+        run: ./run-test.sh --ci
+
+      - name: "[Test] Upload coverage reports"
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: |
+            tests/**/coverage.cobertura.xml
+            .coverage/
+          if-no-files-found: ignore

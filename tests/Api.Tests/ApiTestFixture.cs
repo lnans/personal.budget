@@ -1,5 +1,4 @@
 using System.Data.Common;
-using Api.Tests;
 using Domain.Users;
 using DotNet.Testcontainers.Builders;
 using Infrastructure.Persistence;
@@ -10,11 +9,9 @@ using Npgsql;
 using Respawn;
 using Testcontainers.PostgreSql;
 
-[assembly: AssemblyFixture(typeof(ApiTestFixture))]
-
 namespace Api.Tests;
 
-public class ApiTestFixture
+public class ApiTestFixture : IAsyncLifetime
 {
     private const string DbName = "budget-sqldb-tests";
     private const string DbUser = "postgres";
@@ -24,20 +21,20 @@ public class ApiTestFixture
     private const string DefaultUserLogin = "testuser";
     private const string DefaultUserPassword = "TestPassword123!";
 
-    private readonly PostgreSqlContainer _dbTestContainer;
-    private readonly DbConnection _dbConnection;
-    private readonly Respawner _respawner;
-    private readonly ApiFactory _webApplicationFactory;
-    private readonly string _cachedPasswordHash;
+    private PostgreSqlContainer _dbTestContainer = null!;
+    private DbConnection _dbConnection = null!;
+    private Respawner _respawner = null!;
+    private ApiFactory _webApplicationFactory = null!;
+    private string _cachedPasswordHash = null!;
 
-    public HttpClient ApiClient { get; }
+    public HttpClient ApiClient { get; private set; } = null!;
     public IServiceProvider Services => _webApplicationFactory.Services;
     public User User { get; private set; } = null!;
     public string UserPassword { get; } = DefaultUserPassword;
     public string UserToken { get; private set; } = null!;
     public string UserRefreshToken { get; private set; } = null!;
 
-    public ApiTestFixture()
+    public async ValueTask InitializeAsync()
     {
         _dbTestContainer = new PostgreSqlBuilder()
             .WithDatabase(DbName)
@@ -48,7 +45,7 @@ public class ApiTestFixture
             .WithLogger(new NullLogger<PostgreSqlContainer>()) // Remove this line to see container logs
             .Build();
 
-        _dbTestContainer.StartAsync().Wait();
+        await _dbTestContainer.StartAsync();
         var dbConnectionString = _dbTestContainer.GetConnectionString();
 
         _webApplicationFactory = new ApiFactory(dbConnectionString);
@@ -58,26 +55,23 @@ public class ApiTestFixture
         var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
         _cachedPasswordHash = passwordHasher.Hash(DefaultUserPassword);
 
-        using var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        dbContext.Database.Migrate();
-        InitUser(dbContext);
+        await using var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await dbContext.Database.MigrateAsync();
+        await InitUserAsync(dbContext);
 
         ApiClient = _webApplicationFactory.CreateClient();
 
         _dbConnection = new NpgsqlConnection(dbConnectionString);
-        _dbConnection.Open();
-        _respawner = Respawner
-            .CreateAsync(
-                _dbConnection,
-                new RespawnerOptions
-                {
-                    DbAdapter = DbAdapter.Postgres,
-                    TablesToIgnore = ["__EFMigrationsHistory"],
-                    SchemasToInclude = ["public"],
-                }
-            )
-            .GetAwaiter()
-            .GetResult();
+        await _dbConnection.OpenAsync();
+        _respawner = await Respawner.CreateAsync(
+            _dbConnection,
+            new RespawnerOptions
+            {
+                DbAdapter = DbAdapter.Postgres,
+                TablesToIgnore = ["__EFMigrationsHistory"],
+                SchemasToInclude = ["public"],
+            }
+        );
     }
 
     public async Task ResetFixtureStateAsync()
@@ -86,10 +80,10 @@ public class ApiTestFixture
         await _respawner.ResetAsync(_dbConnection);
         using var scope = _webApplicationFactory.Services.CreateScope();
         await using var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        InitUser(dbContext);
+        await InitUserAsync(dbContext);
     }
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
         await _dbConnection.CloseAsync();
         await _dbTestContainer.StopAsync();
@@ -99,13 +93,14 @@ public class ApiTestFixture
         await _webApplicationFactory.DisposeAsync();
     }
 
-    private void InitUser(AppDbContext dbContext)
+    private async Task InitUserAsync(AppDbContext dbContext)
     {
         var authTokenGenerator = Services.GetRequiredService<IAuthTokenGenerator>();
         User = User.Create(DefaultUserLogin, _cachedPasswordHash, DateTimeOffset.UtcNow).Value;
         UserToken = User.GenerateAuthToken(authTokenGenerator);
         UserRefreshToken = User.GenerateRefreshToken(authTokenGenerator);
-        dbContext.Users.Add(User);
-        dbContext.SaveChanges();
+
+        await dbContext.Users.AddAsync(User);
+        await dbContext.SaveChangesAsync();
     }
 }

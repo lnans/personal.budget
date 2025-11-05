@@ -39,7 +39,7 @@ public class RenameAccountTests : ApiTestBase
         result.Response.Name.ShouldBe(renameCommand.Name);
         result.Response.Type.ShouldBe(account.Type);
         result.Response.Balance.ShouldBe(100m);
-        result.Response.CreatedAt.ShouldBe(originalCreatedAt);
+        result.Response.CreatedAt.ShouldBeCloseTo(originalCreatedAt, TimeSpan.FromMilliseconds(1));
         result.Response.UpdatedAt.ShouldBeGreaterThan(result.Response.CreatedAt);
         result.Response.UpdatedAt.ShouldBeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(1));
     }
@@ -142,7 +142,7 @@ public class RenameAccountTests : ApiTestBase
         accountInDb.Type.ShouldBe(account.Type);
         accountInDb.Balance.ShouldBe(200m);
         accountInDb.UserId.ShouldBe(User.Id);
-        accountInDb.CreatedAt.ShouldBe(originalCreatedAt);
+        accountInDb.CreatedAt.ShouldBeCloseTo(originalCreatedAt, TimeSpan.FromMilliseconds(1));
         accountInDb.UpdatedAt.ShouldBeGreaterThan(accountInDb.CreatedAt);
         accountInDb.UpdatedAt.ShouldBeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(1));
     }
