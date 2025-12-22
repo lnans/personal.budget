@@ -3,15 +3,15 @@ services:
     image: postgres:16-alpine
     container_name: budget-postgres
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgrespw
-      POSTGRES_DB: budget-sqldb
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgrespw}
+      POSTGRES_DB: ${DB_NAME:-budget-sqldb}
     ports:
-      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -27,9 +27,9 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
 
-      - ConnectionStrings__Database=Server=postgres;Database=budget-sqldb;User Id=postgres;Password=postgrespw;
+      - ConnectionStrings__Database=Server=${DB_HOST:-postgres};Database=${DB_NAME:-budget-sqldb};User Id=${DB_USER:-postgres};Password=${DB_PASSWORD:-postgrespw};
 
       - Auth__SecretKey=${JWT_SECRET_KEY:-your-super-secret-key-change-this-in-production-min-32-chars}
       - Auth__Issuer=budget.api
