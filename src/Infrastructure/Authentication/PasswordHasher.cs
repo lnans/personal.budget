@@ -65,8 +65,8 @@ internal class PasswordHasher : IPasswordHasher
 
     private static byte[] HashPassword(string password, byte[] salt)
     {
-        using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, Iterations, HashAlgorithmName.SHA256);
-
-        return pbkdf2.GetBytes(HashSize);
+        var output = new byte[HashSize];
+        Rfc2898DeriveBytes.Pbkdf2(password.AsSpan(), salt, output, Iterations, HashAlgorithmName.SHA256);
+        return output;
     }
 }

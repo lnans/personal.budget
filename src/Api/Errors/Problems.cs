@@ -1,4 +1,3 @@
-using ErrorOr;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Errors;

@@ -7,7 +7,6 @@ namespace Api.Tests;
 public class ApiTestBase(ApiTestFixture fixture) : IAsyncLifetime
 {
     private IServiceScope? _scope;
-    private IAppDbContext? _dbContext;
 
     protected CancellationToken CancellationToken => TestContext.Current.CancellationToken;
     protected HttpClient ApiClient => fixture.ApiClient;
@@ -19,7 +18,7 @@ public class ApiTestBase(ApiTestFixture fixture) : IAsyncLifetime
     /// <summary>
     /// Gets the DbContext for the current test. This context is scoped to the test lifetime.
     /// </summary>
-    protected IAppDbContext DbContext => _dbContext ??= _scope!.ServiceProvider.GetRequiredService<IAppDbContext>();
+    protected IAppDbContext DbContext => field ??= _scope!.ServiceProvider.GetRequiredService<IAppDbContext>();
 
     /// <summary>
     /// Creates a fresh scope with a new DbContext. Useful when you need to query the database

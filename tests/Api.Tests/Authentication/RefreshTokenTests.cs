@@ -1,7 +1,5 @@
 using System.Net.Http.Json;
 using Application.Features.Authentication.Commands.RefreshToken;
-using Application.Features.Authentication.Commands.SignIn;
-using Domain.Users;
 using Microsoft.AspNetCore.Http;
 
 namespace Api.Tests.Authentication;
