@@ -7,7 +7,7 @@ public static class AuthOptionsExtensions
     public static AuthTokenOptions GetAuthTokenOptions(this IConfiguration configuration)
     {
         var authOptions = configuration.GetSection("Auth").Get<AuthTokenOptions>();
-        Guard.Against.Null(authOptions, nameof(authOptions), "'Auth' section is not found in the configuration.");
+        Guard.Against.Null(authOptions, "'Auth' section is not found in the configuration.");
         Guard.Against.NullOrEmpty(
             authOptions.SecretKey,
             nameof(authOptions.SecretKey),

@@ -345,7 +345,7 @@ public class UpdateAccountOperationAmountTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         // Create an operation for the other user's account using direct DB manipulation
-        var operationResult = otherAccount.AddOperation("Test", 50m, DateTimeOffset.UtcNow);
+        otherAccount.AddOperation("Test", 50m, DateTimeOffset.UtcNow);
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var operationId = otherAccount.Operations.First().Id;

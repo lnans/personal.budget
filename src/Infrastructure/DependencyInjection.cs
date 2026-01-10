@@ -20,11 +20,7 @@ public static class DependencyInjection
     private static void ConfigurePersistence(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("Database");
-        Guard.Against.NullOrEmpty(
-            connectionString,
-            nameof(connectionString),
-            "Connection string 'Database' is not found."
-        );
+        Guard.Against.NullOrEmpty(connectionString, "Connection string 'Database' is not found.");
 
         services.AddDbContext<IAppDbContext, AppDbContext>(config => config.UseNpgsql(connectionString));
         services.AddScoped<AppDbContextInitializer>();

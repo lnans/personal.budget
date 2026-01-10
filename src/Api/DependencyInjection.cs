@@ -3,11 +3,10 @@ using Api.Authentication;
 using Api.Errors;
 using Application.Interfaces;
 using Domain.Users;
-using Infrastructure.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 
 namespace Api;
@@ -91,17 +90,24 @@ public static class DependencyInjection
             config.AddDocumentTransformer(
                 (document, _, _) =>
                 {
+                    if (document.Servers == null || !document.Servers.Any())
+                    {
+                        return Task.CompletedTask;
+                    }
+
                     var httpsUrls = document
-                        .Servers.Where(s => s.Url.StartsWith("https:", StringComparison.OrdinalIgnoreCase))
+                        .Servers.Where(s =>
+                            s.Url != null && s.Url.StartsWith("https:", StringComparison.OrdinalIgnoreCase)
+                        )
                         .Select(s => s.Url)
                         .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
                     var serversToAdd = new List<OpenApiServer>();
 
                     foreach (
-                        var httpsUrl in from server in document.Servers.ToList()
-                        where server.Url.StartsWith("http:", StringComparison.OrdinalIgnoreCase)
-                        select server.Url.Replace("http:", "https:") into httpsUrl
+                        var httpsUrl in from server in document.Servers!.ToList()
+                        where server.Url != null && server.Url.StartsWith("http:", StringComparison.OrdinalIgnoreCase)
+                        select server.Url!.Replace("http:", "https:") into httpsUrl
                         where !httpsUrls.Contains(httpsUrl)
                         select httpsUrl
                     )
@@ -116,7 +122,7 @@ public static class DependencyInjection
                     }
 
                     document.Components ??= new OpenApiComponents();
-                    document.Components.SecuritySchemes ??= new Dictionary<string, OpenApiSecurityScheme>();
+                    document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
 
                     document.Components.SecuritySchemes["Bearer"] = new OpenApiSecurityScheme
                     {
@@ -126,22 +132,9 @@ public static class DependencyInjection
                         Description = "Enter your JWT token in the format: your-token-here",
                     };
 
-                    document.SecurityRequirements = new List<OpenApiSecurityRequirement>
+                    document.Security = new List<OpenApiSecurityRequirement>
                     {
-                        new()
-                        {
-                            {
-                                new OpenApiSecurityScheme
-                                {
-                                    Reference = new OpenApiReference
-                                    {
-                                        Type = ReferenceType.SecurityScheme,
-                                        Id = "Bearer",
-                                    },
-                                },
-                                Array.Empty<string>()
-                            },
-                        },
+                        new() { { new OpenApiSecuritySchemeReference("Bearer"), [] } },
                     };
                     return Task.CompletedTask;
                 }
