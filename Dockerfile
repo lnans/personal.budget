@@ -33,9 +33,10 @@ WORKDIR /app
 USER root
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
-# Create a non-root user for security
-RUN useradd -m -u 1000 appuser && chown -R appuser /app
-USER appuser
+# Create a non-root user for security (or use existing user with UID 1000)
+RUN if ! id -u 1000 > /dev/null 2>&1; then useradd -m -u 1000 appuser; fi && \
+    chown -R $(id -nu 1000):$(id -ng 1000) /app
+USER 1000
 
 # Copy published app from build stage
 COPY --from=build /app/publish .
