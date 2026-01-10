@@ -40,12 +40,15 @@ public class ApiTestFixture : IAsyncLifetime
             .WithDatabase(DbName)
             .WithUsername(DbUser)
             .WithPassword(DbPassword)
-            .WithPortBinding(DbPort, true)
-            .WithWaitStrategy(Wait.ForUnixContainer().UntilExternalTcpPortIsAvailable(DbPort))
-            .WithLogger(new NullLogger<PostgreSqlContainer>()) // Remove this line to see container logs
+            .WithPortBinding(DbPort, true) // Use dynamic port binding to avoid conflicts
+            .WithWaitStrategy(
+                Wait.ForUnixContainer().UntilMessageIsLogged("database system is ready to accept connections")
+            )
+            .WithLogger(new NullLogger<PostgreSqlContainer>())
             .Build();
 
         await _dbTestContainer.StartAsync();
+
         var dbConnectionString = _dbTestContainer.GetConnectionString();
 
         _webApplicationFactory = new ApiFactory(dbConnectionString);
