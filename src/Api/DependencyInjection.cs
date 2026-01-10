@@ -90,35 +90,34 @@ public static class DependencyInjection
             config.AddDocumentTransformer(
                 (document, _, _) =>
                 {
-                    if (document.Servers == null || !document.Servers.Any())
+                    if (document.Servers != null && document.Servers.Any())
                     {
-                        return Task.CompletedTask;
-                    }
+                        var httpsUrls = document
+                            .Servers.Where(s =>
+                                s.Url != null && s.Url.StartsWith("https:", StringComparison.OrdinalIgnoreCase)
+                            )
+                            .Select(s => s.Url)
+                            .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-                    var httpsUrls = document
-                        .Servers.Where(s =>
-                            s.Url != null && s.Url.StartsWith("https:", StringComparison.OrdinalIgnoreCase)
+                        var serversToAdd = new List<OpenApiServer>();
+
+                        foreach (
+                            var httpsUrl in from server in document.Servers.ToList()
+                            where
+                                server.Url != null && server.Url.StartsWith("http:", StringComparison.OrdinalIgnoreCase)
+                            select server.Url!.Replace("http:", "https:") into httpsUrl
+                            where !httpsUrls.Contains(httpsUrl)
+                            select httpsUrl
                         )
-                        .Select(s => s.Url)
-                        .ToHashSet(StringComparer.OrdinalIgnoreCase);
+                        {
+                            serversToAdd.Add(new OpenApiServer { Url = httpsUrl });
+                            httpsUrls.Add(httpsUrl);
+                        }
 
-                    var serversToAdd = new List<OpenApiServer>();
-
-                    foreach (
-                        var httpsUrl in from server in document.Servers!.ToList()
-                        where server.Url != null && server.Url.StartsWith("http:", StringComparison.OrdinalIgnoreCase)
-                        select server.Url!.Replace("http:", "https:") into httpsUrl
-                        where !httpsUrls.Contains(httpsUrl)
-                        select httpsUrl
-                    )
-                    {
-                        serversToAdd.Add(new OpenApiServer { Url = httpsUrl });
-                        httpsUrls.Add(httpsUrl);
-                    }
-
-                    foreach (var httpsServer in serversToAdd)
-                    {
-                        document.Servers.Add(httpsServer);
+                        foreach (var httpsServer in serversToAdd)
+                        {
+                            document.Servers.Add(httpsServer);
+                        }
                     }
 
                     document.Components ??= new OpenApiComponents();
