@@ -8,8 +8,8 @@
 
 ## Technology Stack
 
--   **.NET 9.0** - Latest .NET framework
--   **Entity Framework Core 9.0** - ORM with PostgreSQL provider
+-   **.NET 10.0** - Latest .NET framework
+-   **Entity Framework Core 10.0** - ORM with PostgreSQL provider
 -   **PostgreSQL** - Primary database
 -   **MediatR** - Mediator pattern implementation
 -   **FluentValidation** - Validation library
@@ -56,7 +56,7 @@ src/
 
 ## Prerequisites
 
--   [.NET 9.0 SDK](https://dotnet.microsoft.com/download/dotnet/9.0) or later
+-   [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) or later
 -   [PostgreSQL](https://www.postgresql.org/download/) database server
 -   [Docker](https://www.docker.com/products/docker-desktop/) for containerization
 -   (Optional) [.NET Tools](https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools) for code formatting and EF Core tools for migrations
