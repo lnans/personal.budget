@@ -4,23 +4,24 @@ using ErrorOr;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Features.Accounts.Commands.AddOperation;
+namespace Application.Features.Accounts.Commands.AddAccountOperation;
 
-public sealed class AddOperationHandler : IRequestHandler<AddOperationCommand, ErrorOr<AddOperationResponse>>
+public sealed class AddAccountOperationHandler
+    : IRequestHandler<AddAccountOperationCommand, ErrorOr<AddAccountOperationResponse>>
 {
     private readonly IAppDbContext _dbContext;
     private readonly IAuthContext _authContext;
     private readonly TimeProvider _timeProvider;
 
-    public AddOperationHandler(IAppDbContext dbContext, IAuthContext authContext, TimeProvider timeProvider)
+    public AddAccountOperationHandler(IAppDbContext dbContext, IAuthContext authContext, TimeProvider timeProvider)
     {
         _dbContext = dbContext;
         _authContext = authContext;
         _timeProvider = timeProvider;
     }
 
-    public async Task<ErrorOr<AddOperationResponse>> Handle(
-        AddOperationCommand command,
+    public async Task<ErrorOr<AddAccountOperationResponse>> Handle(
+        AddAccountOperationCommand command,
         CancellationToken cancellationToken
     )
     {
@@ -44,13 +45,17 @@ public sealed class AddOperationHandler : IRequestHandler<AddOperationCommand, E
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return new AddOperationResponse(
-            account.Id,
-            account.Name,
-            account.Type,
-            account.Balance,
-            account.CreatedAt,
-            account.UpdatedAt
+        var operation = account.Operations.Last();
+
+        return new AddAccountOperationResponse(
+            operation.Id,
+            operation.AccountId,
+            operation.Description,
+            operation.Amount,
+            operation.PreviousBalance,
+            operation.NextBalance,
+            operation.CreatedAt,
+            operation.UpdatedAt
         );
     }
 }

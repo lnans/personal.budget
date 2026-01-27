@@ -1,9 +1,9 @@
 using ErrorOr;
 using MediatR;
 
-namespace Application.Features.Accounts.Commands.AddOperation;
+namespace Application.Features.Accounts.Commands.AddAccountOperation;
 
-public sealed class AddOperationCommand : IRequest<ErrorOr<AddOperationResponse>>
+public sealed class AddAccountOperationCommand : IRequest<ErrorOr<AddAccountOperationResponse>>
 {
     public Guid AccountId { get; set; }
     public required string Description { get; set; }

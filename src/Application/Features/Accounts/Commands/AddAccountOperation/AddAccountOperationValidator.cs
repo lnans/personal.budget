@@ -2,11 +2,11 @@ using Application.Extensions;
 using Domain.AccountOperations;
 using FluentValidation;
 
-namespace Application.Features.Accounts.Commands.AddOperation;
+namespace Application.Features.Accounts.Commands.AddAccountOperation;
 
-public class AddOperationValidator : AbstractValidator<AddOperationCommand>
+public class AddAccountOperationValidator : AbstractValidator<AddAccountOperationCommand>
 {
-    public AddOperationValidator()
+    public AddAccountOperationValidator()
     {
         RuleFor(q => q.Description)
             .NotEmpty()
