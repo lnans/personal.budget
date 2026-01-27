@@ -11,18 +11,20 @@ public class AccountCreateTests
     {
         // Arrange
         const string accountName = "Test Account";
+        const string accountBank = "Test Bank";
         const AccountType accountType = AccountType.Checking;
         const decimal initialBalance = 100m;
         var user = UserFixture.CreateValidUser();
         var createdAt = FixtureBase.GetTestDate();
 
         // Act
-        var account = Account.Create(user.Id, accountName, accountType, initialBalance, createdAt);
+        var account = Account.Create(user.Id, accountName, accountBank, accountType, initialBalance, createdAt);
 
         // Assert
         account.IsError.ShouldBeFalse();
         account.Value.UserId.ShouldBe(user.Id);
         account.Value.Name.ShouldBe(accountName);
+        account.Value.Bank.ShouldBe(accountBank);
         account.Value.Type.ShouldBe(accountType);
         account.Value.Balance.ShouldBe(initialBalance);
         account.Value.Operations.ShouldBeEmpty();
@@ -35,13 +37,14 @@ public class AccountCreateTests
     {
         // Arrange
         const string accountName = "";
+        const string accountBank = "Test Bank";
         const AccountType accountType = AccountType.Checking;
         const decimal initialBalance = 100m;
         var user = UserFixture.CreateValidUser();
         var createdAt = FixtureBase.GetTestDate();
 
         // Act
-        var account = Account.Create(user.Id, accountName, accountType, initialBalance, createdAt);
+        var account = Account.Create(user.Id, accountName, accountBank, accountType, initialBalance, createdAt);
 
         // Assert
         FixtureBase.AssertError(account, AccountErrors.AccountNameRequired);
@@ -52,15 +55,52 @@ public class AccountCreateTests
     {
         // Arrange
         const decimal initialBalance = 100m;
+        const string accountBank = "Test Bank";
         const AccountType accountType = AccountType.Checking;
         var user = UserFixture.CreateValidUser();
         var accountName = AccountFixture.GenerateLongAccountName();
         var createdAt = FixtureBase.GetTestDate();
 
         // Act
-        var account = Account.Create(user.Id, accountName, accountType, initialBalance, createdAt);
+        var account = Account.Create(user.Id, accountName, accountBank, accountType, initialBalance, createdAt);
 
         // Assert
         FixtureBase.AssertError(account, AccountErrors.AccountNameTooLong);
+    }
+
+    [Fact]
+    public void Account_Create_WithEmptyBank_ShouldReturnError()
+    {
+        // Arrange
+        const string accountName = "Test Account";
+        const string accountBank = "";
+        const AccountType accountType = AccountType.Checking;
+        const decimal initialBalance = 100m;
+        var user = UserFixture.CreateValidUser();
+        var createdAt = FixtureBase.GetTestDate();
+
+        // Act
+        var account = Account.Create(user.Id, accountName, accountBank, accountType, initialBalance, createdAt);
+
+        // Assert
+        FixtureBase.AssertError(account, AccountErrors.AccountBankRequired);
+    }
+
+    [Fact]
+    public void Account_Create_WithTooLongBank_ShouldReturnError()
+    {
+        // Arrange
+        const string accountName = "Test Account";
+        const decimal initialBalance = 100m;
+        const AccountType accountType = AccountType.Checking;
+        var user = UserFixture.CreateValidUser();
+        var accountBank = AccountFixture.GenerateLongAccountBank();
+        var createdAt = FixtureBase.GetTestDate();
+
+        // Act
+        var account = Account.Create(user.Id, accountName, accountBank, accountType, initialBalance, createdAt);
+
+        // Assert
+        FixtureBase.AssertError(account, AccountErrors.AccountBankTooLong);
     }
 }

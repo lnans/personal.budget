@@ -13,6 +13,15 @@ public static class AccountErrors
             description: $"Account name must not exceed {AccountConstants.MaxNameLength} characters."
         );
 
+    public static Error AccountBankRequired =>
+        Error.Validation(code: "Account.Bank.Required", description: "Account bank is required.");
+
+    public static Error AccountBankTooLong =>
+        Error.Validation(
+            code: "Account.Bank.TooLong",
+            description: $"Account bank must not exceed {AccountConstants.MaxBankLength} characters."
+        );
+
     public static Error AccountTypeUnknown =>
         Error.Validation(code: "Account.AccountType.Unknown", description: "Account type is not valid.");
 

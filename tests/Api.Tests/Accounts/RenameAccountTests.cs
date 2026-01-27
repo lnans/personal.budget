@@ -24,7 +24,12 @@ public class RenameAccountTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var originalCreatedAt = account.CreatedAt;
-        var renameCommand = new RenameAccountCommand { Id = account.Id, Name = "Updated Name" };
+        var renameCommand = new RenameAccountCommand
+        {
+            Id = account.Id,
+            Name = "Updated Name",
+            Bank = "Updated Bank",
+        };
 
         // Act
         var response = await ApiClient
@@ -37,6 +42,7 @@ public class RenameAccountTests : ApiTestBase
         result.Response.ShouldNotBeNull();
         result.Response.Id.ShouldBe(account.Id);
         result.Response.Name.ShouldBe(renameCommand.Name);
+        result.Response.Bank.ShouldBe(renameCommand.Bank);
         result.Response.Type.ShouldBe(account.Type);
         result.Response.Balance.ShouldBe(100m);
         result.Response.CreatedAt.ShouldBeCloseTo(originalCreatedAt, TimeSpan.FromMilliseconds(1));
@@ -52,7 +58,12 @@ public class RenameAccountTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var renameCommand = new RenameAccountCommand { Id = account.Id, Name = "" };
+        var renameCommand = new RenameAccountCommand
+        {
+            Id = account.Id,
+            Name = "",
+            Bank = account.Bank,
+        };
 
         // Act
         var response = await ApiClient
@@ -79,6 +90,7 @@ public class RenameAccountTests : ApiTestBase
         {
             Id = account.Id,
             Name = AccountFixture.GenerateLongAccountName(),
+            Bank = account.Bank,
         };
 
         // Act
@@ -95,11 +107,72 @@ public class RenameAccountTests : ApiTestBase
     }
 
     [Fact]
+    public async Task RenameAccount_WithEmptyBank_ShouldReturnValidationError()
+    {
+        // Arrange
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
+        DbContext.Accounts.Add(account);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        var renameCommand = new RenameAccountCommand
+        {
+            Id = account.Id,
+            Name = "Updated Name",
+            Bank = "",
+        };
+
+        // Act
+        var response = await ApiClient
+            .LoggedAs(UserToken)
+            .PatchAsJsonAsync($"{BaseEndpoint}/{account.Id}", renameCommand, CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<RenameAccountResponse>(CancellationToken);
+
+        // Assert
+        result.ShouldBeProblem();
+        result.Problem.ShouldNotBeNull();
+        result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
+        result.Problem.ShouldHaveValidationError("Bank", AccountErrors.AccountBankRequired.Code);
+    }
+
+    [Fact]
+    public async Task RenameAccount_WithTooLongBank_ShouldReturnValidationError()
+    {
+        // Arrange
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
+        DbContext.Accounts.Add(account);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        var renameCommand = new RenameAccountCommand
+        {
+            Id = account.Id,
+            Name = "Updated Name",
+            Bank = AccountFixture.GenerateLongAccountBank(),
+        };
+
+        // Act
+        var response = await ApiClient
+            .LoggedAs(UserToken)
+            .PatchAsJsonAsync($"{BaseEndpoint}/{account.Id}", renameCommand, CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<RenameAccountResponse>(CancellationToken);
+
+        // Assert
+        result.ShouldBeProblem();
+        result.Problem.ShouldNotBeNull();
+        result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
+        result.Problem.ShouldHaveValidationError("Bank", AccountErrors.AccountBankTooLong.Code);
+    }
+
+    [Fact]
     public async Task RenameAccount_WithNonExistentId_ShouldReturnNotFound()
     {
         // Arrange
         var nonExistentId = Guid.NewGuid();
-        var renameCommand = new RenameAccountCommand { Id = nonExistentId, Name = "Updated Name" };
+        var renameCommand = new RenameAccountCommand
+        {
+            Id = nonExistentId,
+            Name = "Updated Name",
+            Bank = "Updated Bank",
+        };
 
         // Act
         var response = await ApiClient
@@ -122,7 +195,12 @@ public class RenameAccountTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var originalCreatedAt = account.CreatedAt;
-        var renameCommand = new RenameAccountCommand { Id = account.Id, Name = "Updated Name" };
+        var renameCommand = new RenameAccountCommand
+        {
+            Id = account.Id,
+            Name = "Updated Name",
+            Bank = "Updated Bank",
+        };
 
         // Act
         var response = await ApiClient
@@ -139,6 +217,7 @@ public class RenameAccountTests : ApiTestBase
             .FirstOrDefaultAsync(a => a.Id == account.Id, CancellationToken);
         accountInDb.ShouldNotBeNull();
         accountInDb.Name.ShouldBe(renameCommand.Name);
+        accountInDb.Bank.ShouldBe(renameCommand.Bank);
         accountInDb.Type.ShouldBe(account.Type);
         accountInDb.Balance.ShouldBe(200m);
         accountInDb.UserId.ShouldBe(User.Id);
@@ -156,7 +235,12 @@ public class RenameAccountTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var originalBalance = account.Balance;
-        var renameCommand = new RenameAccountCommand { Id = account.Id, Name = "Updated Name" };
+        var renameCommand = new RenameAccountCommand
+        {
+            Id = account.Id,
+            Name = "Updated Name",
+            Bank = "Updated Bank",
+        };
 
         // Act
         var response = await ApiClient

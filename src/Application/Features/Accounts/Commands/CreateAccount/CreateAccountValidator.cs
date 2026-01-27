@@ -14,6 +14,12 @@ public class CreateAccountValidator : AbstractValidator<CreateAccountCommand>
             .MaximumLength(AccountConstants.MaxNameLength)
             .WithError(AccountErrors.AccountNameTooLong);
 
+        RuleFor(q => q.Bank)
+            .NotEmpty()
+            .WithError(AccountErrors.AccountBankRequired)
+            .MaximumLength(AccountConstants.MaxBankLength)
+            .WithError(AccountErrors.AccountBankTooLong);
+
         RuleFor(q => q.Type).IsInEnum().WithError(AccountErrors.AccountTypeUnknown);
     }
 }

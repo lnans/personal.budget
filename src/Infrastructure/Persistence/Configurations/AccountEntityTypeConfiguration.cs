@@ -20,6 +20,12 @@ public class AccountEntityTypeConfiguration : IEntityTypeConfiguration<Account>
             .HasMaxLength(AccountConstants.MaxNameLength)
             .IsRequired();
 
+        builder
+            .Property(account => account.Bank)
+            .HasColumnName("Bank")
+            .HasMaxLength(AccountConstants.MaxBankLength)
+            .IsRequired();
+
         builder.Property(account => account.Type).HasColumnName("Type").HasConversion<string>().IsRequired();
 
         builder.Property(account => account.Balance).HasColumnName("Balance").IsRequired();

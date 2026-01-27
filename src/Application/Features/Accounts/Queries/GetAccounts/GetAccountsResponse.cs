@@ -5,6 +5,7 @@ namespace Application.Features.Accounts.Queries.GetAccounts;
 public sealed record GetAccountsResponse(
     Guid Id,
     string Name,
+    string Bank,
     AccountType Type,
     decimal Balance,
     DateTimeOffset CreatedAt,

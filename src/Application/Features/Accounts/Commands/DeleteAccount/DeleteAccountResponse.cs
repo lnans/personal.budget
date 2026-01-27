@@ -5,6 +5,7 @@ namespace Application.Features.Accounts.Commands.DeleteAccount;
 public sealed record DeleteAccountResponse(
     Guid Id,
     string Name,
+    string Bank,
     AccountType Type,
     decimal Balance,
     DateTimeOffset CreatedAt,

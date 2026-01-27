@@ -28,6 +28,7 @@ public sealed class CreateAccountHandler : IRequestHandler<CreateAccountCommand,
         var accountResult = Account.Create(
             _authContext.CurrentUserId,
             command.Name,
+            command.Bank,
             command.Type,
             command.InitialBalance,
             createdAt
@@ -46,6 +47,7 @@ public sealed class CreateAccountHandler : IRequestHandler<CreateAccountCommand,
         return new CreateAccountResponse(
             account.Id,
             account.Name,
+            account.Bank,
             account.Type,
             account.Balance,
             account.CreatedAt,
