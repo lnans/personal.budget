@@ -35,7 +35,7 @@ public sealed class RenameAccountHandler : IRequestHandler<RenameAccountCommand,
         }
 
         var updatedAt = _timeProvider.GetUtcNow();
-        var renameResult = account.Rename(command.Name, updatedAt);
+        var renameResult = account.Rename(command.Name, command.Bank, updatedAt);
 
         if (renameResult.IsError)
         {
@@ -47,6 +47,7 @@ public sealed class RenameAccountHandler : IRequestHandler<RenameAccountCommand,
         return new RenameAccountResponse(
             account.Id,
             account.Name,
+            account.Bank,
             account.Type,
             account.Balance,
             account.CreatedAt,

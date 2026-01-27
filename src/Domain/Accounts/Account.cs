@@ -8,6 +8,7 @@ public sealed class Account : Entity
 {
     public Guid UserId { get; }
     public string Name { get; private set; }
+    public string Bank { get; private set; }
     public AccountType Type { get; }
     public decimal Balance { get; private set; }
 
@@ -15,11 +16,12 @@ public sealed class Account : Entity
     private readonly ICollection<AccountOperation> _operations = [];
     public IReadOnlyList<AccountOperation> Operations => _operations.ToList().AsReadOnly();
 
-    private Account(Guid userId, string name, AccountType type, decimal balance, DateTimeOffset createdAt)
+    private Account(Guid userId, string name, string bank, AccountType type, decimal balance, DateTimeOffset createdAt)
         : base(createdAt)
     {
         UserId = userId;
         Name = name;
+        Bank = bank;
         Type = type;
         Balance = balance;
     }
@@ -27,6 +29,7 @@ public sealed class Account : Entity
     public static ErrorOr<Account> Create(
         Guid userId,
         string name,
+        string bank,
         AccountType type,
         decimal balance,
         DateTimeOffset createdAt
@@ -42,7 +45,17 @@ public sealed class Account : Entity
             return AccountErrors.AccountNameTooLong;
         }
 
-        return new Account(userId, name, type, balance, createdAt);
+        if (string.IsNullOrWhiteSpace(bank))
+        {
+            return AccountErrors.AccountBankRequired;
+        }
+
+        if (bank.Length > AccountConstants.MaxBankLength)
+        {
+            return AccountErrors.AccountBankTooLong;
+        }
+
+        return new Account(userId, name, bank, type, balance, createdAt);
     }
 
     public ErrorOr<Success> AddOperation(string description, decimal amount, DateTimeOffset createdAt) =>
@@ -58,7 +71,7 @@ public sealed class Account : Entity
                 error => error
             );
 
-    public ErrorOr<Success> Rename(string name, DateTimeOffset updatedAt)
+    public ErrorOr<Success> Rename(string name, string bank, DateTimeOffset updatedAt)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -70,7 +83,18 @@ public sealed class Account : Entity
             return AccountErrors.AccountNameTooLong;
         }
 
+        if (string.IsNullOrWhiteSpace(bank))
+        {
+            return AccountErrors.AccountBankRequired;
+        }
+
+        if (bank.Length > AccountConstants.MaxBankLength)
+        {
+            return AccountErrors.AccountBankTooLong;
+        }
+
         Name = name;
+        Bank = bank;
         UpdatedAt = updatedAt;
         return Result.Success;
     }

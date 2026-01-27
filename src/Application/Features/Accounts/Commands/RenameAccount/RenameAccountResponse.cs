@@ -5,6 +5,7 @@ namespace Application.Features.Accounts.Commands.RenameAccount;
 public sealed record RenameAccountResponse(
     Guid Id,
     string Name,
+    string Bank,
     AccountType Type,
     decimal Balance,
     DateTimeOffset CreatedAt,

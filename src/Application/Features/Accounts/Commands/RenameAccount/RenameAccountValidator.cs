@@ -13,5 +13,11 @@ public class RenameAccountValidator : AbstractValidator<RenameAccountCommand>
             .WithError(AccountErrors.AccountNameRequired)
             .MaximumLength(AccountConstants.MaxNameLength)
             .WithError(AccountErrors.AccountNameTooLong);
+
+        RuleFor(q => q.Bank)
+            .NotEmpty()
+            .WithError(AccountErrors.AccountBankRequired)
+            .MaximumLength(AccountConstants.MaxBankLength)
+            .WithError(AccountErrors.AccountBankTooLong);
     }
 }

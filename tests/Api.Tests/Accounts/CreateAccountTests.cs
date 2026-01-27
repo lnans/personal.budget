@@ -19,6 +19,7 @@ public class CreateAccountTests : ApiTestBase
         var command = new CreateAccountCommand
         {
             Name = "Test Account",
+            Bank = "Test Bank",
             Type = AccountType.Checking,
             InitialBalance = 100m,
         };
@@ -31,6 +32,7 @@ public class CreateAccountTests : ApiTestBase
         result.ShouldBeSuccessful();
         result.Response.ShouldNotBeNull();
         result.Response.Name.ShouldBe(command.Name);
+        result.Response.Bank.ShouldBe(command.Bank);
         result.Response.Type.ShouldBe(command.Type);
         result.Response.Balance.ShouldBe(command.InitialBalance);
         result.Response.Id.ShouldNotBe(Guid.Empty);
@@ -46,6 +48,7 @@ public class CreateAccountTests : ApiTestBase
         var command = new CreateAccountCommand
         {
             Name = "",
+            Bank = "Test Bank",
             Type = AccountType.Checking,
             InitialBalance = 100m,
         };
@@ -68,6 +71,7 @@ public class CreateAccountTests : ApiTestBase
         var command = new CreateAccountCommand
         {
             Name = new string('a', AccountConstants.MaxNameLength + 1),
+            Bank = "Test Bank",
             Type = AccountType.Checking,
             InitialBalance = 100m,
         };
@@ -84,12 +88,59 @@ public class CreateAccountTests : ApiTestBase
     }
 
     [Fact]
+    public async Task CreateAccount_WithEmptyBank_ShouldReturnValidationError()
+    {
+        // Arrange
+        var command = new CreateAccountCommand
+        {
+            Name = "Test Account",
+            Bank = "",
+            Type = AccountType.Checking,
+            InitialBalance = 100m,
+        };
+
+        // Act
+        var response = await ApiClient.LoggedAs(UserToken).PostAsJsonAsync(Endpoint, command, CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<CreateAccountResponse>(CancellationToken);
+
+        // Assert
+        result.ShouldBeProblem();
+        result.Problem.ShouldNotBeNull();
+        result.Problem.Status.ShouldBe(400);
+        result.Problem.ShouldHaveValidationError("Bank", AccountErrors.AccountBankRequired.Code);
+    }
+
+    [Fact]
+    public async Task CreateAccount_WithTooLongBank_ShouldReturnValidationError()
+    {
+        // Arrange
+        var command = new CreateAccountCommand
+        {
+            Name = "Test Account",
+            Bank = new string('b', AccountConstants.MaxBankLength + 1),
+            Type = AccountType.Checking,
+            InitialBalance = 100m,
+        };
+
+        // Act
+        var response = await ApiClient.LoggedAs(UserToken).PostAsJsonAsync(Endpoint, command, CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<CreateAccountResponse>(CancellationToken);
+
+        // Assert
+        result.ShouldBeProblem();
+        result.Problem.ShouldNotBeNull();
+        result.Problem.Status.ShouldBe(400);
+        result.Problem.ShouldHaveValidationError("Bank", AccountErrors.AccountBankTooLong.Code);
+    }
+
+    [Fact]
     public async Task CreateAccount_WithNegativeBalance_ShouldCreateAccount()
     {
         // Arrange
         var command = new CreateAccountCommand
         {
             Name = "Test Account",
+            Bank = "Test Bank",
             Type = AccountType.Savings,
             InitialBalance = -50m,
         };
@@ -102,6 +153,7 @@ public class CreateAccountTests : ApiTestBase
         result.ShouldBeSuccessful();
         result.Response.ShouldNotBeNull();
         result.Response.Name.ShouldBe(command.Name);
+        result.Response.Bank.ShouldBe(command.Bank);
         result.Response.Type.ShouldBe(command.Type);
         result.Response.Balance.ShouldBe(command.InitialBalance);
     }
@@ -113,6 +165,7 @@ public class CreateAccountTests : ApiTestBase
         var command = new CreateAccountCommand
         {
             Name = "Persistent Account",
+            Bank = "Persistent Bank",
             Type = AccountType.Savings,
             InitialBalance = 200m,
         };
@@ -128,6 +181,7 @@ public class CreateAccountTests : ApiTestBase
         var accountInDb = await DbContext.Accounts.FindAsync([result.Response.Id], CancellationToken);
         accountInDb.ShouldNotBeNull();
         accountInDb.Name.ShouldBe(command.Name);
+        accountInDb.Bank.ShouldBe(command.Bank);
         accountInDb.Type.ShouldBe(command.Type);
         accountInDb.Balance.ShouldBe(command.InitialBalance);
         accountInDb.UserId.ShouldBe(User.Id);
@@ -142,6 +196,7 @@ public class CreateAccountTests : ApiTestBase
         var json = """
             {
                 "name": "Test Account",
+                "bank": "Test Bank",
                 "type": 999,
                 "initialBalance": 100
             }

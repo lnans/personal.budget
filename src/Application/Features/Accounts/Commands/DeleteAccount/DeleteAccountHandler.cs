@@ -47,6 +47,7 @@ public sealed class DeleteAccountHandler : IRequestHandler<DeleteAccountCommand,
         return new DeleteAccountResponse(
             account.Id,
             account.Name,
+            account.Bank,
             account.Type,
             account.Balance,
             account.CreatedAt,
