@@ -1,6 +1,6 @@
 using Api.Configurations;
 using Api.Extensions;
-using Application.Features.Accounts.Commands.AddOperation;
+using Application.Features.Accounts.Commands.AddAccountOperation;
 using Application.Features.Accounts.Commands.CreateAccount;
 using Application.Features.Accounts.Commands.DeleteAccount;
 using Application.Features.Accounts.Commands.DeleteAccountOperation;
@@ -52,14 +52,14 @@ public class AccountsEndpoints : IEndPoints
             .WithTags(Tag);
 
         group
-            .MapPost("{id:guid}/operations", AddOperation)
+            .MapPost("{id:guid}/operations", AddAccountOperation)
             .WithDescription("Add an operation to an account")
             .WithSummary("Add operation")
-            .Produces<AddOperationResponse>()
+            .Produces<AddAccountOperationResponse>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .WithName(nameof(AddOperation))
+            .WithName(nameof(AddAccountOperation))
             .WithTags(Tag);
 
         group
@@ -138,11 +138,11 @@ public class AccountsEndpoints : IEndPoints
         return result.ToOkResultOrProblem(context);
     }
 
-    private static async Task<IResult> AddOperation(
+    private static async Task<IResult> AddAccountOperation(
         HttpContext context,
         IMediator mediator,
         Guid id,
-        [FromBody] AddOperationCommand command,
+        [FromBody] AddAccountOperationCommand command,
         CancellationToken cancellationToken
     )
     {
