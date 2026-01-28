@@ -26,6 +26,7 @@ public sealed class GetAccountsHandler : IRequestHandler<GetAccountsQuery, List<
                 account.Name,
                 account.Bank,
                 account.Type,
+                account.InitialBalance,
                 account.Balance,
                 account.CreatedAt,
                 account.UpdatedAt

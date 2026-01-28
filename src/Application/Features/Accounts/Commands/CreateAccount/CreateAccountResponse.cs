@@ -7,6 +7,7 @@ public sealed record CreateAccountResponse(
     string Name,
     string Bank,
     AccountType Type,
+    decimal InitialBalance,
     decimal Balance,
     DateTimeOffset CreatedAt,
     DateTimeOffset UpdatedAt

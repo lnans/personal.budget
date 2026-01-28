@@ -10,20 +10,29 @@ public sealed class Account : Entity
     public string Name { get; private set; }
     public string Bank { get; private set; }
     public AccountType Type { get; }
+    public decimal InitialBalance { get; }
     public decimal Balance { get; private set; }
 
     public User User { get; } = null!;
     private readonly ICollection<AccountOperation> _operations = [];
     public IReadOnlyList<AccountOperation> Operations => _operations.ToList().AsReadOnly();
 
-    private Account(Guid userId, string name, string bank, AccountType type, decimal balance, DateTimeOffset createdAt)
+    private Account(
+        Guid userId,
+        string name,
+        string bank,
+        AccountType type,
+        decimal initialBalance,
+        DateTimeOffset createdAt
+    )
         : base(createdAt)
     {
         UserId = userId;
         Name = name;
         Bank = bank;
         Type = type;
-        Balance = balance;
+        InitialBalance = initialBalance;
+        Balance = initialBalance;
     }
 
     public static ErrorOr<Account> Create(

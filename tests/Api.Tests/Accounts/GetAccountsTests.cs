@@ -47,6 +47,7 @@ public class GetAccountsTests : ApiTestBase
         resultAccount1.Name.ShouldBe(account1.Name);
         resultAccount1.Bank.ShouldBe(account1.Bank);
         resultAccount1.Type.ShouldBe(account1.Type);
+        resultAccount1.InitialBalance.ShouldBe(account1.InitialBalance);
         resultAccount1.Balance.ShouldBe(account1.Balance);
         resultAccount1.CreatedAt.ShouldBeCloseTo(account1.CreatedAt, TimeSpan.FromMilliseconds(1));
         resultAccount1.UpdatedAt.ShouldBeCloseTo(account1.UpdatedAt, TimeSpan.FromMilliseconds(1));
@@ -56,6 +57,7 @@ public class GetAccountsTests : ApiTestBase
         resultAccount2.Name.ShouldBe(account2.Name);
         resultAccount2.Bank.ShouldBe(account2.Bank);
         resultAccount2.Type.ShouldBe(account2.Type);
+        resultAccount2.InitialBalance.ShouldBe(account2.InitialBalance);
         resultAccount2.Balance.ShouldBe(account2.Balance);
         resultAccount2.CreatedAt.ShouldBeCloseTo(account2.CreatedAt, TimeSpan.FromMilliseconds(1));
         resultAccount2.UpdatedAt.ShouldBeCloseTo(account2.UpdatedAt, TimeSpan.FromMilliseconds(1));
