@@ -1,8 +1,8 @@
 using Domain.Accounts;
 
-namespace Application.Features.Accounts.Commands.RenameAccount;
+namespace Application.Features.Accounts.Commands.PatchAccount;
 
-public sealed record RenameAccountResponse(
+public sealed record PatchAccountResponse(
     Guid Id,
     string Name,
     string Bank,

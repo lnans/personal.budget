@@ -4,7 +4,7 @@ using Application.Features.Accounts.Commands.AddAccountOperation;
 using Application.Features.Accounts.Commands.CreateAccount;
 using Application.Features.Accounts.Commands.DeleteAccount;
 using Application.Features.Accounts.Commands.DeleteAccountOperation;
-using Application.Features.Accounts.Commands.RenameAccount;
+using Application.Features.Accounts.Commands.PatchAccount;
 using Application.Features.Accounts.Commands.RenameAccountOperation;
 using Application.Features.Accounts.Commands.UpdateAccountOperationAmount;
 using Application.Features.Accounts.Queries.GetAccounts;
@@ -41,14 +41,14 @@ public class AccountsEndpoints : IEndPoints
             .WithTags(Tag);
 
         group
-            .MapPatch("{id:guid}", RenameAccount)
-            .WithDescription("Update an account name")
+            .MapPatch("{id:guid}", PatchAccount)
+            .WithDescription("Update an account")
             .WithSummary("Update account")
-            .Produces<RenameAccountResponse>()
+            .Produces<PatchAccountResponse>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .WithName(nameof(RenameAccount))
+            .WithName(nameof(PatchAccount))
             .WithTags(Tag);
 
         group
@@ -125,11 +125,11 @@ public class AccountsEndpoints : IEndPoints
         return result.ToOkResultOrProblem(context);
     }
 
-    private static async Task<IResult> RenameAccount(
+    private static async Task<IResult> PatchAccount(
         HttpContext context,
         IMediator mediator,
         Guid id,
-        [FromBody] RenameAccountCommand command,
+        [FromBody] PatchAccountCommand command,
         CancellationToken cancellationToken
     )
     {
