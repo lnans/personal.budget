@@ -26,6 +26,7 @@ public class AccountCreateTests
         account.Value.Name.ShouldBe(accountName);
         account.Value.Bank.ShouldBe(accountBank);
         account.Value.Type.ShouldBe(accountType);
+        account.Value.InitialBalance.ShouldBe(initialBalance);
         account.Value.Balance.ShouldBe(initialBalance);
         account.Value.Operations.ShouldBeEmpty();
         account.Value.CreatedAt.ShouldBe(createdAt);

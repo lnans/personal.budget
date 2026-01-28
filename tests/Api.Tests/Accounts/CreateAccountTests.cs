@@ -34,6 +34,7 @@ public class CreateAccountTests : ApiTestBase
         result.Response.Name.ShouldBe(command.Name);
         result.Response.Bank.ShouldBe(command.Bank);
         result.Response.Type.ShouldBe(command.Type);
+        result.Response.InitialBalance.ShouldBe(command.InitialBalance);
         result.Response.Balance.ShouldBe(command.InitialBalance);
         result.Response.Id.ShouldNotBe(Guid.Empty);
 
@@ -155,6 +156,7 @@ public class CreateAccountTests : ApiTestBase
         result.Response.Name.ShouldBe(command.Name);
         result.Response.Bank.ShouldBe(command.Bank);
         result.Response.Type.ShouldBe(command.Type);
+        result.Response.InitialBalance.ShouldBe(command.InitialBalance);
         result.Response.Balance.ShouldBe(command.InitialBalance);
     }
 
@@ -183,6 +185,7 @@ public class CreateAccountTests : ApiTestBase
         accountInDb.Name.ShouldBe(command.Name);
         accountInDb.Bank.ShouldBe(command.Bank);
         accountInDb.Type.ShouldBe(command.Type);
+        accountInDb.InitialBalance.ShouldBe(command.InitialBalance);
         accountInDb.Balance.ShouldBe(command.InitialBalance);
         accountInDb.UserId.ShouldBe(User.Id);
         accountInDb.CreatedAt.ShouldBeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(1));

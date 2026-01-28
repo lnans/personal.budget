@@ -28,6 +28,8 @@ public class AccountEntityTypeConfiguration : IEntityTypeConfiguration<Account>
 
         builder.Property(account => account.Type).HasColumnName("Type").HasConversion<string>().IsRequired();
 
+        builder.Property(account => account.InitialBalance).HasColumnName("InitialBalance").IsRequired();
+
         builder.Property(account => account.Balance).HasColumnName("Balance").IsRequired();
 
         builder

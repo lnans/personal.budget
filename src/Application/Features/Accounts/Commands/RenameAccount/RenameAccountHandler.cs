@@ -49,6 +49,7 @@ public sealed class RenameAccountHandler : IRequestHandler<RenameAccountCommand,
             account.Name,
             account.Bank,
             account.Type,
+            account.InitialBalance,
             account.Balance,
             account.CreatedAt,
             account.UpdatedAt

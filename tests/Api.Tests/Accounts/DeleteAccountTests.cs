@@ -33,6 +33,7 @@ public class DeleteAccountTests : ApiTestBase
         result.Response.ShouldNotBeNull();
         result.Response.Id.ShouldBe(account.Id);
         result.Response.Name.ShouldBe(account.Name);
+        result.Response.InitialBalance.ShouldBe(account.InitialBalance);
         result.Response.DeletedAt.ShouldBeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(1));
     }
 

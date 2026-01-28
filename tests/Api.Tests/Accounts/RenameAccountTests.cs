@@ -44,6 +44,7 @@ public class RenameAccountTests : ApiTestBase
         result.Response.Name.ShouldBe(renameCommand.Name);
         result.Response.Bank.ShouldBe(renameCommand.Bank);
         result.Response.Type.ShouldBe(account.Type);
+        result.Response.InitialBalance.ShouldBe(100m);
         result.Response.Balance.ShouldBe(100m);
         result.Response.CreatedAt.ShouldBeCloseTo(originalCreatedAt, TimeSpan.FromMilliseconds(1));
         result.Response.UpdatedAt.ShouldBeGreaterThan(result.Response.CreatedAt);
