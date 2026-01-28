@@ -10,7 +10,7 @@ public sealed class Account : Entity
     public string Name { get; private set; }
     public string Bank { get; private set; }
     public AccountType Type { get; }
-    public decimal InitialBalance { get; }
+    public decimal InitialBalance { get; private set; }
     public decimal Balance { get; private set; }
 
     public User User { get; } = null!;
@@ -80,7 +80,7 @@ public sealed class Account : Entity
                 error => error
             );
 
-    public ErrorOr<Success> Rename(string name, string bank, DateTimeOffset updatedAt)
+    public ErrorOr<Success> Patch(string name, string bank, decimal? initialBalance, DateTimeOffset updatedAt)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -104,8 +104,31 @@ public sealed class Account : Entity
 
         Name = name;
         Bank = bank;
+
+        if (initialBalance.HasValue && initialBalance.Value != InitialBalance)
+        {
+            UpdateInitialBalance(initialBalance.Value, updatedAt);
+        }
+
         UpdatedAt = updatedAt;
         return Result.Success;
+    }
+
+    private void UpdateInitialBalance(decimal newInitialBalance, DateTimeOffset updatedAt)
+    {
+        InitialBalance = newInitialBalance;
+
+        // Recalculate all operations' balances starting from the new initial balance
+        var orderedOperations = _operations.Where(o => o.DeletedAt is null).OrderBy(o => o.CreatedAt).ToList();
+
+        var currentBalance = newInitialBalance;
+        foreach (var operation in orderedOperations)
+        {
+            operation.UpdateBalances(currentBalance, updatedAt);
+            currentBalance = operation.NextBalance;
+        }
+
+        Balance = currentBalance;
     }
 
     public ErrorOr<Success> UpdateOperationAmount(Guid operationId, decimal newAmount, DateTimeOffset updatedAt)
