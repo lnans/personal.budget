@@ -37,6 +37,7 @@ public class AccountsEndpoints : IEndPoints
             .WithDescription("Get paginated account operations")
             .WithSummary("Get paginated operations")
             .Produces<PaginatedList<GetPaginatedAccountOperationsResponse>>()
+            .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .WithName(nameof(GetPaginatedAccountOperations))
             .WithTags(Tag);
@@ -119,6 +120,7 @@ public class AccountsEndpoints : IEndPoints
     }
 
     private static async Task<IResult> GetPaginatedAccountOperations(
+        HttpContext context,
         IMediator mediator,
         [FromQuery] string? accountId,
         [FromQuery] int? pageNumber,
@@ -131,13 +133,13 @@ public class AccountsEndpoints : IEndPoints
         var query = new GetPaginatedAccountOperationsQuery
         {
             AccountId = accountId is not null ? parsedAccountId : null,
-            PageNumber = pageNumber ?? 1,
-            PageSize = pageSize ?? 10,
+            PageNumber = pageNumber ?? PaginationConstants.DefaultPageNumber,
+            PageSize = pageSize ?? PaginationConstants.DefaultPageSize,
         };
 
-        var response = await mediator.Send(query, cancellationToken);
+        var result = await mediator.Send(query, cancellationToken);
 
-        return Results.Ok(response);
+        return result.ToOkResultOrProblem(context);
     }
 
     private static async Task<IResult> GetAccounts(IMediator mediator, CancellationToken cancellationToken)
