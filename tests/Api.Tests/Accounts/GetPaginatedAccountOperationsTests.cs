@@ -1,6 +1,8 @@
 using System.Net;
 using Application.Features.Accounts.Queries.GetPaginatedAccountOperations;
 using Application.Models;
+using Domain.Accounts;
+using Microsoft.AspNetCore.Http;
 using TestFixtures.Domain;
 
 namespace Api.Tests.Accounts;
@@ -342,14 +344,8 @@ public class GetPaginatedAccountOperationsTests : ApiTestBase
     }
 
     [Fact]
-    public async Task GetPaginatedAccountOperations_ReturnsEmptyList_WhenAccountIdIsNotValidGuid()
+    public async Task GetPaginatedAccountOperations_ReturnsValidationError_WhenAccountIdIsNotValidGuid()
     {
-        // Arrange
-        var account = AccountFixture.CreateValidAccount(User.Id, initialBalance: 100m);
-        account.AddOperation("Op 1", 50m, DateTimeOffset.UtcNow);
-        DbContext.Accounts.Add(account);
-        await DbContext.SaveChangesAsync(CancellationToken);
-
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
@@ -359,9 +355,92 @@ public class GetPaginatedAccountOperationsTests : ApiTestBase
         );
 
         // Assert
-        result.ShouldBeSuccessful();
-        result.Response.ShouldNotBeNull();
-        result.Response.Items.ShouldBeEmpty();
-        result.Response.TotalCount.ShouldBe(0);
+        result.ShouldBeProblem();
+        result.Problem.ShouldNotBeNull();
+        result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
+        result.Problem.ShouldHaveValidationError("AccountId", AccountErrors.AccountIdInvalid.Code);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public async Task GetPaginatedAccountOperations_ReturnsValidationError_WhenPageNumberIsZeroOrNegative(
+        int pageNumber
+    )
+    {
+        // Act
+        var response = await ApiClient
+            .LoggedAs(UserToken)
+            .GetAsync($"{Endpoint}?pageNumber={pageNumber}", CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<PaginatedList<GetPaginatedAccountOperationsResponse>>(
+            CancellationToken
+        );
+
+        // Assert
+        result.ShouldBeProblem();
+        result.Problem.ShouldNotBeNull();
+        result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
+        result.Problem.ShouldHaveValidationError("PageNumber", PaginationErrors.PageNumberInvalid.Code);
+    }
+
+    [Fact]
+    public async Task GetPaginatedAccountOperations_ReturnsValidationError_WhenPageSizeExceedsMaximum()
+    {
+        // Act
+        var response = await ApiClient
+            .LoggedAs(UserToken)
+            .GetAsync($"{Endpoint}?pageSize={PaginationConstants.MaxPageSize + 1}", CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<PaginatedList<GetPaginatedAccountOperationsResponse>>(
+            CancellationToken
+        );
+
+        // Assert
+        result.ShouldBeProblem();
+        result.Problem.ShouldNotBeNull();
+        result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
+        result.Problem.ShouldHaveValidationError("PageSize", PaginationErrors.PageSizeTooLarge.Code);
+    }
+
+    [Fact]
+    public async Task GetPaginatedAccountOperations_ReturnsValidationError_WhenAccountIdIsEmptyGuid()
+    {
+        // Act
+        var response = await ApiClient
+            .LoggedAs(UserToken)
+            .GetAsync($"{Endpoint}?accountId={Guid.Empty}", CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<PaginatedList<GetPaginatedAccountOperationsResponse>>(
+            CancellationToken
+        );
+
+        // Assert
+        result.ShouldBeProblem();
+        result.Problem.ShouldNotBeNull();
+        result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
+        result.Problem.ShouldHaveValidationError("AccountId", AccountErrors.AccountIdInvalid.Code);
+    }
+
+    [Fact]
+    public async Task GetPaginatedAccountOperations_ReturnsValidationErrors_WhenMultipleFieldsAreInvalid()
+    {
+        // Act
+        var response = await ApiClient
+            .LoggedAs(UserToken)
+            .GetAsync(
+                $"{Endpoint}?pageNumber=-1&pageSize={PaginationConstants.MaxPageSize + 1}&accountId={Guid.Empty}",
+                CancellationToken
+            );
+        var result = await response.ReadResponseOrProblemAsync<PaginatedList<GetPaginatedAccountOperationsResponse>>(
+            CancellationToken
+        );
+
+        // Assert
+        result.ShouldBeProblem();
+        result.Problem.ShouldNotBeNull();
+        result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
+        result.Problem.ShouldHaveValidationErrors(
+            ("PageNumber", PaginationErrors.PageNumberInvalid.Code),
+            ("PageSize", PaginationErrors.PageSizeTooLarge.Code),
+            ("AccountId", AccountErrors.AccountIdInvalid.Code)
+        );
     }
 }

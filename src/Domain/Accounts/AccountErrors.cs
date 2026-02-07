@@ -29,4 +29,7 @@ public static class AccountErrors
 
     public static Error AccountAlreadyDeleted =>
         Error.Validation(code: "Account.AlreadyDeleted", description: "Account is already deleted.");
+
+    public static Error AccountIdInvalid =>
+        Error.Validation(code: "Account.Id.Invalid", description: "Account ID must be a valid non-empty identifier.");
 }
