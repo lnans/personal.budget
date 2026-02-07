@@ -76,6 +76,7 @@ public sealed class UpdateAccountOperationAmountHandler
         return new UpdateAccountOperationAmountResponse(
             operation.Id,
             operation.AccountId,
+            account.Name,
             operation.Description,
             operation.Amount,
             operation.PreviousBalance,

@@ -3,6 +3,7 @@ namespace Application.Features.Accounts.Commands.DeleteAccountOperation;
 public sealed record DeleteAccountOperationResponse(
     Guid Id,
     Guid AccountId,
+    string AccountName,
     string Description,
     decimal Amount,
     decimal PreviousBalance,

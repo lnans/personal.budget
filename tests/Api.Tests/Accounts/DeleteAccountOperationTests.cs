@@ -34,6 +34,7 @@ public class DeleteAccountOperationTests : ApiTestBase
         result.ShouldBeSuccessful();
         result.Response.ShouldNotBeNull();
         result.Response.Id.ShouldBe(operationId);
+        result.Response.AccountName.ShouldBe("Test Account");
         result.Response.Amount.ShouldBe(50m);
         result.Response.DeletedAt.ShouldNotBe(default);
 

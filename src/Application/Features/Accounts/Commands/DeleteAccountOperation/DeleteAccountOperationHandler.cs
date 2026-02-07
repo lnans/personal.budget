@@ -72,6 +72,7 @@ public sealed class DeleteAccountOperationHandler
         return new DeleteAccountOperationResponse(
             operation.Id,
             operation.AccountId,
+            account.Name,
             operation.Description,
             operation.Amount,
             operation.PreviousBalance,

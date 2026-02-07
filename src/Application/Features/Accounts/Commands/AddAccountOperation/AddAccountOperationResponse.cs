@@ -3,6 +3,7 @@ namespace Application.Features.Accounts.Commands.AddAccountOperation;
 public sealed record AddAccountOperationResponse(
     Guid Id,
     Guid AccountId,
+    string AccountName,
     string Description,
     decimal Amount,
     decimal PreviousBalance,

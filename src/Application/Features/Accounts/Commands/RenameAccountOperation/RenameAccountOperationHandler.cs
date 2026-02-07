@@ -56,6 +56,7 @@ public sealed class RenameAccountOperationHandler
         return new RenameAccountOperationResponse(
             operation.Id,
             operation.AccountId,
+            operation.Account.Name,
             operation.Description,
             operation.Amount,
             operation.PreviousBalance,
