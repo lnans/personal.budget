@@ -8,6 +8,8 @@ using Application.Features.Accounts.Commands.PatchAccount;
 using Application.Features.Accounts.Commands.RenameAccountOperation;
 using Application.Features.Accounts.Commands.UpdateAccountOperationAmount;
 using Application.Features.Accounts.Queries.GetAccounts;
+using Application.Features.Accounts.Queries.GetPaginatedAccountOperations;
+using Application.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,6 +30,15 @@ public class AccountsEndpoints : IEndPoints
             .Produces<List<GetAccountsResponse>>()
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .WithName(nameof(GetAccounts))
+            .WithTags(Tag);
+
+        group
+            .MapGet("operations", GetPaginatedAccountOperations)
+            .WithDescription("Get paginated account operations")
+            .WithSummary("Get paginated operations")
+            .Produces<PaginatedList<GetPaginatedAccountOperationsResponse>>()
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .WithName(nameof(GetPaginatedAccountOperations))
             .WithTags(Tag);
 
         group
@@ -105,6 +116,28 @@ public class AccountsEndpoints : IEndPoints
             .ProducesProblem(StatusCodes.Status404NotFound)
             .WithName(nameof(DeleteAccount))
             .WithTags(Tag);
+    }
+
+    private static async Task<IResult> GetPaginatedAccountOperations(
+        IMediator mediator,
+        [FromQuery] string? accountId,
+        [FromQuery] int? pageNumber,
+        [FromQuery] int? pageSize,
+        CancellationToken cancellationToken
+    )
+    {
+        _ = Guid.TryParse(accountId, out var parsedAccountId);
+
+        var query = new GetPaginatedAccountOperationsQuery
+        {
+            AccountId = accountId is not null ? parsedAccountId : null,
+            PageNumber = pageNumber ?? 1,
+            PageSize = pageSize ?? 10,
+        };
+
+        var response = await mediator.Send(query, cancellationToken);
+
+        return Results.Ok(response);
     }
 
     private static async Task<IResult> GetAccounts(IMediator mediator, CancellationToken cancellationToken)
