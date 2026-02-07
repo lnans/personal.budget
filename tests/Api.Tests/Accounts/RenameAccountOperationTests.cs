@@ -47,6 +47,7 @@ public class RenameAccountOperationTests : ApiTestBase
         result.Response.ShouldNotBeNull();
         result.Response.Id.ShouldBe(operation.Id);
         result.Response.AccountId.ShouldBe(account.Id);
+        result.Response.AccountName.ShouldBe("Test Account");
         result.Response.Description.ShouldBe(renameCommand.Description);
         result.Response.Amount.ShouldBe(50m);
         result.Response.PreviousBalance.ShouldBe(100m);
@@ -335,6 +336,7 @@ public class RenameAccountOperationTests : ApiTestBase
         // Assert
         result.ShouldBeSuccessful();
         result.Response.ShouldNotBeNull();
+        result.Response.AccountName.ShouldBe("Test Account");
         result.Response.Amount.ShouldBe(50m);
         result.Response.PreviousBalance.ShouldBe(100m);
         result.Response.NextBalance.ShouldBe(150m);

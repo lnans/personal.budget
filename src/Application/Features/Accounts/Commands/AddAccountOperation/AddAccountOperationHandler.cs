@@ -50,6 +50,7 @@ public sealed class AddAccountOperationHandler
         return new AddAccountOperationResponse(
             operation.Id,
             operation.AccountId,
+            account.Name,
             operation.Description,
             operation.Amount,
             operation.PreviousBalance,

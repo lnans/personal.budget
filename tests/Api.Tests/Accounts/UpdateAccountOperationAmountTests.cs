@@ -40,6 +40,7 @@ public class UpdateAccountOperationAmountTests : ApiTestBase
         result.ShouldBeSuccessful();
         result.Response.ShouldNotBeNull();
         result.Response.Id.ShouldBe(operationId);
+        result.Response.AccountName.ShouldBe("Test Account");
         result.Response.Amount.ShouldBe(75m);
         result.Response.PreviousBalance.ShouldBe(100m);
         result.Response.NextBalance.ShouldBe(175m); // 100 + 75
@@ -77,6 +78,7 @@ public class UpdateAccountOperationAmountTests : ApiTestBase
         // Assert
         result.ShouldBeSuccessful();
         result.Response.ShouldNotBeNull();
+        result.Response.AccountName.ShouldBe("Test Account");
         result.Response.Amount.ShouldBe(-30m);
         result.Response.NextBalance.ShouldBe(70m); // 100 - 30
 
@@ -272,6 +274,7 @@ public class UpdateAccountOperationAmountTests : ApiTestBase
         // Assert
         result.ShouldBeSuccessful();
         result.Response.ShouldNotBeNull();
+        result.Response.AccountName.ShouldBe("Test Account");
         result.Response.Amount.ShouldBe(0m);
         result.Response.NextBalance.ShouldBe(100m); // Previous balance + 0
 

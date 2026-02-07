@@ -40,6 +40,7 @@ public class AddAccountOperationTests : ApiTestBase
         result.ShouldBeSuccessful();
         result.Response.ShouldNotBeNull();
         result.Response.AccountId.ShouldBe(account.Id);
+        result.Response.AccountName.ShouldBe("Test Account");
         result.Response.Description.ShouldBe(command.Description);
         result.Response.Amount.ShouldBe(500m);
         result.Response.PreviousBalance.ShouldBe(100m);
@@ -71,6 +72,7 @@ public class AddAccountOperationTests : ApiTestBase
         result.ShouldBeSuccessful();
         result.Response.ShouldNotBeNull();
         result.Response.AccountId.ShouldBe(account.Id);
+        result.Response.AccountName.ShouldBe("Test Account");
         result.Response.Description.ShouldBe(command.Description);
         result.Response.Amount.ShouldBe(-50m);
         result.Response.PreviousBalance.ShouldBe(100m);
@@ -102,6 +104,7 @@ public class AddAccountOperationTests : ApiTestBase
         result.ShouldBeSuccessful();
         result.Response.ShouldNotBeNull();
         result.Response.AccountId.ShouldBe(account.Id);
+        result.Response.AccountName.ShouldBe("Test Account");
         result.Response.Description.ShouldBe(command.Description);
         result.Response.Amount.ShouldBe(0m);
         result.Response.PreviousBalance.ShouldBe(100m);
@@ -281,6 +284,7 @@ public class AddAccountOperationTests : ApiTestBase
         result.ShouldBeSuccessful();
         result.Response.ShouldNotBeNull();
         result.Response.AccountId.ShouldBe(account.Id);
+        result.Response.AccountName.ShouldBe("Test Account");
         result.Response.Description.ShouldBe(command3.Description);
         result.Response.Amount.ShouldBe(100m);
         result.Response.PreviousBalance.ShouldBe(120m);
@@ -321,6 +325,7 @@ public class AddAccountOperationTests : ApiTestBase
         result.ShouldBeSuccessful();
         result.Response.ShouldNotBeNull();
         result.Response.AccountId.ShouldBe(account.Id);
+        result.Response.AccountName.ShouldBe("Test Account");
         result.Response.Description.ShouldBe(command.Description);
         result.Response.Amount.ShouldBe(-100m);
         result.Response.PreviousBalance.ShouldBe(50m);
