@@ -9,8 +9,8 @@ using Application.Features.Accounts.Commands.RenameAccountOperation;
 using Application.Features.Accounts.Commands.UpdateAccountOperationAmount;
 using Application.Features.Accounts.Queries.GetAccounts;
 using Application.Features.Accounts.Queries.GetPaginatedAccountOperations;
+using Application.Interfaces;
 using Application.Models;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Endpoints;
@@ -121,7 +121,7 @@ public class AccountsEndpoints : IEndPoints
 
     private static async Task<IResult> GetPaginatedAccountOperations(
         HttpContext context,
-        IMediator mediator,
+        IQueryHandler<GetPaginatedAccountOperationsQuery, PaginatedList<GetPaginatedAccountOperationsResponse>> handler,
         [FromQuery] string? accountId,
         [FromQuery] int? pageNumber,
         [FromQuery] int? pageSize,
@@ -137,58 +137,60 @@ public class AccountsEndpoints : IEndPoints
             PageSize = pageSize ?? PaginationConstants.DefaultPageSize,
         };
 
-        var result = await mediator.Send(query, cancellationToken);
-
+        var result = await handler.Handle(query, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }
 
-    private static async Task<IResult> GetAccounts(IMediator mediator, CancellationToken cancellationToken)
+    private static async Task<IResult> GetAccounts(
+        HttpContext context,
+        IQueryHandler<GetAccountsQuery, List<GetAccountsResponse>> handler,
+        CancellationToken cancellationToken
+    )
     {
-        var response = await mediator.Send(new GetAccountsQuery(), cancellationToken);
-
-        return Results.Ok(response);
+        var result = await handler.Handle(new GetAccountsQuery(), cancellationToken);
+        return result.ToOkResultOrProblem(context);
     }
 
     private static async Task<IResult> CreateAccount(
         HttpContext context,
-        IMediator mediator,
+        ICommandHandler<CreateAccountCommand, CreateAccountResponse> handler,
         [FromBody] CreateAccountCommand command,
         CancellationToken cancellationToken
     )
     {
-        var result = await mediator.Send(command, cancellationToken);
+        var result = await handler.Handle(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }
 
     private static async Task<IResult> PatchAccount(
         HttpContext context,
-        IMediator mediator,
+        ICommandHandler<PatchAccountCommand, PatchAccountResponse> handler,
         Guid id,
         [FromBody] PatchAccountCommand command,
         CancellationToken cancellationToken
     )
     {
         command.Id = id;
-        var result = await mediator.Send(command, cancellationToken);
+        var result = await handler.Handle(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }
 
     private static async Task<IResult> AddAccountOperation(
         HttpContext context,
-        IMediator mediator,
+        ICommandHandler<AddAccountOperationCommand, AddAccountOperationResponse> handler,
         Guid id,
         [FromBody] AddAccountOperationCommand command,
         CancellationToken cancellationToken
     )
     {
         command.AccountId = id;
-        var result = await mediator.Send(command, cancellationToken);
+        var result = await handler.Handle(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }
 
     private static async Task<IResult> RenameAccountOperation(
         HttpContext context,
-        IMediator mediator,
+        ICommandHandler<RenameAccountOperationCommand, RenameAccountOperationResponse> handler,
         Guid accountId,
         Guid operationId,
         [FromBody] RenameAccountOperationCommand command,
@@ -197,13 +199,13 @@ public class AccountsEndpoints : IEndPoints
     {
         command.AccountId = accountId;
         command.OperationId = operationId;
-        var result = await mediator.Send(command, cancellationToken);
+        var result = await handler.Handle(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }
 
     private static async Task<IResult> UpdateAccountOperationAmount(
         HttpContext context,
-        IMediator mediator,
+        ICommandHandler<UpdateAccountOperationAmountCommand, UpdateAccountOperationAmountResponse> handler,
         Guid accountId,
         Guid operationId,
         [FromBody] UpdateAccountOperationAmountCommand command,
@@ -212,32 +214,32 @@ public class AccountsEndpoints : IEndPoints
     {
         command.AccountId = accountId;
         command.OperationId = operationId;
-        var result = await mediator.Send(command, cancellationToken);
+        var result = await handler.Handle(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }
 
     private static async Task<IResult> DeleteAccountOperation(
         HttpContext context,
-        IMediator mediator,
+        ICommandHandler<DeleteAccountOperationCommand, DeleteAccountOperationResponse> handler,
         Guid accountId,
         Guid operationId,
         CancellationToken cancellationToken
     )
     {
         var command = new DeleteAccountOperationCommand { AccountId = accountId, OperationId = operationId };
-        var result = await mediator.Send(command, cancellationToken);
+        var result = await handler.Handle(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }
 
     private static async Task<IResult> DeleteAccount(
         HttpContext context,
-        IMediator mediator,
+        ICommandHandler<DeleteAccountCommand, DeleteAccountResponse> handler,
         Guid id,
         CancellationToken cancellationToken
     )
     {
         var command = new DeleteAccountCommand { Id = id };
-        var result = await mediator.Send(command, cancellationToken);
+        var result = await handler.Handle(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }
 }

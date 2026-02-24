@@ -1,5 +1,6 @@
 using ErrorOr;
 using FluentValidation;
+using FluentValidation.Results;
 
 namespace Application.Extensions;
 
@@ -9,4 +10,24 @@ internal static class ValidationExtensions
         this IRuleBuilderOptions<T, TProperty> rule,
         Error error
     ) => rule.WithMessage(error.Description).WithErrorCode(error.Code);
+
+    public static Error CreateValidationError(this List<ValidationFailure> failures)
+    {
+        var metadata = failures
+            .GroupBy(failure => failure.PropertyName)
+            .ToDictionary(
+                grouping => grouping.Key,
+                grouping =>
+                    (object)
+                        grouping
+                            .Select(failure => new { Description = failure.ErrorMessage, Code = failure.ErrorCode })
+                            .ToList()
+            );
+
+        return Error.Validation(
+            description: "Validation errors occurred.",
+            code: "ValidationError",
+            metadata: metadata
+        );
+    }
 }

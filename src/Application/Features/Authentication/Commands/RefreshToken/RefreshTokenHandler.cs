@@ -1,12 +1,11 @@
 using Application.Interfaces;
 using Domain.Users;
 using ErrorOr;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Authentication.Commands.RefreshToken;
 
-public sealed class RefreshTokenHandler : IRequestHandler<RefreshTokenCommand, ErrorOr<RefreshTokenResponse>>
+public sealed class RefreshTokenHandler : ICommandHandler<RefreshTokenCommand, RefreshTokenResponse>
 {
     private readonly IAppDbContext _dbContext;
     private readonly IAuthTokenGenerator _authTokenGenerator;

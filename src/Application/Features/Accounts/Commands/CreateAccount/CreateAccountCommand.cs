@@ -1,10 +1,9 @@
+using Application.Interfaces;
 using Domain.Accounts;
-using ErrorOr;
-using MediatR;
 
 namespace Application.Features.Accounts.Commands.CreateAccount;
 
-public sealed class CreateAccountCommand : IRequest<ErrorOr<CreateAccountResponse>>
+public sealed class CreateAccountCommand : ICommand<CreateAccountResponse>
 {
     public required string Name { get; set; }
     public required string Bank { get; set; }

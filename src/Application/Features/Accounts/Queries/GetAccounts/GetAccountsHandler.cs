@@ -1,10 +1,10 @@
 using Application.Interfaces;
-using MediatR;
+using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Accounts.Queries.GetAccounts;
 
-public sealed class GetAccountsHandler : IRequestHandler<GetAccountsQuery, List<GetAccountsResponse>>
+public sealed class GetAccountsHandler : IQueryHandler<GetAccountsQuery, List<GetAccountsResponse>>
 {
     private readonly IAppDbContext _dbContext;
     private readonly IAuthContext _authContext;
@@ -15,7 +15,7 @@ public sealed class GetAccountsHandler : IRequestHandler<GetAccountsQuery, List<
         _authContext = authContext;
     }
 
-    public async Task<List<GetAccountsResponse>> Handle(
+    public async Task<ErrorOr<List<GetAccountsResponse>>> Handle(
         GetAccountsQuery request,
         CancellationToken cancellationToken
     ) =>

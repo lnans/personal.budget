@@ -1,9 +1,8 @@
-using ErrorOr;
-using MediatR;
+using Application.Interfaces;
 
 namespace Application.Features.Accounts.Commands.RenameAccountOperation;
 
-public sealed class RenameAccountOperationCommand : IRequest<ErrorOr<RenameAccountOperationResponse>>
+public sealed class RenameAccountOperationCommand : ICommand<RenameAccountOperationResponse>
 {
     public Guid AccountId { get; set; }
     public Guid OperationId { get; set; }

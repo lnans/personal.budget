@@ -1,5 +1,5 @@
-using MediatR;
+using Application.Interfaces;
 
 namespace Application.Features.Accounts.Queries.GetAccounts;
 
-public sealed class GetAccountsQuery : IRequest<List<GetAccountsResponse>> { }
+public sealed class GetAccountsQuery : IQuery<List<GetAccountsResponse>> { }

@@ -1,13 +1,12 @@
 using Application.Interfaces;
 using Application.Models;
 using ErrorOr;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Accounts.Queries.GetPaginatedAccountOperations;
 
 public sealed class GetPaginatedAccountOperationsHandler
-    : IRequestHandler<GetPaginatedAccountOperationsQuery, ErrorOr<PaginatedList<GetPaginatedAccountOperationsResponse>>>
+    : IQueryHandler<GetPaginatedAccountOperationsQuery, PaginatedList<GetPaginatedAccountOperationsResponse>>
 {
     private readonly IAppDbContext _dbContext;
     private readonly IAuthContext _authContext;

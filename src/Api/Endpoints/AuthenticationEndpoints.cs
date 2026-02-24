@@ -3,7 +3,7 @@ using Api.Extensions;
 using Application.Features.Authentication.Commands.RefreshToken;
 using Application.Features.Authentication.Commands.SignIn;
 using Application.Features.Authentication.Queries.GetCurrentUser;
-using MediatR;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Endpoints;
@@ -51,33 +51,33 @@ public class AuthenticationEndpoints : IEndPoints
 
     private static async Task<IResult> GetCurrentUser(
         HttpContext context,
-        IMediator mediator,
+        IQueryHandler<GetCurrentUserQuery, GetCurrentUserResponse> handler,
         CancellationToken cancellationToken
     )
     {
-        var result = await mediator.Send(new GetCurrentUserQuery(), cancellationToken);
+        var result = await handler.Handle(new GetCurrentUserQuery(), cancellationToken);
         return result.ToOkResultOrProblem(context);
     }
 
     private static async Task<IResult> SignIn(
         HttpContext context,
-        IMediator mediator,
+        ICommandHandler<SignInCommand, SignInResponse> handler,
         [FromBody] SignInCommand command,
         CancellationToken cancellationToken
     )
     {
-        var result = await mediator.Send(command, cancellationToken);
+        var result = await handler.Handle(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }
 
     private static async Task<IResult> RefreshToken(
         HttpContext context,
-        IMediator mediator,
+        ICommandHandler<RefreshTokenCommand, RefreshTokenResponse> handler,
         [FromBody] RefreshTokenCommand command,
         CancellationToken cancellationToken
     )
     {
-        var result = await mediator.Send(command, cancellationToken);
+        var result = await handler.Handle(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }
 }

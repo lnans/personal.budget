@@ -2,13 +2,12 @@ using Application.Interfaces;
 using Domain.AccountOperations;
 using Domain.Accounts;
 using ErrorOr;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Accounts.Commands.UpdateAccountOperationAmount;
 
 public sealed class UpdateAccountOperationAmountHandler
-    : IRequestHandler<UpdateAccountOperationAmountCommand, ErrorOr<UpdateAccountOperationAmountResponse>>
+    : ICommandHandler<UpdateAccountOperationAmountCommand, UpdateAccountOperationAmountResponse>
 {
     private readonly IAppDbContext _dbContext;
     private readonly IAuthContext _authContext;
