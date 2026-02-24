@@ -1,9 +1,8 @@
-using ErrorOr;
-using MediatR;
+using Application.Interfaces;
 
 namespace Application.Features.Accounts.Commands.PatchAccount;
 
-public sealed class PatchAccountCommand : IRequest<ErrorOr<PatchAccountResponse>>
+public sealed class PatchAccountCommand : ICommand<PatchAccountResponse>
 {
     public Guid Id { get; set; }
     public required string Name { get; set; }

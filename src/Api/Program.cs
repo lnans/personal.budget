@@ -21,7 +21,7 @@ try
     );
 
     services.AddApiServices(configuration);
-    services.AddApplicationServices(configuration);
+    services.AddApplicationServices();
     services.AddInfrastructureServices(configuration);
 
     var app = builder.Build();

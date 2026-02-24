@@ -11,7 +11,7 @@
 -   **.NET 10.0** - Latest .NET framework
 -   **Entity Framework Core 10.0** - ORM with PostgreSQL provider
 -   **PostgreSQL** - Primary database
--   **MediatR** - Mediator pattern implementation
+-   **Scrutor** - Assembly scanning and dependency injection
 -   **FluentValidation** - Validation library
 -   **Scalar** - ASP.NET Core utilities for API endpoints documentation
 -   **ErrorOr** - Functional error handling library

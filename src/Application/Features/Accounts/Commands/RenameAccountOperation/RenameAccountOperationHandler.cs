@@ -2,13 +2,12 @@ using Application.Interfaces;
 using Domain.AccountOperations;
 using Domain.Accounts;
 using ErrorOr;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Accounts.Commands.RenameAccountOperation;
 
 public sealed class RenameAccountOperationHandler
-    : IRequestHandler<RenameAccountOperationCommand, ErrorOr<RenameAccountOperationResponse>>
+    : ICommandHandler<RenameAccountOperationCommand, RenameAccountOperationResponse>
 {
     private readonly IAppDbContext _dbContext;
     private readonly IAuthContext _authContext;

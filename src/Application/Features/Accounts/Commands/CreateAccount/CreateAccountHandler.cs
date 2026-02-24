@@ -1,11 +1,10 @@
 using Application.Interfaces;
 using Domain.Accounts;
 using ErrorOr;
-using MediatR;
 
 namespace Application.Features.Accounts.Commands.CreateAccount;
 
-public sealed class CreateAccountHandler : IRequestHandler<CreateAccountCommand, ErrorOr<CreateAccountResponse>>
+public sealed class CreateAccountHandler : ICommandHandler<CreateAccountCommand, CreateAccountResponse>
 {
     private readonly IAppDbContext _dbContext;
     private readonly IAuthContext _authContext;

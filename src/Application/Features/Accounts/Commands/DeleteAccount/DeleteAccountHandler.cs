@@ -1,12 +1,11 @@
 using Application.Interfaces;
 using Domain.Accounts;
 using ErrorOr;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Accounts.Commands.DeleteAccount;
 
-public sealed class DeleteAccountHandler : IRequestHandler<DeleteAccountCommand, ErrorOr<DeleteAccountResponse>>
+public sealed class DeleteAccountHandler : ICommandHandler<DeleteAccountCommand, DeleteAccountResponse>
 {
     private readonly IAppDbContext _dbContext;
     private readonly IAuthContext _authContext;

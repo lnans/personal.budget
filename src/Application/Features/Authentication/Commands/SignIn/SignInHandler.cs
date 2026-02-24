@@ -1,12 +1,11 @@
 using Application.Interfaces;
 using Domain.Users;
 using ErrorOr;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Authentication.Commands.SignIn;
 
-public sealed class SignInHandler : IRequestHandler<SignInCommand, ErrorOr<SignInResponse>>
+public sealed class SignInHandler : ICommandHandler<SignInCommand, SignInResponse>
 {
     private readonly IAppDbContext _dbContext;
     private readonly IPasswordHasher _passwordHasher;

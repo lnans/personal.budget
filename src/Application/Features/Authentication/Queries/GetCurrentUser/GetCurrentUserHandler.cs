@@ -1,12 +1,11 @@
 using Application.Interfaces;
 using Domain.Users;
 using ErrorOr;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Authentication.Queries.GetCurrentUser;
 
-public sealed class GetCurrentUserHandler : IRequestHandler<GetCurrentUserQuery, ErrorOr<GetCurrentUserResponse>>
+public sealed class GetCurrentUserHandler : IQueryHandler<GetCurrentUserQuery, GetCurrentUserResponse>
 {
     private readonly IAppDbContext _dbContext;
     private readonly IAuthContext _authContext;
