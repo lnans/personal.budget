@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Endpoints;
 
-public class AccountsEndpoints : IEndPoints
+public class AccountsEndpoints : IEndpoints
 {
     private const string Tag = "Accounts";
 

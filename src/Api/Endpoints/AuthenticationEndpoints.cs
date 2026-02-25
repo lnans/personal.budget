@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Endpoints;
 
-public class AuthenticationEndpoints : IEndPoints
+public class AuthenticationEndpoints : IEndpoints
 {
     private const string Tag = "Authentication";
 

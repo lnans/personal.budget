@@ -28,7 +28,11 @@ internal static class LoggingDecorator
 
             if (result.IsError)
             {
-                _logger.LogError("Completed command {Command} with error", commandName);
+                _logger.LogError(
+                    "Completed command {Command} with errors: {Errors}",
+                    commandName,
+                    result.Errors.Select(e => e.Code)
+                );
             }
             else
             {
@@ -64,7 +68,11 @@ internal static class LoggingDecorator
 
             if (result.IsError)
             {
-                _logger.LogError("Completed command {Command} with error", commandName);
+                _logger.LogError(
+                    "Completed command {Command} with errors: {Errors}",
+                    commandName,
+                    result.Errors.Select(e => e.Code)
+                );
             }
             else
             {
@@ -100,7 +108,11 @@ internal static class LoggingDecorator
 
             if (result.IsError)
             {
-                _logger.LogError("Completed query {Query} with error", queryName);
+                _logger.LogError(
+                    "Completed query {Query} with errors: {Errors}",
+                    queryName,
+                    result.Errors.Select(e => e.Code)
+                );
             }
             else
             {

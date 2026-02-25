@@ -1,6 +1,6 @@
 namespace Api.Configurations;
 
-public interface IEndPoints
+public interface IEndpoints
 {
     void MapEndpoints(WebApplication app);
 }
@@ -9,14 +9,14 @@ public static class EndpointsExtensions
 {
     public static void MapApiEndpoints(this WebApplication app)
     {
-        var endPointsInterface = typeof(IEndPoints);
+        var endPointsInterface = typeof(IEndpoints);
         var endPointsClasses = typeof(Program)
             .Assembly.GetTypes()
             .Where(type => type.IsClass && endPointsInterface.IsAssignableFrom(type));
 
         foreach (var endPointsClass in endPointsClasses)
         {
-            var instance = (IEndPoints)Activator.CreateInstance(endPointsClass)!;
+            var instance = (IEndpoints)Activator.CreateInstance(endPointsClass)!;
             instance.MapEndpoints(app);
         }
     }
