@@ -6,20 +6,17 @@ using Infrastructure.Persistence;
 using Microsoft.AspNetCore.HttpOverrides;
 using Serilog;
 
-Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateBootstrapLogger();
+Log.Logger = new LoggerConfiguration().WithConsoleConfig().CreateBootstrapLogger();
 
 try
 {
     var builder = WebApplication.CreateBuilder(args);
-    var configuration = builder.Configuration;
-    var services = builder.Services;
+    builder.Host.ConfigureLogs();
 
+    var configuration = builder.Configuration;
     configuration.AddEnvironmentVariables();
 
-    builder.Host.UseSerilog(
-        (ctx, sv, config) => config.ReadFrom.Configuration(ctx.Configuration).ReadFrom.Services(sv)
-    );
-
+    var services = builder.Services;
     services.AddApiServices(configuration);
     services.AddApplicationServices();
     services.AddInfrastructureServices(configuration);
