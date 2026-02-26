@@ -191,8 +191,15 @@ csharp_space_between_parentheses = false
 csharp_space_between_square_brackets = false
 
 # Wrapping preferences
-csharp_preserve_single_line_blocks = false
+csharp_preserve_single_line_properties = true
+csharp_preserve_single_line_blocks = true
 csharp_preserve_single_line_statements = true
+
+# Enforce removing unnecessary usings
+dotnet_diagnostic.IDE0005.severity = warning
+
+# Use property instead of Linq Enumerable method when available (e.g. use 'list.Count' instead of 'list.Count()')
+dotnet_diagnostic.CA1826.severity = error
 
 [*.{csproj,xml,yml,yaml,json}]
 indent_size = 2

@@ -231,7 +231,7 @@ public class AddAccountOperationTests : ApiTestBase
         accountInDb.Balance.ShouldBe(300m);
         accountInDb.Operations.Count.ShouldBe(1);
 
-        var operation = accountInDb.Operations.First();
+        var operation = accountInDb.Operations[0];
         operation.Id.ShouldBe(result.Response.Id);
         operation.Description.ShouldBe(command.Description);
         operation.Amount.ShouldBe(command.Amount);

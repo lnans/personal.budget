@@ -160,7 +160,7 @@ public class AccountPatchTests
 
         account.AddOperation("Operation 1", 50m, createdAt.AddMinutes(1));
 
-        var operation = account.Operations.First();
+        var operation = account.Operations[0];
         var originalUpdatedAt = operation.UpdatedAt;
 
         var updatedAt = FixtureBase.GetTestDate(1);
@@ -176,7 +176,7 @@ public class AccountPatchTests
         account.Balance.ShouldBe(150m);
 
         // Operation should not have been updated (same UpdatedAt)
-        account.Operations.First().UpdatedAt.ShouldBe(originalUpdatedAt);
+        account.Operations[0].UpdatedAt.ShouldBe(originalUpdatedAt);
     }
 
     [Fact]
@@ -220,7 +220,7 @@ public class AccountPatchTests
         // Balance should be -100 + 50 = -50
         account.Balance.ShouldBe(-50m);
 
-        var operation = account.Operations.First();
+        var operation = account.Operations[0];
         operation.PreviousBalance.ShouldBe(-100m);
         operation.NextBalance.ShouldBe(-50m);
     }
@@ -247,7 +247,7 @@ public class AccountPatchTests
         // Balance should be 0 + 100 = 100
         account.Balance.ShouldBe(100m);
 
-        var operation = account.Operations.First();
+        var operation = account.Operations[0];
         operation.PreviousBalance.ShouldBe(0m);
         operation.NextBalance.ShouldBe(100m);
     }

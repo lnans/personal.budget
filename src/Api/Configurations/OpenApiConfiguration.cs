@@ -12,9 +12,9 @@ public static class OpenApiConfiguration
                 config =>
                 {
                     config.Title = "Budget.Api";
-                    config.Authentication = new ScalarAuthenticationOptions()
+                    config.Authentication = new ScalarAuthenticationOptions
                     {
-                        PreferredSecuritySchemes = new List<string>() { "Bearer" },
+                        PreferredSecuritySchemes = new List<string> { "Bearer" },
                     };
                 }
             )

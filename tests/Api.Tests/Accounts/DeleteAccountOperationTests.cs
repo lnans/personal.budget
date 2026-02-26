@@ -22,7 +22,7 @@ public class DeleteAccountOperationTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var operationId = account.Operations.First().Id;
+        var operationId = account.Operations[0].Id;
 
         // Act
         var response = await ApiClient
@@ -266,7 +266,7 @@ public class DeleteAccountOperationTests : ApiTestBase
         otherAccount.AddOperation("Test", 50m, DateTimeOffset.UtcNow);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var operationId = otherAccount.Operations.First().Id;
+        var operationId = otherAccount.Operations[0].Id;
 
         // Act - Try to delete operation from another user's account
         var response = await ApiClient
