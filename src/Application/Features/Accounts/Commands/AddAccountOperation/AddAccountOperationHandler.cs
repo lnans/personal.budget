@@ -44,7 +44,7 @@ public sealed class AddAccountOperationHandler
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        var operation = account.Operations.Last();
+        var operation = account.Operations[^1];
 
         return new AddAccountOperationResponse(
             operation.Id,

@@ -23,7 +23,7 @@ public class UpdateAccountOperationAmountTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var operationId = account.Operations.First().Id;
+        var operationId = account.Operations[0].Id;
         var updateCommand = new UpdateAccountOperationAmountCommand { Amount = 75m };
 
         // Act
@@ -62,7 +62,7 @@ public class UpdateAccountOperationAmountTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var operationId = account.Operations.First().Id;
+        var operationId = account.Operations[0].Id;
         var updateCommand = new UpdateAccountOperationAmountCommand { Amount = -30m };
 
         // Act
@@ -258,7 +258,7 @@ public class UpdateAccountOperationAmountTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var operationId = account.Operations.First().Id;
+        var operationId = account.Operations[0].Id;
         var updateCommand = new UpdateAccountOperationAmountCommand { Amount = 0m };
 
         // Act
@@ -351,7 +351,7 @@ public class UpdateAccountOperationAmountTests : ApiTestBase
         otherAccount.AddOperation("Test", 50m, DateTimeOffset.UtcNow);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var operationId = otherAccount.Operations.First().Id;
+        var operationId = otherAccount.Operations[0].Id;
         var updateCommand = new UpdateAccountOperationAmountCommand { Amount = 100m };
 
         // Act - Try to update operation from another user's account

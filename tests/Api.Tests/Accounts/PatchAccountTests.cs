@@ -429,7 +429,7 @@ public class PatchAccountTests : ApiTestBase
         account.AddOperation("Operation 1", 50m, DateTimeOffset.UtcNow.AddMinutes(1));
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var operationUpdatedAt = account.Operations.First().UpdatedAt;
+        var operationUpdatedAt = account.Operations[0].UpdatedAt;
 
         var patchCommand = new PatchAccountCommand
         {

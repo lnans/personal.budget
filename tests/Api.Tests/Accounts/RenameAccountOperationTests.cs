@@ -26,7 +26,7 @@ public class RenameAccountOperationTests : ApiTestBase
         account.AddOperation("Original Description", 50m, DateTimeOffset.UtcNow);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var operation = account.Operations.First();
+        var operation = account.Operations[0];
         var originalCreatedAt = operation.CreatedAt;
 
         var renameCommand = new RenameAccountOperationCommand
@@ -68,7 +68,7 @@ public class RenameAccountOperationTests : ApiTestBase
         account.AddOperation("Original Description", 50m, DateTimeOffset.UtcNow);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var operation = account.Operations.First();
+        var operation = account.Operations[0];
 
         var renameCommand = new RenameAccountOperationCommand
         {
@@ -104,7 +104,7 @@ public class RenameAccountOperationTests : ApiTestBase
         account.AddOperation("Original Description", 50m, DateTimeOffset.UtcNow);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var operation = account.Operations.First();
+        var operation = account.Operations[0];
 
         var renameCommand = new RenameAccountOperationCommand
         {
@@ -140,7 +140,7 @@ public class RenameAccountOperationTests : ApiTestBase
         account.AddOperation("Original Description", 50m, DateTimeOffset.UtcNow);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var operation = account.Operations.First();
+        var operation = account.Operations[0];
 
         var renameCommand = new RenameAccountOperationCommand
         {
@@ -241,7 +241,7 @@ public class RenameAccountOperationTests : ApiTestBase
         account1.AddOperation("Operation on Account 1", 50m, DateTimeOffset.UtcNow);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var operation = account1.Operations.First();
+        var operation = account1.Operations[0];
 
         var renameCommand = new RenameAccountOperationCommand
         {
@@ -273,7 +273,7 @@ public class RenameAccountOperationTests : ApiTestBase
         account.AddOperation("Original Description", 75m, DateTimeOffset.UtcNow);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var operation = account.Operations.First();
+        var operation = account.Operations[0];
         var originalCreatedAt = operation.CreatedAt;
 
         var renameCommand = new RenameAccountOperationCommand
@@ -318,7 +318,7 @@ public class RenameAccountOperationTests : ApiTestBase
         account.AddOperation("Original Description", 50m, DateTimeOffset.UtcNow);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var operation = account.Operations.First();
+        var operation = account.Operations[0];
 
         var renameCommand = new RenameAccountOperationCommand
         {
@@ -369,7 +369,7 @@ public class RenameAccountOperationTests : ApiTestBase
         otherUserAccount.AddOperation("Other User Operation", 50m, DateTimeOffset.UtcNow);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var operation = otherUserAccount.Operations.First();
+        var operation = otherUserAccount.Operations[0];
 
         var renameCommand = new RenameAccountOperationCommand
         {
