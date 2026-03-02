@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using Api.Contracts.Accounts;
 using Application.Features.Accounts.Commands.UpdateAccount;
 using Domain.Accounts;
 using Microsoft.AspNetCore.Http;
@@ -24,25 +25,20 @@ public class UpdateAccountTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var originalCreatedAt = account.CreatedAt;
-        var updateAccountCommand = new UpdateAccountCommand
-        {
-            Id = account.Id,
-            Name = "Updated Name",
-            Bank = "Updated Bank",
-        };
+        var updateAccountRequest = new UpdateAccountRequest("Updated Name", "Updated Bank");
 
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountCommand, CancellationToken);
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountRequest, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountResponse>(CancellationToken);
 
         // Assert
         result.ShouldBeSuccessful();
         result.Response.ShouldNotBeNull();
         result.Response.Id.ShouldBe(account.Id);
-        result.Response.Name.ShouldBe(updateAccountCommand.Name);
-        result.Response.Bank.ShouldBe(updateAccountCommand.Bank);
+        result.Response.Name.ShouldBe(updateAccountRequest.Name);
+        result.Response.Bank.ShouldBe(updateAccountRequest.Bank);
         result.Response.Type.ShouldBe(account.Type);
         result.Response.InitialBalance.ShouldBe(100m);
         result.Response.Balance.ShouldBe(100m);
@@ -59,17 +55,12 @@ public class UpdateAccountTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var updateAccountCommand = new UpdateAccountCommand
-        {
-            Id = account.Id,
-            Name = "",
-            Bank = account.Bank,
-        };
+        var updateAccountRequest = new UpdateAccountRequest("", account.Bank);
 
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountCommand, CancellationToken);
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountRequest, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountResponse>(CancellationToken);
 
         // Assert
@@ -87,17 +78,12 @@ public class UpdateAccountTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var updateAccountCommand = new UpdateAccountCommand
-        {
-            Id = account.Id,
-            Name = AccountFixture.GenerateLongAccountName(),
-            Bank = account.Bank,
-        };
+        var updateAccountRequest = new UpdateAccountRequest(AccountFixture.GenerateLongAccountName(), account.Bank);
 
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountCommand, CancellationToken);
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountRequest, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountResponse>(CancellationToken);
 
         // Assert
@@ -115,17 +101,12 @@ public class UpdateAccountTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var updateAccountCommand = new UpdateAccountCommand
-        {
-            Id = account.Id,
-            Name = "Updated Name",
-            Bank = "",
-        };
+        var updateAccountRequest = new UpdateAccountRequest("Updated Name", "");
 
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountCommand, CancellationToken);
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountRequest, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountResponse>(CancellationToken);
 
         // Assert
@@ -143,17 +124,12 @@ public class UpdateAccountTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var updateAccountCommand = new UpdateAccountCommand
-        {
-            Id = account.Id,
-            Name = "Updated Name",
-            Bank = AccountFixture.GenerateLongAccountBank(),
-        };
+        var updateAccountRequest = new UpdateAccountRequest("Updated Name", AccountFixture.GenerateLongAccountBank());
 
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountCommand, CancellationToken);
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountRequest, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountResponse>(CancellationToken);
 
         // Assert
@@ -168,17 +144,12 @@ public class UpdateAccountTests : ApiTestBase
     {
         // Arrange
         var nonExistentId = Guid.NewGuid();
-        var updateAccountCommand = new UpdateAccountCommand
-        {
-            Id = nonExistentId,
-            Name = "Updated Name",
-            Bank = "Updated Bank",
-        };
+        var updateAccountRequest = new UpdateAccountRequest("Updated Name", "Updated Bank");
 
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PutAsJsonAsync($"{BaseEndpoint}/{nonExistentId}", updateAccountCommand, CancellationToken);
+            .PutAsJsonAsync($"{BaseEndpoint}/{nonExistentId}", updateAccountRequest, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountResponse>(CancellationToken);
 
         // Assert
@@ -196,17 +167,12 @@ public class UpdateAccountTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var originalCreatedAt = account.CreatedAt;
-        var updateAccountCommand = new UpdateAccountCommand
-        {
-            Id = account.Id,
-            Name = "Updated Name",
-            Bank = "Updated Bank",
-        };
+        var updateAccountRequest = new UpdateAccountRequest("Updated Name", "Updated Bank");
 
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountCommand, CancellationToken);
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountRequest, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountResponse>(CancellationToken);
 
         // Assert
@@ -217,8 +183,8 @@ public class UpdateAccountTests : ApiTestBase
             .Accounts.AsNoTracking()
             .FirstOrDefaultAsync(a => a.Id == account.Id, CancellationToken);
         accountInDb.ShouldNotBeNull();
-        accountInDb.Name.ShouldBe(updateAccountCommand.Name);
-        accountInDb.Bank.ShouldBe(updateAccountCommand.Bank);
+        accountInDb.Name.ShouldBe(updateAccountRequest.Name);
+        accountInDb.Bank.ShouldBe(updateAccountRequest.Bank);
         accountInDb.Type.ShouldBe(account.Type);
         accountInDb.Balance.ShouldBe(200m);
         accountInDb.UserId.ShouldBe(User.Id);
@@ -236,17 +202,12 @@ public class UpdateAccountTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var originalBalance = account.Balance;
-        var updateAccountCommand = new UpdateAccountCommand
-        {
-            Id = account.Id,
-            Name = "Updated Name",
-            Bank = "Updated Bank",
-        };
+        var updateAccountRequest = new UpdateAccountRequest("Updated Name", "Updated Bank");
 
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountCommand, CancellationToken);
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountRequest, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountResponse>(CancellationToken);
 
         // Assert
@@ -264,18 +225,12 @@ public class UpdateAccountTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var updateAccountCommand = new UpdateAccountCommand
-        {
-            Id = account.Id,
-            Name = account.Name,
-            Bank = account.Bank,
-            InitialBalance = 500m,
-        };
+        var updateAccountRequest = new UpdateAccountRequest(account.Name, account.Bank, 500m);
 
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountCommand, CancellationToken);
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountRequest, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountResponse>(CancellationToken);
 
         // Assert
@@ -309,18 +264,12 @@ public class UpdateAccountTests : ApiTestBase
 
         account.Balance.ShouldBe(140m);
 
-        var updateAccountCommand = new UpdateAccountCommand
-        {
-            Id = account.Id,
-            Name = account.Name,
-            Bank = account.Bank,
-            InitialBalance = 200m, // Change from 100 to 200
-        };
+        var updateAccountRequest = new UpdateAccountRequest(account.Name, account.Bank, 200m);
 
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountCommand, CancellationToken);
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountRequest, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountResponse>(CancellationToken);
 
         // Assert
@@ -363,18 +312,12 @@ public class UpdateAccountTests : ApiTestBase
         account.AddOperation("Operation 1", 50m, DateTimeOffset.UtcNow.AddMinutes(1));
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var updateAccountCommand = new UpdateAccountCommand
-        {
-            Id = account.Id,
-            Name = account.Name,
-            Bank = account.Bank,
-            InitialBalance = -100m,
-        };
+        var updateAccountRequest = new UpdateAccountRequest(account.Name, account.Bank, -100m);
 
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountCommand, CancellationToken);
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountRequest, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountResponse>(CancellationToken);
 
         // Assert
@@ -396,18 +339,12 @@ public class UpdateAccountTests : ApiTestBase
         account.AddOperation("Operation 1", 100m, DateTimeOffset.UtcNow.AddMinutes(1));
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var updateAccountCommand = new UpdateAccountCommand
-        {
-            Id = account.Id,
-            Name = account.Name,
-            Bank = account.Bank,
-            InitialBalance = 0m,
-        };
+        var updateAccountRequest = new UpdateAccountRequest(account.Name, account.Bank, 0m);
 
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountCommand, CancellationToken);
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountRequest, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountResponse>(CancellationToken);
 
         // Assert
@@ -431,18 +368,12 @@ public class UpdateAccountTests : ApiTestBase
 
         var operationUpdatedAt = account.Operations[0].UpdatedAt;
 
-        var updateAccountCommand = new UpdateAccountCommand
-        {
-            Id = account.Id,
-            Name = "New Name",
-            Bank = "New Bank",
-            InitialBalance = 100m, // Same as original
-        };
+        var updateAccountRequest = new UpdateAccountRequest("New Name", "New Bank", 100m);
 
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountCommand, CancellationToken);
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountRequest, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountResponse>(CancellationToken);
 
         // Assert
@@ -474,18 +405,12 @@ public class UpdateAccountTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var updateAccountCommand = new UpdateAccountCommand
-        {
-            Id = account.Id,
-            Name = "New Name",
-            Bank = "New Bank",
-            InitialBalance = 999m,
-        };
+        var updateAccountRequest = new UpdateAccountRequest("New Name", "New Bank", 999m);
 
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountCommand, CancellationToken);
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}", updateAccountRequest, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountResponse>(CancellationToken);
 
         // Assert

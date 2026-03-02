@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using Api.Contracts.Authentication;
 using Application.Features.Authentication.Commands.SignIn;
 using Domain.Users;
 using Microsoft.AspNetCore.Http;
@@ -18,10 +19,10 @@ public class SignInTests : ApiTestBase
     public async Task SignIn_ReturnsToken_WhenCredentialsAreValid()
     {
         // Arrange
-        var query = new SignInCommand { Login = User.Login, Password = UserPassword };
+        var request = new SignInRequest(User.Login, UserPassword);
 
         // Act
-        var response = await ApiClient.PostAsJsonAsync(Endpoint, query, CancellationToken);
+        var response = await ApiClient.PostAsJsonAsync(Endpoint, request, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<SignInResponse>(CancellationToken);
 
         // Assert
@@ -35,10 +36,10 @@ public class SignInTests : ApiTestBase
     public async Task SignIn_ReturnsTokens_WithDifferentValues()
     {
         // Arrange
-        var query = new SignInCommand { Login = User.Login, Password = UserPassword };
+        var request = new SignInRequest(User.Login, UserPassword);
 
         // Act
-        var response = await ApiClient.PostAsJsonAsync(Endpoint, query, CancellationToken);
+        var response = await ApiClient.PostAsJsonAsync(Endpoint, request, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<SignInResponse>(CancellationToken);
 
         // Assert
@@ -51,10 +52,10 @@ public class SignInTests : ApiTestBase
     public async Task SignIn_ReturnsUnauthorized_WhenUserDoesNotExist()
     {
         // Arrange
-        var query = new SignInCommand { Login = "nonexistentuser", Password = "SomePassword123!" };
+        var request = new SignInRequest("nonexistentuser", "SomePassword123!");
 
         // Act
-        var response = await ApiClient.PostAsJsonAsync(Endpoint, query, CancellationToken);
+        var response = await ApiClient.PostAsJsonAsync(Endpoint, request, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<SignInResponse>(CancellationToken);
 
         // Assert
@@ -67,10 +68,10 @@ public class SignInTests : ApiTestBase
     public async Task SignIn_ReturnsUnauthorized_WhenPasswordIsIncorrect()
     {
         // Arrange
-        var query = new SignInCommand { Login = User.Login, Password = "WrongPassword123!" };
+        var request = new SignInRequest(User.Login, "WrongPassword123!");
 
         // Act
-        var response = await ApiClient.PostAsJsonAsync(Endpoint, query, CancellationToken);
+        var response = await ApiClient.PostAsJsonAsync(Endpoint, request, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<SignInResponse>(CancellationToken);
 
         // Assert
@@ -83,10 +84,10 @@ public class SignInTests : ApiTestBase
     public async Task SignIn_ReturnsBadRequest_WhenLoginIsEmpty()
     {
         // Arrange
-        var query = new SignInCommand { Login = string.Empty, Password = "SomePassword123!" };
+        var request = new SignInRequest(string.Empty, "SomePassword123!");
 
         // Act
-        var response = await ApiClient.PostAsJsonAsync(Endpoint, query, CancellationToken);
+        var response = await ApiClient.PostAsJsonAsync(Endpoint, request, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<SignInResponse>(CancellationToken);
 
         // Assert
@@ -101,10 +102,10 @@ public class SignInTests : ApiTestBase
     {
         // Arrange
         var longLogin = UserFixture.GenerateLongLogin();
-        var query = new SignInCommand { Login = longLogin, Password = "SomePassword123!" };
+        var request = new SignInRequest(longLogin, "SomePassword123!");
 
         // Act
-        var response = await ApiClient.PostAsJsonAsync(Endpoint, query, CancellationToken);
+        var response = await ApiClient.PostAsJsonAsync(Endpoint, request, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<SignInResponse>(CancellationToken);
 
         // Assert
@@ -118,10 +119,10 @@ public class SignInTests : ApiTestBase
     public async Task SignIn_ReturnsBadRequest_WhenPasswordIsEmpty()
     {
         // Arrange
-        var query = new SignInCommand { Login = "testuser", Password = string.Empty };
+        var request = new SignInRequest("testuser", string.Empty);
 
         // Act
-        var response = await ApiClient.PostAsJsonAsync(Endpoint, query, CancellationToken);
+        var response = await ApiClient.PostAsJsonAsync(Endpoint, request, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<SignInResponse>(CancellationToken);
 
         // Assert
@@ -135,10 +136,10 @@ public class SignInTests : ApiTestBase
     public async Task SignIn_ReturnsBadRequest_WhenBothLoginAndPasswordAreEmpty()
     {
         // Arrange
-        var query = new SignInCommand { Login = string.Empty, Password = string.Empty };
+        var request = new SignInRequest(string.Empty, string.Empty);
 
         // Act
-        var response = await ApiClient.PostAsJsonAsync(Endpoint, query, CancellationToken);
+        var response = await ApiClient.PostAsJsonAsync(Endpoint, request, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<SignInResponse>(CancellationToken);
 
         // Assert

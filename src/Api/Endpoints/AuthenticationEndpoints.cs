@@ -1,4 +1,5 @@
 using Api.Configurations;
+using Api.Contracts.Authentication;
 using Api.Extensions;
 using Application.Features.Authentication.Commands.RefreshToken;
 using Application.Features.Authentication.Commands.SignIn;
@@ -62,10 +63,11 @@ public class AuthenticationEndpoints : IEndpoints
     private static async Task<IResult> SignIn(
         HttpContext context,
         ICommandHandler<SignInCommand, SignInResponse> handler,
-        [FromBody] SignInCommand command,
+        [FromBody] SignInRequest request,
         CancellationToken cancellationToken
     )
     {
+        var command = new SignInCommand(request.Login, request.Password);
         var result = await handler.Handle(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }
@@ -73,10 +75,11 @@ public class AuthenticationEndpoints : IEndpoints
     private static async Task<IResult> RefreshToken(
         HttpContext context,
         ICommandHandler<RefreshTokenCommand, RefreshTokenResponse> handler,
-        [FromBody] RefreshTokenCommand command,
+        [FromBody] RefreshTokenRequest request,
         CancellationToken cancellationToken
     )
     {
+        var command = new RefreshTokenCommand(request.RefreshToken);
         var result = await handler.Handle(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }

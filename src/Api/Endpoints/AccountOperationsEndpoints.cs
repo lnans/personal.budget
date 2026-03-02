@@ -37,12 +37,11 @@ public class AccountOperationsEndpoints : IEndpoints
     {
         _ = Guid.TryParse(accountId, out var parsedAccountId);
 
-        var query = new GetPaginatedAccountOperationsQuery
-        {
-            AccountId = accountId is not null ? parsedAccountId : null,
-            PageNumber = pageNumber ?? PaginationConstants.DefaultPageNumber,
-            PageSize = pageSize ?? PaginationConstants.DefaultPageSize,
-        };
+        var query = new GetPaginatedAccountOperationsQuery(
+            AccountId: accountId is not null ? parsedAccountId : null,
+            PageNumber: pageNumber ?? PaginationConstants.DefaultPageNumber,
+            PageSize: pageSize ?? PaginationConstants.DefaultPageSize
+        );
 
         var result = await handler.Handle(query, cancellationToken);
         return result.ToOkResultOrProblem(context);

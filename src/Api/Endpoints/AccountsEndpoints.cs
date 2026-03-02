@@ -1,4 +1,6 @@
 using Api.Configurations;
+using Api.Contracts.AccountOperations;
+using Api.Contracts.Accounts;
 using Api.Extensions;
 using Application.Features.AccountOperations.Commands.AddAccountOperation;
 using Application.Features.AccountOperations.Commands.DeleteAccountOperation;
@@ -108,10 +110,11 @@ public class AccountsEndpoints : IEndpoints
     private static async Task<IResult> CreateAccount(
         HttpContext context,
         ICommandHandler<CreateAccountCommand, CreateAccountResponse> handler,
-        [FromBody] CreateAccountCommand command,
+        [FromBody] CreateAccountRequest request,
         CancellationToken cancellationToken
     )
     {
+        var command = new CreateAccountCommand(request.Name, request.Bank, request.Type, request.InitialBalance);
         var result = await handler.Handle(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }
@@ -120,11 +123,11 @@ public class AccountsEndpoints : IEndpoints
         HttpContext context,
         ICommandHandler<UpdateAccountCommand, UpdateAccountResponse> handler,
         Guid id,
-        [FromBody] UpdateAccountCommand command,
+        [FromBody] UpdateAccountRequest request,
         CancellationToken cancellationToken
     )
     {
-        command.Id = id;
+        var command = new UpdateAccountCommand(id, request.Name, request.Bank, request.InitialBalance);
         var result = await handler.Handle(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }
@@ -133,11 +136,11 @@ public class AccountsEndpoints : IEndpoints
         HttpContext context,
         ICommandHandler<AddAccountOperationCommand, AddAccountOperationResponse> handler,
         Guid id,
-        [FromBody] AddAccountOperationCommand command,
+        [FromBody] AddAccountOperationRequest request,
         CancellationToken cancellationToken
     )
     {
-        command.AccountId = id;
+        var command = new AddAccountOperationCommand(id, request.Description, request.Amount);
         var result = await handler.Handle(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }
@@ -147,12 +150,11 @@ public class AccountsEndpoints : IEndpoints
         ICommandHandler<UpdateAccountOperationCommand, UpdateAccountOperationResponse> handler,
         Guid accountId,
         Guid operationId,
-        [FromBody] UpdateAccountOperationCommand command,
+        [FromBody] UpdateAccountOperationRequest request,
         CancellationToken cancellationToken
     )
     {
-        command.AccountId = accountId;
-        command.OperationId = operationId;
+        var command = new UpdateAccountOperationCommand(accountId, operationId, request.Amount, request.Description);
         var result = await handler.Handle(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }
@@ -165,7 +167,7 @@ public class AccountsEndpoints : IEndpoints
         CancellationToken cancellationToken
     )
     {
-        var command = new DeleteAccountOperationCommand { AccountId = accountId, OperationId = operationId };
+        var command = new DeleteAccountOperationCommand(accountId, operationId);
         var result = await handler.Handle(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }
@@ -177,7 +179,7 @@ public class AccountsEndpoints : IEndpoints
         CancellationToken cancellationToken
     )
     {
-        var command = new DeleteAccountCommand { Id = id };
+        var command = new DeleteAccountCommand(id);
         var result = await handler.Handle(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }

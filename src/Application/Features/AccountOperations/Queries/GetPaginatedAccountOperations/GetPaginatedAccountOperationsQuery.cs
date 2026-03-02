@@ -2,7 +2,8 @@ using Application.Models;
 
 namespace Application.Features.AccountOperations.Queries.GetPaginatedAccountOperations;
 
-public sealed class GetPaginatedAccountOperationsQuery : PaginatedQuery<GetPaginatedAccountOperationsResponse>
-{
-    public Guid? AccountId { get; init; }
-}
+public sealed record GetPaginatedAccountOperationsQuery(
+    Guid? AccountId = null,
+    int PageNumber = PaginationConstants.DefaultPageNumber,
+    int PageSize = PaginationConstants.DefaultPageSize
+) : PaginatedQuery<GetPaginatedAccountOperationsResponse>(PageNumber, PageSize);
