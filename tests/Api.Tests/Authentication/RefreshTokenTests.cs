@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using Api.Contracts.Authentication;
 using Application.Features.Authentication.Commands.RefreshToken;
 using Microsoft.AspNetCore.Http;
 
@@ -16,10 +17,10 @@ public class RefreshTokenTests : ApiTestBase
     public async Task RefreshToken_ReturnsNewTokens_WhenRefreshTokenIsValid()
     {
         // Arrange
-        var command = new RefreshTokenCommand { RefreshToken = UserRefreshToken };
+        var request = new RefreshTokenRequest(UserRefreshToken);
 
         // Act
-        var response = await ApiClient.PostAsJsonAsync(Endpoint, command, CancellationToken);
+        var response = await ApiClient.PostAsJsonAsync(Endpoint, request, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<RefreshTokenResponse>(CancellationToken);
 
         // Assert
@@ -36,10 +37,10 @@ public class RefreshTokenTests : ApiTestBase
     public async Task RefreshToken_ReturnsUnauthorized_WhenRefreshTokenIsInvalid()
     {
         // Arrange
-        var command = new RefreshTokenCommand { RefreshToken = "invalid-token" };
+        var request = new RefreshTokenRequest("invalid-token");
 
         // Act
-        var response = await ApiClient.PostAsJsonAsync(Endpoint, command, CancellationToken);
+        var response = await ApiClient.PostAsJsonAsync(Endpoint, request, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<RefreshTokenResponse>(CancellationToken);
 
         // Assert
@@ -52,14 +53,12 @@ public class RefreshTokenTests : ApiTestBase
     public async Task RefreshToken_ReturnsUnauthorized_WhenRefreshTokenIsExpired()
     {
         // Arrange
-        var command = new RefreshTokenCommand
-        {
-            RefreshToken =
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MDAwMDAwMDAsInN1YiI6IjEyMzQ1Njc4OTAifQ.invalid",
-        };
+        var request = new RefreshTokenRequest(
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MDAwMDAwMDAsInN1YiI6IjEyMzQ1Njc4OTAifQ.invalid"
+        );
 
         // Act
-        var response = await ApiClient.PostAsJsonAsync(Endpoint, command, CancellationToken);
+        var response = await ApiClient.PostAsJsonAsync(Endpoint, request, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<RefreshTokenResponse>(CancellationToken);
 
         // Assert
@@ -72,10 +71,10 @@ public class RefreshTokenTests : ApiTestBase
     public async Task RefreshToken_ReturnsUnauthorized_WhenAccessTokenIsUsedInsteadOfRefreshToken()
     {
         // Arrange
-        var command = new RefreshTokenCommand { RefreshToken = UserToken };
+        var request = new RefreshTokenRequest(UserToken);
 
         // Act
-        var response = await ApiClient.PostAsJsonAsync(Endpoint, command, CancellationToken);
+        var response = await ApiClient.PostAsJsonAsync(Endpoint, request, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<RefreshTokenResponse>(CancellationToken);
 
         // Assert
@@ -88,10 +87,10 @@ public class RefreshTokenTests : ApiTestBase
     public async Task RefreshToken_ReturnsBadRequest_WhenRefreshTokenIsEmpty()
     {
         // Arrange
-        var command = new RefreshTokenCommand { RefreshToken = string.Empty };
+        var request = new RefreshTokenRequest(string.Empty);
 
         // Act
-        var response = await ApiClient.PostAsJsonAsync(Endpoint, command, CancellationToken);
+        var response = await ApiClient.PostAsJsonAsync(Endpoint, request, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<RefreshTokenResponse>(CancellationToken);
 
         // Assert
@@ -103,16 +102,16 @@ public class RefreshTokenTests : ApiTestBase
     [Fact]
     public async Task RefreshToken_CanBeUsedMultipleTimes_ToGetNewTokens()
     {
-        var firstRefreshCommand = new RefreshTokenCommand { RefreshToken = UserRefreshToken };
-        var firstRefreshResponse = await ApiClient.PostAsJsonAsync(Endpoint, firstRefreshCommand, CancellationToken);
+        var firstRefreshRequest = new RefreshTokenRequest(UserRefreshToken);
+        var firstRefreshResponse = await ApiClient.PostAsJsonAsync(Endpoint, firstRefreshRequest, CancellationToken);
         var firstRefreshResult = await firstRefreshResponse.ReadResponseOrProblemAsync<RefreshTokenResponse>(
             CancellationToken
         );
         firstRefreshResult.ShouldBeSuccessful();
 
         var secondRefreshToken = firstRefreshResult.Response!.RefreshToken;
-        var secondRefreshCommand = new RefreshTokenCommand { RefreshToken = secondRefreshToken };
-        var secondRefreshResponse = await ApiClient.PostAsJsonAsync(Endpoint, secondRefreshCommand, CancellationToken);
+        var secondRefreshRequest = new RefreshTokenRequest(secondRefreshToken);
+        var secondRefreshResponse = await ApiClient.PostAsJsonAsync(Endpoint, secondRefreshRequest, CancellationToken);
         var secondRefreshResult = await secondRefreshResponse.ReadResponseOrProblemAsync<RefreshTokenResponse>(
             CancellationToken
         );

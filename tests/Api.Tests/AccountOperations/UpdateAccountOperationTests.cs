@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using Api.Contracts.AccountOperations;
 using Application.Features.AccountOperations.Commands.UpdateAccountOperation;
 using Domain.AccountOperations;
 using Microsoft.AspNetCore.Http;
@@ -28,11 +29,11 @@ public class UpdateAccountOperationTests : ApiTestBase
         var operation = account.Operations[0];
         var originalCreatedAt = operation.CreatedAt;
 
-        var updateCommand = new UpdateAccountOperationCommand { Amount = 75m, Description = "Updated Description" };
+        var updateRequest = new UpdateAccountOperationRequest(75m, "Updated Description");
 
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operation.Id}", updateCommand, CancellationToken);
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operation.Id}", updateRequest, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);
 
         result.ShouldBeSuccessful();
@@ -67,11 +68,11 @@ public class UpdateAccountOperationTests : ApiTestBase
 
         var operation = account.Operations[0];
 
-        var updateCommand = new UpdateAccountOperationCommand { Amount = 50m, Description = "New Description" };
+        var updateRequest = new UpdateAccountOperationRequest(50m, "New Description");
 
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operation.Id}", updateCommand, CancellationToken);
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operation.Id}", updateRequest, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);
 
         result.ShouldBeSuccessful();
@@ -100,11 +101,11 @@ public class UpdateAccountOperationTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var operationId = account.Operations[0].Id;
-        var updateCommand = new UpdateAccountOperationCommand { Amount = -30m, Description = "Initial Operation" };
+        var updateRequest = new UpdateAccountOperationRequest(-30m, "Initial Operation");
 
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operationId}", updateCommand, CancellationToken);
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operationId}", updateRequest, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);
 
         result.ShouldBeSuccessful();
@@ -133,13 +134,13 @@ public class UpdateAccountOperationTests : ApiTestBase
         account.Balance.ShouldBe(200m);
 
         var firstOperationId = account.Operations.OrderBy(o => o.CreatedAt).First().Id;
-        var updateCommand = new UpdateAccountOperationCommand { Amount = 100m, Description = "First" };
+        var updateRequest = new UpdateAccountOperationRequest(100m, "First");
 
         var response = await ApiClient
             .LoggedAs(UserToken)
             .PutAsJsonAsync(
                 $"{BaseEndpoint}/{account.Id}/operations/{firstOperationId}",
-                updateCommand,
+                updateRequest,
                 CancellationToken
             );
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);
@@ -182,13 +183,13 @@ public class UpdateAccountOperationTests : ApiTestBase
         var operations = account.Operations.OrderBy(o => o.CreatedAt).ToList();
 
         var middleOperationId = operations[1].Id;
-        var updateCommand = new UpdateAccountOperationCommand { Amount = 80m, Description = "Second" };
+        var updateRequest = new UpdateAccountOperationRequest(80m, "Second");
 
         await ApiClient
             .LoggedAs(UserToken)
             .PutAsJsonAsync(
                 $"{BaseEndpoint}/{account.Id}/operations/{middleOperationId}",
-                updateCommand,
+                updateRequest,
                 CancellationToken
             );
 
@@ -227,13 +228,13 @@ public class UpdateAccountOperationTests : ApiTestBase
         var operations = account.Operations.OrderBy(o => o.CreatedAt).ToList();
 
         var lastOperationId = operations[1].Id;
-        var updateCommand = new UpdateAccountOperationCommand { Amount = 100m, Description = "Second" };
+        var updateRequest = new UpdateAccountOperationRequest(100m, "Second");
 
         await ApiClient
             .LoggedAs(UserToken)
             .PutAsJsonAsync(
                 $"{BaseEndpoint}/{account.Id}/operations/{lastOperationId}",
-                updateCommand,
+                updateRequest,
                 CancellationToken
             );
 
@@ -264,11 +265,11 @@ public class UpdateAccountOperationTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var operationId = account.Operations[0].Id;
-        var updateCommand = new UpdateAccountOperationCommand { Amount = 0m, Description = "Test Operation" };
+        var updateRequest = new UpdateAccountOperationRequest(0m, "Test Operation");
 
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operationId}", updateCommand, CancellationToken);
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operationId}", updateRequest, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);
 
         result.ShouldBeSuccessful();
@@ -295,11 +296,11 @@ public class UpdateAccountOperationTests : ApiTestBase
 
         var operation = account.Operations[0];
 
-        var updateCommand = new UpdateAccountOperationCommand { Amount = 50m, Description = "" };
+        var updateRequest = new UpdateAccountOperationRequest(50m, "");
 
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operation.Id}", updateCommand, CancellationToken);
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operation.Id}", updateRequest, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);
 
         result.ShouldBeProblem();
@@ -323,11 +324,11 @@ public class UpdateAccountOperationTests : ApiTestBase
 
         var operation = account.Operations[0];
 
-        var updateCommand = new UpdateAccountOperationCommand { Amount = 50m, Description = "   " };
+        var updateRequest = new UpdateAccountOperationRequest(50m, "   ");
 
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operation.Id}", updateCommand, CancellationToken);
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operation.Id}", updateRequest, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);
 
         result.ShouldBeProblem();
@@ -351,15 +352,14 @@ public class UpdateAccountOperationTests : ApiTestBase
 
         var operation = account.Operations[0];
 
-        var updateCommand = new UpdateAccountOperationCommand
-        {
-            Amount = 50m,
-            Description = new string('a', AccountOperationConstants.MaxDescriptionLength + 1),
-        };
+        var updateRequest = new UpdateAccountOperationRequest(
+            50m,
+            new string('a', AccountOperationConstants.MaxDescriptionLength + 1)
+        );
 
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operation.Id}", updateCommand, CancellationToken);
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operation.Id}", updateRequest, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);
 
         result.ShouldBeProblem();
@@ -379,13 +379,13 @@ public class UpdateAccountOperationTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var nonExistentOperationId = Guid.NewGuid();
-        var updateCommand = new UpdateAccountOperationCommand { Amount = 100m, Description = "Updated Description" };
+        var updateRequest = new UpdateAccountOperationRequest(100m, "Updated Description");
 
         var response = await ApiClient
             .LoggedAs(UserToken)
             .PutAsJsonAsync(
                 $"{BaseEndpoint}/{account.Id}/operations/{nonExistentOperationId}",
-                updateCommand,
+                updateRequest,
                 CancellationToken
             );
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);
@@ -400,13 +400,13 @@ public class UpdateAccountOperationTests : ApiTestBase
     {
         var nonExistentAccountId = Guid.NewGuid();
         var nonExistentOperationId = Guid.NewGuid();
-        var updateCommand = new UpdateAccountOperationCommand { Amount = 100m, Description = "Updated Description" };
+        var updateRequest = new UpdateAccountOperationRequest(100m, "Updated Description");
 
         var response = await ApiClient
             .LoggedAs(UserToken)
             .PutAsJsonAsync(
                 $"{BaseEndpoint}/{nonExistentAccountId}/operations/{nonExistentOperationId}",
-                updateCommand,
+                updateRequest,
                 CancellationToken
             );
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);
@@ -430,13 +430,13 @@ public class UpdateAccountOperationTests : ApiTestBase
 
         var operation = account1.Operations[0];
 
-        var updateCommand = new UpdateAccountOperationCommand { Amount = 50m, Description = "Updated Description" };
+        var updateRequest = new UpdateAccountOperationRequest(50m, "Updated Description");
 
         var response = await ApiClient
             .LoggedAs(UserToken)
             .PutAsJsonAsync(
                 $"{BaseEndpoint}/{account2.Id}/operations/{operation.Id}",
-                updateCommand,
+                updateRequest,
                 CancellationToken
             );
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);
@@ -461,13 +461,13 @@ public class UpdateAccountOperationTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var operationId = otherAccount.Operations[0].Id;
-        var updateCommand = new UpdateAccountOperationCommand { Amount = 100m, Description = "Trying to update" };
+        var updateRequest = new UpdateAccountOperationRequest(100m, "Trying to update");
 
         var response = await ApiClient
             .LoggedAs(UserToken)
             .PutAsJsonAsync(
                 $"{BaseEndpoint}/{otherAccount.Id}/operations/{operationId}",
-                updateCommand,
+                updateRequest,
                 CancellationToken
             );
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);
@@ -490,11 +490,11 @@ public class UpdateAccountOperationTests : ApiTestBase
         var operation = account.Operations[0];
         var originalCreatedAt = operation.CreatedAt;
 
-        var updateCommand = new UpdateAccountOperationCommand { Amount = 75m, Description = "Updated Description" };
+        var updateRequest = new UpdateAccountOperationRequest(75m, "Updated Description");
 
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operation.Id}", updateCommand, CancellationToken);
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operation.Id}", updateRequest, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);
 
         result.ShouldBeSuccessful();
@@ -505,7 +505,7 @@ public class UpdateAccountOperationTests : ApiTestBase
             .FirstOrDefaultAsync(o => o.Id == operation.Id, CancellationToken);
 
         operationInDb.ShouldNotBeNull();
-        operationInDb.Description.ShouldBe(updateCommand.Description);
+        operationInDb.Description.ShouldBe(updateRequest.Description);
         operationInDb.Amount.ShouldBe(75m);
         operationInDb.PreviousBalance.ShouldBe(100m);
         operationInDb.NextBalance.ShouldBe(175m);
@@ -529,13 +529,13 @@ public class UpdateAccountOperationTests : ApiTestBase
 
         var targetOperation = account.Operations.OrderBy(o => o.CreatedAt).ElementAt(1);
 
-        var updateCommand = new UpdateAccountOperationCommand { Amount = 20m, Description = "Updated Operation 2" };
+        var updateRequest = new UpdateAccountOperationRequest(20m, "Updated Operation 2");
 
         var response = await ApiClient
             .LoggedAs(UserToken)
             .PutAsJsonAsync(
                 $"{BaseEndpoint}/{account.Id}/operations/{targetOperation.Id}",
-                updateCommand,
+                updateRequest,
                 CancellationToken
             );
         var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);

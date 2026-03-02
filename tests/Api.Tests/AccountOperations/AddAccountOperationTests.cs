@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using Api.Contracts.AccountOperations;
 using Application.Features.AccountOperations.Commands.AddAccountOperation;
 using Domain.AccountOperations;
 using Microsoft.AspNetCore.Http;
@@ -23,17 +24,12 @@ public class AddAccountOperationTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var command = new AddAccountOperationCommand
-        {
-            AccountId = account.Id,
-            Description = "Salary",
-            Amount = 500m,
-        };
+        var request = new AddAccountOperationRequest("Salary", 500m);
 
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", command, CancellationToken);
+            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", request, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<AddAccountOperationResponse>(CancellationToken);
 
         // Assert
@@ -41,7 +37,7 @@ public class AddAccountOperationTests : ApiTestBase
         result.Response.ShouldNotBeNull();
         result.Response.AccountId.ShouldBe(account.Id);
         result.Response.AccountName.ShouldBe("Test Account");
-        result.Response.Description.ShouldBe(command.Description);
+        result.Response.Description.ShouldBe(request.Description);
         result.Response.Amount.ShouldBe(500m);
         result.Response.PreviousBalance.ShouldBe(100m);
         result.Response.NextBalance.ShouldBe(600m); // 100 + 500
@@ -55,17 +51,12 @@ public class AddAccountOperationTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var command = new AddAccountOperationCommand
-        {
-            AccountId = account.Id,
-            Description = "Rent payment",
-            Amount = -50m,
-        };
+        var request = new AddAccountOperationRequest("Rent payment", -50m);
 
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", command, CancellationToken);
+            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", request, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<AddAccountOperationResponse>(CancellationToken);
 
         // Assert
@@ -73,7 +64,7 @@ public class AddAccountOperationTests : ApiTestBase
         result.Response.ShouldNotBeNull();
         result.Response.AccountId.ShouldBe(account.Id);
         result.Response.AccountName.ShouldBe("Test Account");
-        result.Response.Description.ShouldBe(command.Description);
+        result.Response.Description.ShouldBe(request.Description);
         result.Response.Amount.ShouldBe(-50m);
         result.Response.PreviousBalance.ShouldBe(100m);
         result.Response.NextBalance.ShouldBe(50m); // 100 - 50
@@ -87,17 +78,12 @@ public class AddAccountOperationTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var command = new AddAccountOperationCommand
-        {
-            AccountId = account.Id,
-            Description = "No change",
-            Amount = 0m,
-        };
+        var request = new AddAccountOperationRequest("No change", 0m);
 
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", command, CancellationToken);
+            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", request, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<AddAccountOperationResponse>(CancellationToken);
 
         // Assert
@@ -105,7 +91,7 @@ public class AddAccountOperationTests : ApiTestBase
         result.Response.ShouldNotBeNull();
         result.Response.AccountId.ShouldBe(account.Id);
         result.Response.AccountName.ShouldBe("Test Account");
-        result.Response.Description.ShouldBe(command.Description);
+        result.Response.Description.ShouldBe(request.Description);
         result.Response.Amount.ShouldBe(0m);
         result.Response.PreviousBalance.ShouldBe(100m);
         result.Response.NextBalance.ShouldBe(100m);
@@ -119,17 +105,12 @@ public class AddAccountOperationTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var command = new AddAccountOperationCommand
-        {
-            AccountId = account.Id,
-            Description = "",
-            Amount = 100m,
-        };
+        var request = new AddAccountOperationRequest("", 100m);
 
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", command, CancellationToken);
+            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", request, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<AddAccountOperationResponse>(CancellationToken);
 
         // Assert
@@ -150,17 +131,15 @@ public class AddAccountOperationTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var command = new AddAccountOperationCommand
-        {
-            AccountId = account.Id,
-            Description = new string('a', AccountOperationConstants.MaxDescriptionLength + 1),
-            Amount = 100m,
-        };
+        var request = new AddAccountOperationRequest(
+            new string('a', AccountOperationConstants.MaxDescriptionLength + 1),
+            100m
+        );
 
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", command, CancellationToken);
+            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", request, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<AddAccountOperationResponse>(CancellationToken);
 
         // Assert
@@ -178,17 +157,12 @@ public class AddAccountOperationTests : ApiTestBase
     {
         // Arrange
         var nonExistentId = Guid.NewGuid();
-        var command = new AddAccountOperationCommand
-        {
-            AccountId = nonExistentId,
-            Description = "Test",
-            Amount = 100m,
-        };
+        var request = new AddAccountOperationRequest("Test", 100m);
 
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PostAsJsonAsync($"{BaseEndpoint}/{nonExistentId}/operations", command, CancellationToken);
+            .PostAsJsonAsync($"{BaseEndpoint}/{nonExistentId}/operations", request, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<AddAccountOperationResponse>(CancellationToken);
 
         // Assert
@@ -205,17 +179,12 @@ public class AddAccountOperationTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var command = new AddAccountOperationCommand
-        {
-            AccountId = account.Id,
-            Description = "Test Operation",
-            Amount = 200m,
-        };
+        var request = new AddAccountOperationRequest("Test Operation", 200m);
 
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", command, CancellationToken);
+            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", request, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<AddAccountOperationResponse>(CancellationToken);
 
         // Assert
@@ -233,8 +202,8 @@ public class AddAccountOperationTests : ApiTestBase
 
         var operation = accountInDb.Operations[0];
         operation.Id.ShouldBe(result.Response.Id);
-        operation.Description.ShouldBe(command.Description);
-        operation.Amount.ShouldBe(command.Amount);
+        operation.Description.ShouldBe(request.Description);
+        operation.Amount.ShouldBe(request.Amount);
         operation.PreviousBalance.ShouldBe(100m);
         operation.NextBalance.ShouldBe(300m);
         operation.AccountId.ShouldBe(account.Id);
@@ -249,35 +218,20 @@ public class AddAccountOperationTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var command1 = new AddAccountOperationCommand
-        {
-            AccountId = account.Id,
-            Description = "First",
-            Amount = 50m,
-        };
-        var command2 = new AddAccountOperationCommand
-        {
-            AccountId = account.Id,
-            Description = "Second",
-            Amount = -30m,
-        };
-        var command3 = new AddAccountOperationCommand
-        {
-            AccountId = account.Id,
-            Description = "Third",
-            Amount = 100m,
-        };
+        var request1 = new AddAccountOperationRequest("First", 50m);
+        var request2 = new AddAccountOperationRequest("Second", -30m);
+        var request3 = new AddAccountOperationRequest("Third", 100m);
 
         // Act
         await ApiClient
             .LoggedAs(UserToken)
-            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", command1, CancellationToken);
+            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", request1, CancellationToken);
         await ApiClient
             .LoggedAs(UserToken)
-            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", command2, CancellationToken);
+            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", request2, CancellationToken);
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", command3, CancellationToken);
+            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", request3, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<AddAccountOperationResponse>(CancellationToken);
 
         // Assert
@@ -285,7 +239,7 @@ public class AddAccountOperationTests : ApiTestBase
         result.Response.ShouldNotBeNull();
         result.Response.AccountId.ShouldBe(account.Id);
         result.Response.AccountName.ShouldBe("Test Account");
-        result.Response.Description.ShouldBe(command3.Description);
+        result.Response.Description.ShouldBe(request3.Description);
         result.Response.Amount.ShouldBe(100m);
         result.Response.PreviousBalance.ShouldBe(120m);
         result.Response.NextBalance.ShouldBe(220m); // 100 + 50 - 30 + 100
@@ -308,17 +262,12 @@ public class AddAccountOperationTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        var command = new AddAccountOperationCommand
-        {
-            AccountId = account.Id,
-            Description = "Overdraft",
-            Amount = -100m,
-        };
+        var request = new AddAccountOperationRequest("Overdraft", -100m);
 
         // Act
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", command, CancellationToken);
+            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", request, CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<AddAccountOperationResponse>(CancellationToken);
 
         // Assert
@@ -326,7 +275,7 @@ public class AddAccountOperationTests : ApiTestBase
         result.Response.ShouldNotBeNull();
         result.Response.AccountId.ShouldBe(account.Id);
         result.Response.AccountName.ShouldBe("Test Account");
-        result.Response.Description.ShouldBe(command.Description);
+        result.Response.Description.ShouldBe(request.Description);
         result.Response.Amount.ShouldBe(-100m);
         result.Response.PreviousBalance.ShouldBe(50m);
         result.Response.NextBalance.ShouldBe(-50m);

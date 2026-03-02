@@ -2,7 +2,4 @@ using Application.Interfaces;
 
 namespace Application.Features.Accounts.Commands.DeleteAccount;
 
-public sealed class DeleteAccountCommand : ICommand<DeleteAccountResponse>
-{
-    public Guid Id { get; set; }
-}
+public sealed record DeleteAccountCommand(Guid Id) : ICommand<DeleteAccountResponse>;
