@@ -1,16 +1,13 @@
 using Api.Configurations;
 using Api.Extensions;
-using Application.Features.Accounts.Commands.AddAccountOperation;
+using Application.Features.AccountOperations.Commands.AddAccountOperation;
+using Application.Features.AccountOperations.Commands.DeleteAccountOperation;
+using Application.Features.AccountOperations.Commands.UpdateAccountOperation;
 using Application.Features.Accounts.Commands.CreateAccount;
 using Application.Features.Accounts.Commands.DeleteAccount;
-using Application.Features.Accounts.Commands.DeleteAccountOperation;
-using Application.Features.Accounts.Commands.PatchAccount;
-using Application.Features.Accounts.Commands.RenameAccountOperation;
-using Application.Features.Accounts.Commands.UpdateAccountOperationAmount;
+using Application.Features.Accounts.Commands.UpdateAccount;
 using Application.Features.Accounts.Queries.GetAccounts;
-using Application.Features.Accounts.Queries.GetPaginatedAccountOperations;
 using Application.Interfaces;
-using Application.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Endpoints;
@@ -33,16 +30,6 @@ public class AccountsEndpoints : IEndpoints
             .WithTags(Tag);
 
         group
-            .MapGet("operations", GetPaginatedAccountOperations)
-            .WithDescription("Get paginated account operations")
-            .WithSummary("Get paginated operations")
-            .Produces<PaginatedList<GetPaginatedAccountOperationsResponse>>()
-            .ProducesProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .WithName(nameof(GetPaginatedAccountOperations))
-            .WithTags(Tag);
-
-        group
             .MapPost("", CreateAccount)
             .WithDescription("Create a new account")
             .WithSummary("Create account")
@@ -53,14 +40,14 @@ public class AccountsEndpoints : IEndpoints
             .WithTags(Tag);
 
         group
-            .MapPatch("{id:guid}", PatchAccount)
+            .MapPut("{id:guid}", UpdateAccount)
             .WithDescription("Update an account")
             .WithSummary("Update account")
-            .Produces<PatchAccountResponse>()
+            .Produces<UpdateAccountResponse>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .WithName(nameof(PatchAccount))
+            .WithName(nameof(UpdateAccount))
             .WithTags(Tag);
 
         group
@@ -75,25 +62,14 @@ public class AccountsEndpoints : IEndpoints
             .WithTags(Tag);
 
         group
-            .MapPatch("{accountId:guid}/operations/{operationId:guid}", RenameAccountOperation)
-            .WithDescription("Rename an account operation")
-            .WithSummary("Rename operation")
-            .Produces<RenameAccountOperationResponse>()
+            .MapPut("{accountId:guid}/operations/{operationId:guid}", UpdateAccountOperation)
+            .WithDescription("Update an account operation")
+            .WithSummary("Update operation")
+            .Produces<UpdateAccountOperationResponse>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .WithName(nameof(RenameAccountOperation))
-            .WithTags(Tag);
-
-        group
-            .MapPut("{accountId:guid}/operations/{operationId:guid}/amount", UpdateAccountOperationAmount)
-            .WithDescription("Update an account operation amount")
-            .WithSummary("Update operation amount")
-            .Produces<UpdateAccountOperationAmountResponse>()
-            .ProducesProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .ProducesProblem(StatusCodes.Status404NotFound)
-            .WithName(nameof(UpdateAccountOperationAmount))
+            .WithName(nameof(UpdateAccountOperation))
             .WithTags(Tag);
 
         group
@@ -119,28 +95,6 @@ public class AccountsEndpoints : IEndpoints
             .WithTags(Tag);
     }
 
-    private static async Task<IResult> GetPaginatedAccountOperations(
-        HttpContext context,
-        IQueryHandler<GetPaginatedAccountOperationsQuery, PaginatedList<GetPaginatedAccountOperationsResponse>> handler,
-        [FromQuery] string? accountId,
-        [FromQuery] int? pageNumber,
-        [FromQuery] int? pageSize,
-        CancellationToken cancellationToken
-    )
-    {
-        _ = Guid.TryParse(accountId, out var parsedAccountId);
-
-        var query = new GetPaginatedAccountOperationsQuery
-        {
-            AccountId = accountId is not null ? parsedAccountId : null,
-            PageNumber = pageNumber ?? PaginationConstants.DefaultPageNumber,
-            PageSize = pageSize ?? PaginationConstants.DefaultPageSize,
-        };
-
-        var result = await handler.Handle(query, cancellationToken);
-        return result.ToOkResultOrProblem(context);
-    }
-
     private static async Task<IResult> GetAccounts(
         HttpContext context,
         IQueryHandler<GetAccountsQuery, List<GetAccountsResponse>> handler,
@@ -162,11 +116,11 @@ public class AccountsEndpoints : IEndpoints
         return result.ToOkResultOrProblem(context);
     }
 
-    private static async Task<IResult> PatchAccount(
+    private static async Task<IResult> UpdateAccount(
         HttpContext context,
-        ICommandHandler<PatchAccountCommand, PatchAccountResponse> handler,
+        ICommandHandler<UpdateAccountCommand, UpdateAccountResponse> handler,
         Guid id,
-        [FromBody] PatchAccountCommand command,
+        [FromBody] UpdateAccountCommand command,
         CancellationToken cancellationToken
     )
     {
@@ -188,27 +142,12 @@ public class AccountsEndpoints : IEndpoints
         return result.ToOkResultOrProblem(context);
     }
 
-    private static async Task<IResult> RenameAccountOperation(
+    private static async Task<IResult> UpdateAccountOperation(
         HttpContext context,
-        ICommandHandler<RenameAccountOperationCommand, RenameAccountOperationResponse> handler,
+        ICommandHandler<UpdateAccountOperationCommand, UpdateAccountOperationResponse> handler,
         Guid accountId,
         Guid operationId,
-        [FromBody] RenameAccountOperationCommand command,
-        CancellationToken cancellationToken
-    )
-    {
-        command.AccountId = accountId;
-        command.OperationId = operationId;
-        var result = await handler.Handle(command, cancellationToken);
-        return result.ToOkResultOrProblem(context);
-    }
-
-    private static async Task<IResult> UpdateAccountOperationAmount(
-        HttpContext context,
-        ICommandHandler<UpdateAccountOperationAmountCommand, UpdateAccountOperationAmountResponse> handler,
-        Guid accountId,
-        Guid operationId,
-        [FromBody] UpdateAccountOperationAmountCommand command,
+        [FromBody] UpdateAccountOperationCommand command,
         CancellationToken cancellationToken
     )
     {

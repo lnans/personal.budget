@@ -9,7 +9,7 @@ namespace Api.Tests.Authentication;
 [Collection(ApiTestCollection.CollectionName)]
 public class GetCurrentUserTests : ApiTestBase
 {
-    private const string Endpoint = "/auth";
+    private const string Endpoint = "/auth/me";
 
     public GetCurrentUserTests(ApiTestFixture factory)
         : base(factory) { }
