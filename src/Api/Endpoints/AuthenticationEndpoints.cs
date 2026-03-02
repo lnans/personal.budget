@@ -17,7 +17,7 @@ public class AuthenticationEndpoints : IEndpoints
         var group = app.MapGroup("/auth").RequireAuthorization();
 
         group
-            .MapGet("", GetCurrentUser)
+            .MapGet("me", GetCurrentUser)
             .WithDescription("Get the authenticated user details")
             .WithSummary("Get current user")
             .Produces<GetCurrentUserResponse>()
