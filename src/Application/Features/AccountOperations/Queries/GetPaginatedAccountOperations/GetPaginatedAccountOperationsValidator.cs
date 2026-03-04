@@ -5,7 +5,7 @@ using FluentValidation;
 
 namespace Application.Features.AccountOperations.Queries.GetPaginatedAccountOperations;
 
-public class GetPaginatedAccountOperationsValidator : AbstractValidator<GetPaginatedAccountOperationsQuery>
+internal sealed class GetPaginatedAccountOperationsValidator : AbstractValidator<GetPaginatedAccountOperationsQuery>
 {
     public GetPaginatedAccountOperationsValidator()
     {

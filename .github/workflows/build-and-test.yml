@@ -37,10 +37,10 @@ jobs:
           fi
 
       - name: "[Build] Restore dependencies"
-        run: dotnet restore Personal.Budget.sln
+        run: dotnet restore Personal.Budget.slnx
 
       - name: "[Build] Build solution"
-        run: dotnet build Personal.Budget.sln --configuration Release --no-restore
+        run: dotnet build Personal.Budget.slnx --configuration Release --no-restore
 
       - name: "[Test] Run tests"
         run: ./run-test.sh --ci

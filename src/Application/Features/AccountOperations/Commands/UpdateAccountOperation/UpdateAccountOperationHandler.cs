@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.AccountOperations.Commands.UpdateAccountOperation;
 
-public class UpdateAccountOperationHandler
+public sealed class UpdateAccountOperationHandler
     : ICommandHandler<UpdateAccountOperationCommand, UpdateAccountOperationResponse>
 {
     private readonly IAppDbContext _dbContext;

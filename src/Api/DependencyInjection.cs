@@ -90,6 +90,7 @@ public static class DependencyInjection
             config.AddDocumentTransformer(
                 (document, _, _) =>
                 {
+                    document.Info.Title = "Budget.Api";
                     if (document.Servers != null && document.Servers.Any())
                     {
                         var httpsUrls = document

@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace Application.Features.Authentication.Commands.SignIn;
 
-public class SignInValidator : AbstractValidator<SignInCommand>
+internal sealed class SignInValidator : AbstractValidator<SignInCommand>
 {
     public SignInValidator()
     {

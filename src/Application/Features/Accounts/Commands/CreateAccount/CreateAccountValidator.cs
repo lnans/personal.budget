@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace Application.Features.Accounts.Commands.CreateAccount;
 
-public class CreateAccountValidator : AbstractValidator<CreateAccountCommand>
+internal sealed class CreateAccountValidator : AbstractValidator<CreateAccountCommand>
 {
     public CreateAccountValidator()
     {

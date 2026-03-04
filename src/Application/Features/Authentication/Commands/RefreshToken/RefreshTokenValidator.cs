@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace Application.Features.Authentication.Commands.RefreshToken;
 
-public class RefreshTokenValidator : AbstractValidator<RefreshTokenCommand>
+internal sealed class RefreshTokenValidator : AbstractValidator<RefreshTokenCommand>
 {
     public RefreshTokenValidator()
     {
