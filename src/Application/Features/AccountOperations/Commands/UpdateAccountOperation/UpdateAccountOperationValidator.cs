@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace Application.Features.AccountOperations.Commands.UpdateAccountOperation;
 
-public class UpdateAccountOperationValidator : AbstractValidator<UpdateAccountOperationCommand>
+internal sealed class UpdateAccountOperationValidator : AbstractValidator<UpdateAccountOperationCommand>
 {
     public UpdateAccountOperationValidator()
     {

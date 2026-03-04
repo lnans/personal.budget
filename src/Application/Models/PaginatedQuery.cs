@@ -1,8 +1,6 @@
-using Application.Interfaces;
-
 namespace Application.Models;
 
-public abstract record PaginatedQuery<TResponse>(
+public abstract record PaginatedQuery(
     int PageNumber = PaginationConstants.DefaultPageNumber,
     int PageSize = PaginationConstants.DefaultPageSize
-) : IQuery<PaginatedList<TResponse>>;
+);

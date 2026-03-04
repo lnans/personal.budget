@@ -21,6 +21,7 @@ COVERAGE_ARGS="--coverage \
   --output detailed"
 
 dotnet run --project tests/Domain.Tests/Domain.Tests.csproj -- $COVERAGE_ARGS
+dotnet run --project tests/Architecture.Tests/Architecture.Tests.csproj -- $COVERAGE_ARGS
 dotnet run --project tests/Api.Tests/Api.Tests.csproj -- $COVERAGE_ARGS
 
 if [ $? -eq 0 ] && [ "$COVERAGE_HTML" = true ]; then
