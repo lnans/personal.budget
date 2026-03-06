@@ -23,7 +23,7 @@ public class UpdateAccountOperationTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        account.AddOperation("Original Description", 50m, DateTimeOffset.UtcNow);
+        account.AddOperation("Original Description", 50m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var operation = account.Operations[0];
@@ -63,7 +63,7 @@ public class UpdateAccountOperationTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        account.AddOperation("Original Description", 50m, DateTimeOffset.UtcNow);
+        account.AddOperation("Original Description", 50m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var operation = account.Operations[0];
@@ -96,7 +96,7 @@ public class UpdateAccountOperationTests : ApiTestBase
     public async Task UpdateAccountOperation_WithNegativeAmount_ShouldUpdateCorrectly()
     {
         var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
-        account.AddOperation("Initial Operation", 50m, DateTimeOffset.UtcNow);
+        account.AddOperation("Initial Operation", 50m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
@@ -125,9 +125,9 @@ public class UpdateAccountOperationTests : ApiTestBase
     {
         var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
         var now = DateTimeOffset.UtcNow;
-        account.AddOperation("First", 50m, now);
-        account.AddOperation("Second", 30m, now.AddMilliseconds(10));
-        account.AddOperation("Third", 20m, now.AddMilliseconds(20));
+        account.AddOperation("First", 50m, now, now);
+        account.AddOperation("Second", 30m, now.AddMilliseconds(10), now.AddMilliseconds(10));
+        account.AddOperation("Third", 20m, now.AddMilliseconds(20), now.AddMilliseconds(20));
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
@@ -174,9 +174,9 @@ public class UpdateAccountOperationTests : ApiTestBase
     {
         var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
         var now = DateTimeOffset.UtcNow;
-        account.AddOperation("First", 50m, now);
-        account.AddOperation("Second", 30m, now.AddMilliseconds(10));
-        account.AddOperation("Third", 20m, now.AddMilliseconds(20));
+        account.AddOperation("First", 50m, now, now);
+        account.AddOperation("Second", 30m, now.AddMilliseconds(10), now.AddMilliseconds(10));
+        account.AddOperation("Third", 20m, now.AddMilliseconds(20), now.AddMilliseconds(20));
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
@@ -220,8 +220,8 @@ public class UpdateAccountOperationTests : ApiTestBase
     {
         var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
         var now = DateTimeOffset.UtcNow;
-        account.AddOperation("First", 50m, now);
-        account.AddOperation("Second", 30m, now.AddMilliseconds(10));
+        account.AddOperation("First", 50m, now, now);
+        account.AddOperation("Second", 30m, now.AddMilliseconds(10), now.AddMilliseconds(10));
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
@@ -260,7 +260,7 @@ public class UpdateAccountOperationTests : ApiTestBase
     public async Task UpdateAccountOperation_WithZeroAmount_ShouldUpdateCorrectly()
     {
         var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
-        account.AddOperation("Test Operation", 50m, DateTimeOffset.UtcNow);
+        account.AddOperation("Test Operation", 50m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
@@ -291,7 +291,7 @@ public class UpdateAccountOperationTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        account.AddOperation("Original Description", 50m, DateTimeOffset.UtcNow);
+        account.AddOperation("Original Description", 50m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var operation = account.Operations[0];
@@ -319,7 +319,7 @@ public class UpdateAccountOperationTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        account.AddOperation("Original Description", 50m, DateTimeOffset.UtcNow);
+        account.AddOperation("Original Description", 50m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var operation = account.Operations[0];
@@ -347,7 +347,7 @@ public class UpdateAccountOperationTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        account.AddOperation("Original Description", 50m, DateTimeOffset.UtcNow);
+        account.AddOperation("Original Description", 50m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var operation = account.Operations[0];
@@ -425,7 +425,7 @@ public class UpdateAccountOperationTests : ApiTestBase
         DbContext.Accounts.Add(account2);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        account1.AddOperation("Operation on Account 1", 50m, DateTimeOffset.UtcNow);
+        account1.AddOperation("Operation on Account 1", 50m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var operation = account1.Operations[0];
@@ -457,7 +457,7 @@ public class UpdateAccountOperationTests : ApiTestBase
         DbContext.Accounts.Add(otherAccount);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        otherAccount.AddOperation("Test", 50m, DateTimeOffset.UtcNow);
+        otherAccount.AddOperation("Test", 50m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var operationId = otherAccount.Operations[0].Id;
@@ -484,7 +484,7 @@ public class UpdateAccountOperationTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        account.AddOperation("Original Description", 75m, DateTimeOffset.UtcNow);
+        account.AddOperation("Original Description", 75m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var operation = account.Operations[0];
@@ -522,9 +522,9 @@ public class UpdateAccountOperationTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var now = DateTimeOffset.UtcNow;
-        account.AddOperation("Operation 1", 10m, now);
-        account.AddOperation("Operation 2", 20m, now.AddMilliseconds(10));
-        account.AddOperation("Operation 3", 30m, now.AddMilliseconds(20));
+        account.AddOperation("Operation 1", 10m, now, now);
+        account.AddOperation("Operation 2", 20m, now.AddMilliseconds(10), now.AddMilliseconds(10));
+        account.AddOperation("Operation 3", 30m, now.AddMilliseconds(20), now.AddMilliseconds(20));
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var targetOperation = account.Operations.OrderBy(o => o.CreatedAt).ElementAt(1);
@@ -554,5 +554,94 @@ public class UpdateAccountOperationTests : ApiTestBase
         operationsInDb[0].Description.ShouldBe("Operation 1");
         operationsInDb[1].Description.ShouldBe("Updated Operation 2");
         operationsInDb[2].Description.ShouldBe("Operation 3");
+    }
+
+    [Fact]
+    public async Task UpdateAccountOperation_WithExplicitOperationDate_ShouldUseProvidedTimestamp()
+    {
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
+        DbContext.Accounts.Add(account);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        account.AddOperation("Original Description", 50m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        var operation = account.Operations[0];
+        var originalOperationDate = operation.OperationDate;
+
+        var explicitOperationDate = new DateTimeOffset(2025, 6, 15, 10, 30, 0, TimeSpan.Zero);
+        var updateRequest = new UpdateAccountOperationRequest(75m, "Updated Description", explicitOperationDate);
+
+        var response = await ApiClient
+            .LoggedAs(UserToken)
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operation.Id}", updateRequest, CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);
+
+        result.ShouldBeSuccessful();
+        result.Response.ShouldNotBeNull();
+        result.Response.Description.ShouldBe("Updated Description");
+        result.Response.Amount.ShouldBe(75m);
+        result.Response.OperationDate.ShouldBeCloseTo(explicitOperationDate, TimeSpan.FromMilliseconds(1));
+        result.Response.UpdatedAt.ShouldBeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(5));
+
+        var operationInDb = await DbContext
+            .AccountOperations.AsNoTracking()
+            .FirstOrDefaultAsync(o => o.Id == operation.Id, CancellationToken);
+
+        operationInDb.ShouldNotBeNull();
+        operationInDb.OperationDate.ShouldBeCloseTo(explicitOperationDate, TimeSpan.FromMilliseconds(1));
+    }
+
+    [Fact]
+    public async Task UpdateAccountOperation_WithoutOperationDate_ShouldNotChangeOperationDate()
+    {
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
+        DbContext.Accounts.Add(account);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        account.AddOperation("Original Description", 50m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        var operation = account.Operations[0];
+        var originalOperationDate = operation.OperationDate;
+
+        var updateRequest = new UpdateAccountOperationRequest(75m, "Updated Description");
+
+        var response = await ApiClient
+            .LoggedAs(UserToken)
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operation.Id}", updateRequest, CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);
+
+        result.ShouldBeSuccessful();
+        result.Response.ShouldNotBeNull();
+        result.Response.OperationDate.ShouldBeCloseTo(originalOperationDate, TimeSpan.FromMilliseconds(1));
+    }
+
+    [Fact]
+    public async Task UpdateAccountOperation_WithFutureOperationDate_ShouldReturnValidationError()
+    {
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
+        DbContext.Accounts.Add(account);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        account.AddOperation("Original Description", 50m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        var operation = account.Operations[0];
+        var futureDate = DateTimeOffset.UtcNow.AddDays(1);
+        var updateRequest = new UpdateAccountOperationRequest(75m, "Updated Description", futureDate);
+
+        var response = await ApiClient
+            .LoggedAs(UserToken)
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operation.Id}", updateRequest, CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);
+
+        result.ShouldBeProblem();
+        result.Problem.ShouldNotBeNull();
+        result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
+        result.Problem.ShouldHaveValidationError(
+            "OperationDate",
+            AccountOperationErrors.AccountOperationDateInFuture.Code
+        );
     }
 }

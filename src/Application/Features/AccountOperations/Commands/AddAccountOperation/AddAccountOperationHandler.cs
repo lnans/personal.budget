@@ -35,7 +35,8 @@ public sealed class AddAccountOperationHandler
         }
 
         var createdAt = _timeProvider.GetUtcNow();
-        var addOperationResult = account.AddOperation(command.Description, command.Amount, createdAt);
+        var operationDate = command.OperationDate ?? createdAt;
+        var addOperationResult = account.AddOperation(command.Description, command.Amount, operationDate, createdAt);
 
         if (addOperationResult.IsError)
         {
@@ -54,6 +55,7 @@ public sealed class AddAccountOperationHandler
             operation.Amount,
             operation.PreviousBalance,
             operation.NextBalance,
+            operation.OperationDate,
             operation.CreatedAt,
             operation.UpdatedAt
         );

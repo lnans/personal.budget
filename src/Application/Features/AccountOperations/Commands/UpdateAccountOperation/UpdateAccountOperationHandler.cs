@@ -1,3 +1,4 @@
+using Application.Extensions;
 using Application.Interfaces;
 using Domain.AccountOperations;
 using Domain.Accounts;
@@ -25,67 +26,67 @@ public sealed class UpdateAccountOperationHandler
         CancellationToken cancellationToken
     )
     {
-        var operation = await _dbContext
+        var updatedAt = _timeProvider.GetUtcNow();
+
+        return await GetAccountOperationAsync(command.AccountId, command.OperationId, cancellationToken)
+            .Then(operation => operation.Rename(command.Description, updatedAt))
+            .Then(operation => UpdateOperationDate(operation, command, updatedAt))
+            .ThenAsync(operation => UpdateOperationAmountAsync(operation, command, updatedAt, cancellationToken))
+            .ThenDoAsync(_ => _dbContext.SaveChangesAsync(cancellationToken))
+            .MatchFirst(
+                operation =>
+                    new UpdateAccountOperationResponse(
+                        operation.Id,
+                        operation.AccountId,
+                        operation.Account.Name,
+                        operation.Description,
+                        operation.Amount,
+                        operation.PreviousBalance,
+                        operation.NextBalance,
+                        operation.OperationDate,
+                        operation.CreatedAt,
+                        operation.UpdatedAt
+                    ).ToErrorOr(),
+                errors => errors
+            );
+    }
+
+    private async Task<ErrorOr<AccountOperation>> GetAccountOperationAsync(
+        Guid accountId,
+        Guid operationId,
+        CancellationToken cancellationToken
+    ) =>
+        await _dbContext
             .AccountOperations.Include(o => o.Account)
-            .FirstOrDefaultAsync(
-                o => o.Id == command.OperationId && o.AccountId == command.AccountId,
+            .FirstOrErrorAsync(
+                o => o.Id == operationId && o.AccountId == accountId && o.Account.UserId == _authContext.CurrentUserId,
+                AccountOperationErrors.AccountOperationNotFound,
                 cancellationToken
             );
 
-        if (operation is null)
-        {
-            return AccountOperationErrors.AccountOperationNotFound;
-        }
+    private static ErrorOr<AccountOperation> UpdateOperationDate(
+        AccountOperation operation,
+        UpdateAccountOperationCommand command,
+        DateTimeOffset updatedAt
+    ) => command.OperationDate.HasValue ? operation.UpdateDate(command.OperationDate.Value, updatedAt) : operation;
 
-        if (operation.Account.UserId != _authContext.CurrentUserId)
-        {
-            return AccountErrors.AccountNotFound;
-        }
-
-        var updatedAt = _timeProvider.GetUtcNow();
-        var renameResult = operation.Rename(command.Description, updatedAt);
-
-        if (renameResult.IsError)
-        {
-            return renameResult.Errors;
-        }
-
-        if (operation.Amount != command.Amount)
-        {
-            var account = await _dbContext
+    private async Task<ErrorOr<AccountOperation>> UpdateOperationAmountAsync(
+        AccountOperation operation,
+        UpdateAccountOperationCommand command,
+        DateTimeOffset updatedAt,
+        CancellationToken cancellationToken
+    ) =>
+        operation.Amount == command.Amount
+            ? operation
+            : await _dbContext
                 .Accounts.Include(a =>
                     a.Operations.Where(o => o.Id == command.OperationId || o.CreatedAt > operation.CreatedAt)
                 )
-                .FirstOrDefaultAsync(
+                .FirstOrErrorAsync(
                     a => a.Id == command.AccountId && a.UserId == _authContext.CurrentUserId,
+                    AccountErrors.AccountNotFound,
                     cancellationToken
-                );
-
-            if (account is null)
-            {
-                return AccountErrors.AccountNotFound;
-            }
-
-            var updateResult = account.UpdateOperationAmount(command.OperationId, command.Amount, updatedAt);
-
-            if (updateResult.IsError)
-            {
-                return updateResult.Errors;
-            }
-        }
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return new UpdateAccountOperationResponse(
-            operation.Id,
-            operation.AccountId,
-            operation.Account.Name,
-            operation.Description,
-            operation.Amount,
-            operation.PreviousBalance,
-            operation.NextBalance,
-            operation.CreatedAt,
-            operation.UpdatedAt
-        );
-    }
+                )
+                .Then(account => account.UpdateOperationAmount(command.OperationId, command.Amount, updatedAt))
+                .MatchFirst(_ => operation.ToErrorOr(), error => error);
 }

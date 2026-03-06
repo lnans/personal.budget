@@ -14,6 +14,7 @@ public class AccountOperationCreateTests
         const string operationDescription = "Test Operation";
         const decimal operationAmount = 100m;
         const decimal previousBalance = 50m;
+        var operationDate = FixtureBase.GetTestDate();
         var createdAt = FixtureBase.GetTestDate();
 
         // Act
@@ -22,6 +23,7 @@ public class AccountOperationCreateTests
             operationDescription,
             operationAmount,
             previousBalance,
+            operationDate,
             createdAt
         );
 
@@ -32,6 +34,7 @@ public class AccountOperationCreateTests
         result.Value.PreviousBalance.ShouldBe(previousBalance);
         result.Value.NextBalance.ShouldBe(150m);
         result.Value.AccountId.ShouldBe(accountId);
+        result.Value.OperationDate.ShouldBe(operationDate);
         result.Value.CreatedAt.ShouldBe(createdAt);
         result.Value.UpdatedAt.ShouldBe(createdAt);
     }
@@ -52,6 +55,7 @@ public class AccountOperationCreateTests
             operationDescription,
             operationAmount,
             previousBalance,
+            createdAt,
             createdAt
         );
 
@@ -75,6 +79,7 @@ public class AccountOperationCreateTests
             operationDescription,
             operationAmount,
             previousBalance,
+            createdAt,
             createdAt
         );
 
@@ -98,6 +103,7 @@ public class AccountOperationCreateTests
             operationDescription,
             operationAmount,
             previousBalance,
+            createdAt,
             createdAt
         );
 
@@ -121,6 +127,7 @@ public class AccountOperationCreateTests
             operationDescription,
             operationAmount,
             previousBalance,
+            createdAt,
             createdAt
         );
 
@@ -147,6 +154,7 @@ public class AccountOperationCreateTests
             operationDescription,
             operationAmount,
             previousBalance,
+            createdAt,
             createdAt
         );
 
@@ -155,5 +163,30 @@ public class AccountOperationCreateTests
         result.Value.Amount.ShouldBe(0m);
         result.Value.PreviousBalance.ShouldBe(previousBalance);
         result.Value.NextBalance.ShouldBe(previousBalance);
+    }
+
+    [Fact]
+    public void AccountOperation_Create_WithOperationDateInFuture_ShouldReturnError()
+    {
+        // Arrange
+        var accountId = Guid.NewGuid();
+        const string operationDescription = "Future operation";
+        const decimal operationAmount = 100m;
+        const decimal previousBalance = 0m;
+        var createdAt = FixtureBase.GetTestDate();
+        var operationDate = createdAt.AddDays(1);
+
+        // Act
+        var result = AccountOperation.Create(
+            accountId,
+            operationDescription,
+            operationAmount,
+            previousBalance,
+            operationDate,
+            createdAt
+        );
+
+        // Assert
+        FixtureBase.AssertError(result, AccountOperationErrors.AccountOperationDateInFuture);
     }
 }

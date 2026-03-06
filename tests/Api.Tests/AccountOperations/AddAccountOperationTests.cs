@@ -280,4 +280,78 @@ public class AddAccountOperationTests : ApiTestBase
         result.Response.PreviousBalance.ShouldBe(50m);
         result.Response.NextBalance.ShouldBe(-50m);
     }
+
+    [Fact]
+    public async Task AddAccountOperation_WithExplicitOperationDate_ShouldUseProvidedTimestamp()
+    {
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
+        DbContext.Accounts.Add(account);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        var explicitOperationDate = new DateTimeOffset(2025, 6, 15, 10, 30, 0, TimeSpan.Zero);
+        var request = new AddAccountOperationRequest("Backdated Operation", 200m, explicitOperationDate);
+
+        var response = await ApiClient
+            .LoggedAs(UserToken)
+            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", request, CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<AddAccountOperationResponse>(CancellationToken);
+
+        result.ShouldBeSuccessful();
+        result.Response.ShouldNotBeNull();
+        result.Response.OperationDate.ShouldBeCloseTo(explicitOperationDate, TimeSpan.FromMilliseconds(1));
+        result.Response.CreatedAt.ShouldBeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(5));
+        result.Response.Amount.ShouldBe(200m);
+        result.Response.PreviousBalance.ShouldBe(100m);
+        result.Response.NextBalance.ShouldBe(300m);
+
+        var operationInDb = await DbContext
+            .AccountOperations.AsNoTracking()
+            .FirstOrDefaultAsync(o => o.Id == result.Response.Id, CancellationToken);
+
+        operationInDb.ShouldNotBeNull();
+        operationInDb.OperationDate.ShouldBeCloseTo(explicitOperationDate, TimeSpan.FromMilliseconds(1));
+    }
+
+    [Fact]
+    public async Task AddAccountOperation_WithoutOperationDate_ShouldDefaultToCurrentTime()
+    {
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
+        DbContext.Accounts.Add(account);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        var request = new AddAccountOperationRequest("Current Time Operation", 50m);
+
+        var response = await ApiClient
+            .LoggedAs(UserToken)
+            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", request, CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<AddAccountOperationResponse>(CancellationToken);
+
+        result.ShouldBeSuccessful();
+        result.Response.ShouldNotBeNull();
+        result.Response.OperationDate.ShouldBeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
+    public async Task AddAccountOperation_WithFutureOperationDate_ShouldReturnValidationError()
+    {
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
+        DbContext.Accounts.Add(account);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        var futureDate = DateTimeOffset.UtcNow.AddDays(1);
+        var request = new AddAccountOperationRequest("Future Operation", 50m, futureDate);
+
+        var response = await ApiClient
+            .LoggedAs(UserToken)
+            .PostAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations", request, CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<AddAccountOperationResponse>(CancellationToken);
+
+        result.ShouldBeProblem();
+        result.Problem.ShouldNotBeNull();
+        result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
+        result.Problem.ShouldHaveValidationError(
+            "OperationDate",
+            AccountOperationErrors.AccountOperationDateInFuture.Code
+        );
+    }
 }

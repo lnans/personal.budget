@@ -18,4 +18,10 @@ public static class AccountOperationErrors
 
     public static Error AccountOperationNotFound =>
         Error.NotFound(code: "AccountOperation.NotFound", description: "Account operation not found.");
+
+    public static Error AccountOperationDateInFuture =>
+        Error.Validation(
+            code: "AccountOperation.OperationDate.InFuture",
+            description: "Account operation date cannot be in the future."
+        );
 }

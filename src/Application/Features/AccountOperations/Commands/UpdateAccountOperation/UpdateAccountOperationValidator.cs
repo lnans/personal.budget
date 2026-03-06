@@ -6,12 +6,17 @@ namespace Application.Features.AccountOperations.Commands.UpdateAccountOperation
 
 internal sealed class UpdateAccountOperationValidator : AbstractValidator<UpdateAccountOperationCommand>
 {
-    public UpdateAccountOperationValidator()
+    public UpdateAccountOperationValidator(TimeProvider timeProvider)
     {
         RuleFor(q => q.Description)
             .NotEmpty()
             .WithError(AccountOperationErrors.AccountOperationDescriptionRequired)
             .MaximumLength(AccountOperationConstants.MaxDescriptionLength)
             .WithError(AccountOperationErrors.AccountOperationDescriptionTooLong);
+
+        RuleFor(q => q.OperationDate)
+            .LessThanOrEqualTo(_ => timeProvider.GetUtcNow())
+            .When(q => q.OperationDate.HasValue)
+            .WithError(AccountOperationErrors.AccountOperationDateInFuture);
     }
 }

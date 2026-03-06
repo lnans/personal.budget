@@ -44,6 +44,7 @@ public sealed class GetPaginatedAccountOperationsHandler
                 op.Amount,
                 op.PreviousBalance,
                 op.NextBalance,
+                op.OperationDate,
                 op.CreatedAt,
                 op.UpdatedAt
             ))

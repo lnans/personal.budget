@@ -8,6 +8,7 @@ public sealed record AddAccountOperationResponse(
     decimal Amount,
     decimal PreviousBalance,
     decimal NextBalance,
+    DateTimeOffset OperationDate,
     DateTimeOffset CreatedAt,
     DateTimeOffset UpdatedAt
 );

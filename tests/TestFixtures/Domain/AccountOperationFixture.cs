@@ -8,10 +8,18 @@ public static class AccountOperationFixture
         string description = "Test Operation",
         decimal amount = 100m,
         decimal previousBalance = 0m,
+        DateTimeOffset? operationDate = null,
         DateTimeOffset? createdAt = null
     ) =>
         AccountOperation
-            .Create(Guid.NewGuid(), description, amount, previousBalance, createdAt ?? FixtureBase.GetTestDate())
+            .Create(
+                Guid.NewGuid(),
+                description,
+                amount,
+                previousBalance,
+                operationDate ?? FixtureBase.GetTestDate(),
+                createdAt ?? FixtureBase.GetTestDate()
+            )
             .Value;
 
     public static string GenerateLongOperationDescription() =>
