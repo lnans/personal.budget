@@ -23,7 +23,8 @@
                 <Source>.*/Api/Authentication/.*</Source>
                 <Source>.*/Api/Configurations/.*</Source>
                 <Source>.*/Api/Errors/.*</Source>
-                <Source>.*/Application/Behaviors/.*</Source>
+                <Source>.*/Api/Extensions/.*</Source>
+                <Source>.*/Application/Decorators/.*</Source>
                 <Source>.*/Infrastructure/Persistence/.*\.cs$</Source>
               </Exclude>
             </Sources>

@@ -41,6 +41,11 @@ public class AccountOperationEntityTypeConfiguration : IEntityTypeConfiguration<
 
         builder.Property(accountOperation => accountOperation.NextBalance).HasColumnName("NextBalance").IsRequired();
 
+        builder
+            .Property(accountOperation => accountOperation.OperationDate)
+            .HasColumnName("OperationDate")
+            .IsRequired();
+
         builder.Property(accountOperation => accountOperation.CreatedAt).HasColumnName("CreatedAt").IsRequired();
 
         builder.Property(accountOperation => accountOperation.UpdatedAt).HasColumnName("UpdatedAt").IsRequired();

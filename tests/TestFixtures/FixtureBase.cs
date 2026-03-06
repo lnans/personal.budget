@@ -22,5 +22,7 @@ public static class FixtureBase
 
     public static void AssertSuccess(ErrorOr<Success> result) => result.IsError.ShouldBeFalse();
 
+    public static void AssertSuccess<T>(ErrorOr<T> result) => result.IsError.ShouldBeFalse();
+
     public static DateTimeOffset GetTestDate(int daysOffset = 0) => DateTimeOffset.UtcNow.AddDays(daysOffset);
 }

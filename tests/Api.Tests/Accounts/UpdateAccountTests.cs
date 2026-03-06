@@ -257,9 +257,24 @@ public class UpdateAccountTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         // Add operations: +50, -30, +20 => Balance should be 100 + 50 - 30 + 20 = 140
-        account.AddOperation("Operation 1", 50m, DateTimeOffset.UtcNow.AddMinutes(1));
-        account.AddOperation("Operation 2", -30m, DateTimeOffset.UtcNow.AddMinutes(2));
-        account.AddOperation("Operation 3", 20m, DateTimeOffset.UtcNow.AddMinutes(3));
+        account.AddOperation(
+            "Operation 1",
+            50m,
+            DateTimeOffset.UtcNow.AddMinutes(1),
+            DateTimeOffset.UtcNow.AddMinutes(1)
+        );
+        account.AddOperation(
+            "Operation 2",
+            -30m,
+            DateTimeOffset.UtcNow.AddMinutes(2),
+            DateTimeOffset.UtcNow.AddMinutes(2)
+        );
+        account.AddOperation(
+            "Operation 3",
+            20m,
+            DateTimeOffset.UtcNow.AddMinutes(3),
+            DateTimeOffset.UtcNow.AddMinutes(3)
+        );
         await DbContext.SaveChangesAsync(CancellationToken);
 
         account.Balance.ShouldBe(140m);
@@ -309,7 +324,12 @@ public class UpdateAccountTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        account.AddOperation("Operation 1", 50m, DateTimeOffset.UtcNow.AddMinutes(1));
+        account.AddOperation(
+            "Operation 1",
+            50m,
+            DateTimeOffset.UtcNow.AddMinutes(1),
+            DateTimeOffset.UtcNow.AddMinutes(1)
+        );
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var updateAccountRequest = new UpdateAccountRequest(account.Name, account.Bank, -100m);
@@ -336,7 +356,12 @@ public class UpdateAccountTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        account.AddOperation("Operation 1", 100m, DateTimeOffset.UtcNow.AddMinutes(1));
+        account.AddOperation(
+            "Operation 1",
+            100m,
+            DateTimeOffset.UtcNow.AddMinutes(1),
+            DateTimeOffset.UtcNow.AddMinutes(1)
+        );
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var updateAccountRequest = new UpdateAccountRequest(account.Name, account.Bank, 0m);
@@ -363,7 +388,12 @@ public class UpdateAccountTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        account.AddOperation("Operation 1", 50m, DateTimeOffset.UtcNow.AddMinutes(1));
+        account.AddOperation(
+            "Operation 1",
+            50m,
+            DateTimeOffset.UtcNow.AddMinutes(1),
+            DateTimeOffset.UtcNow.AddMinutes(1)
+        );
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var operationUpdatedAt = account.Operations[0].UpdatedAt;

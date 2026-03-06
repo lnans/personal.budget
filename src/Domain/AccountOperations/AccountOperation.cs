@@ -10,6 +10,7 @@ public sealed class AccountOperation : Entity
     public decimal Amount { get; private set; }
     public decimal PreviousBalance { get; private set; }
     public decimal NextBalance { get; private set; }
+    public DateTimeOffset OperationDate { get; private set; }
     public Account Account { get; } = null!;
 
     private AccountOperation(
@@ -17,6 +18,7 @@ public sealed class AccountOperation : Entity
         string description,
         decimal amount,
         decimal previousBalance,
+        DateTimeOffset operationDate,
         DateTimeOffset createdAt
     )
         : base(createdAt)
@@ -26,6 +28,7 @@ public sealed class AccountOperation : Entity
         Amount = amount;
         PreviousBalance = previousBalance;
         NextBalance = previousBalance + amount;
+        OperationDate = operationDate;
     }
 
     internal static ErrorOr<AccountOperation> Create(
@@ -33,6 +36,7 @@ public sealed class AccountOperation : Entity
         string description,
         decimal amount,
         decimal previousBalance,
+        DateTimeOffset operationDate,
         DateTimeOffset createdAt
     )
     {
@@ -46,10 +50,15 @@ public sealed class AccountOperation : Entity
             return AccountOperationErrors.AccountOperationDescriptionTooLong;
         }
 
-        return new AccountOperation(accountId, description, amount, previousBalance, createdAt);
+        if (operationDate > createdAt)
+        {
+            return AccountOperationErrors.AccountOperationDateInFuture;
+        }
+
+        return new AccountOperation(accountId, description, amount, previousBalance, operationDate, createdAt);
     }
 
-    public ErrorOr<Success> Rename(string description, DateTimeOffset updatedAt)
+    public ErrorOr<AccountOperation> Rename(string description, DateTimeOffset updatedAt)
     {
         if (string.IsNullOrWhiteSpace(description))
         {
@@ -63,7 +72,19 @@ public sealed class AccountOperation : Entity
 
         Description = description;
         UpdatedAt = updatedAt;
-        return Result.Success;
+        return this;
+    }
+
+    public ErrorOr<AccountOperation> UpdateDate(DateTimeOffset operationDate, DateTimeOffset updatedAt)
+    {
+        if (operationDate > updatedAt)
+        {
+            return AccountOperationErrors.AccountOperationDateInFuture;
+        }
+
+        OperationDate = operationDate;
+        UpdatedAt = updatedAt;
+        return this;
     }
 
     internal void UpdateAmount(decimal newAmount, DateTimeOffset updatedAt)

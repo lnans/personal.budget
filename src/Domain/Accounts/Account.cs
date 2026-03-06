@@ -67,9 +67,20 @@ public sealed class Account : Entity
         return new Account(userId, name, bank, type, balance, createdAt);
     }
 
-    public ErrorOr<Success> AddOperation(string description, decimal amount, DateTimeOffset createdAt) =>
-        AccountOperation
-            .Create(Id, description, amount, Balance, createdAt)
+    public ErrorOr<Success> AddOperation(
+        string description,
+        decimal amount,
+        DateTimeOffset operationDate,
+        DateTimeOffset createdAt
+    )
+    {
+        if (operationDate > createdAt)
+        {
+            return AccountOperationErrors.AccountOperationDateInFuture;
+        }
+
+        return AccountOperation
+            .Create(Id, description, amount, Balance, operationDate, createdAt)
             .MatchFirst<ErrorOr<Success>>(
                 operation =>
                 {
@@ -79,6 +90,7 @@ public sealed class Account : Entity
                 },
                 error => error
             );
+    }
 
     public ErrorOr<Success> Patch(string name, string bank, decimal? initialBalance, DateTimeOffset updatedAt)
     {
@@ -155,8 +167,7 @@ public sealed class Account : Entity
             currentBalance = subsequentOperation.NextBalance;
         }
 
-        Balance = subsequentOperations.Any() ? currentBalance : operation.NextBalance;
-
+        Balance = subsequentOperations.Count != 0 ? currentBalance : operation.NextBalance;
         return Result.Success;
     }
 
