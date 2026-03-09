@@ -1,4 +1,4 @@
-namespace Application.Models;
+namespace Application.Models.Pagination;
 
 public sealed record PaginatedList<T>(List<T> Items, int PageNumber, int PageSize, int TotalCount)
 {

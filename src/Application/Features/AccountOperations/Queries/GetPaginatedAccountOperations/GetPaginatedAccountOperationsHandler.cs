@@ -1,5 +1,6 @@
+using Application.Extensions;
 using Application.Interfaces;
-using Application.Models;
+using Application.Models.Pagination;
 using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,41 +21,27 @@ public sealed class GetPaginatedAccountOperationsHandler
     public async Task<ErrorOr<PaginatedList<GetPaginatedAccountOperationsResponse>>> Handle(
         GetPaginatedAccountOperationsQuery request,
         CancellationToken cancellationToken
-    )
-    {
-        var query = _dbContext.AccountOperations.Where(op => op.Account.UserId == _authContext.CurrentUserId);
-
-        if (request.AccountId.HasValue)
-        {
-            query = query.Where(op => op.AccountId == request.AccountId.Value);
-        }
-
-        var orderedQuery = query.OrderByDescending(op => op.CreatedAt);
-
-        var totalCount = await orderedQuery.CountAsync(cancellationToken);
-
-        var items = await orderedQuery
-            .Skip((request.PageNumber - 1) * request.PageSize)
-            .Take(request.PageSize)
-            .Select(op => new GetPaginatedAccountOperationsResponse(
-                op.Id,
-                op.AccountId,
-                op.Account.Name,
-                op.Description,
-                op.Amount,
-                op.PreviousBalance,
-                op.NextBalance,
-                op.OperationDate,
-                op.CreatedAt,
-                op.UpdatedAt
-            ))
-            .ToListAsync(cancellationToken);
-
-        return new PaginatedList<GetPaginatedAccountOperationsResponse>(
-            items,
-            request.PageNumber,
-            request.PageSize,
-            totalCount
-        );
-    }
+    ) =>
+        await _dbContext
+            .AccountOperations.AsNoTracking()
+            .Where(operation => operation.Account.UserId == _authContext.CurrentUserId)
+            .Where(operation => !request.AccountId.HasValue || operation.AccountId == request.AccountId!.Value)
+            .OrderByDescending(operation => operation.CreatedAt)
+            .ToPaginatedListOrErrorAsync(
+                operation => new GetPaginatedAccountOperationsResponse(
+                    operation.Id,
+                    operation.AccountId,
+                    operation.Account.Name,
+                    operation.Description,
+                    operation.Amount,
+                    operation.PreviousBalance,
+                    operation.NextBalance,
+                    operation.OperationDate,
+                    operation.CreatedAt,
+                    operation.UpdatedAt
+                ),
+                request.PageNumber,
+                request.PageSize,
+                cancellationToken
+            );
 }

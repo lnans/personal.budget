@@ -37,14 +37,14 @@ public sealed class User : Entity
         return new User(login, passwordHash, createdAt);
     }
 
-    public ErrorOr<Success> VerifyPassword(string password, IPasswordHasher passwordHasher)
+    public ErrorOr<User> VerifyPassword(string password, IPasswordHasher passwordHasher)
     {
         if (string.IsNullOrEmpty(password) || !passwordHasher.Verify(password, PasswordHash))
         {
             return UserErrors.UserInvalidCredentials;
         }
 
-        return Result.Success;
+        return this;
     }
 
     public string GenerateAuthToken(IAuthTokenGenerator authTokenGenerator) =>

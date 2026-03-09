@@ -1,7 +1,7 @@
+using Application.Extensions;
 using Application.Interfaces;
 using Domain.Accounts;
 using ErrorOr;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.AccountOperations.Commands.AddAccountOperation;
 
@@ -24,40 +24,35 @@ public sealed class AddAccountOperationHandler
         CancellationToken cancellationToken
     )
     {
-        var account = await _dbContext.Accounts.FirstOrDefaultAsync(
-            a => a.Id == command.AccountId && a.UserId == _authContext.CurrentUserId,
-            cancellationToken
-        );
-
-        if (account is null)
-        {
-            return AccountErrors.AccountNotFound;
-        }
-
         var createdAt = _timeProvider.GetUtcNow();
         var operationDate = command.OperationDate ?? createdAt;
-        var addOperationResult = account.AddOperation(command.Description, command.Amount, operationDate, createdAt);
 
-        if (addOperationResult.IsError)
-        {
-            return addOperationResult.Errors;
-        }
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        var operation = account.Operations[^1];
-
-        return new AddAccountOperationResponse(
-            operation.Id,
-            operation.AccountId,
-            account.Name,
-            operation.Description,
-            operation.Amount,
-            operation.PreviousBalance,
-            operation.NextBalance,
-            operation.OperationDate,
-            operation.CreatedAt,
-            operation.UpdatedAt
-        );
+        return await GetAccountAsync(command.AccountId, cancellationToken)
+            .Then(account => account.AddOperation(command.Description, command.Amount, operationDate, createdAt))
+            .ThenDoAsync(_ => _dbContext.SaveChangesAsync(cancellationToken))
+            .MatchFirst(account => account.Operations[^1].ToErrorOr(), error => error)
+            .MatchFirst(
+                operation =>
+                    new AddAccountOperationResponse(
+                        operation.Id,
+                        operation.AccountId,
+                        operation.Account.Name,
+                        operation.Description,
+                        operation.Amount,
+                        operation.PreviousBalance,
+                        operation.NextBalance,
+                        operation.OperationDate,
+                        operation.CreatedAt,
+                        operation.UpdatedAt
+                    ).ToErrorOr(),
+                error => error
+            );
     }
+
+    private async Task<ErrorOr<Account>> GetAccountAsync(Guid accountId, CancellationToken cancellationToken) =>
+        await _dbContext.Accounts.FirstOrErrorAsync(
+            account => account.Id == accountId && account.UserId == _authContext.CurrentUserId,
+            AccountErrors.AccountNotFound,
+            cancellationToken
+        );
 }

@@ -1,3 +1,4 @@
+using Application.Extensions;
 using Application.Interfaces;
 using Domain.Accounts;
 using ErrorOr;
@@ -21,38 +22,32 @@ public sealed class DeleteAccountHandler : ICommandHandler<DeleteAccountCommand,
     public async Task<ErrorOr<DeleteAccountResponse>> Handle(
         DeleteAccountCommand command,
         CancellationToken cancellationToken
-    )
-    {
-        // Include operations so they are loaded and can be soft-deleted by the aggregate
-        var account = await _dbContext
+    ) =>
+        await GetAccountByIdAsync(command.Id, cancellationToken)
+            .Then(account => account.Delete(_timeProvider.GetUtcNow()))
+            .ThenDoAsync(_ => _dbContext.SaveChangesAsync(cancellationToken))
+            .MatchFirst(
+                account =>
+                    new DeleteAccountResponse(
+                        account.Id,
+                        account.Name,
+                        account.Bank,
+                        account.Type,
+                        account.InitialBalance,
+                        account.Balance,
+                        account.CreatedAt,
+                        account.UpdatedAt,
+                        account.DeletedAt!.Value
+                    ).ToErrorOr(),
+                error => error
+            );
+
+    private async Task<ErrorOr<Account>> GetAccountByIdAsync(Guid accountId, CancellationToken cancellationToken) =>
+        await _dbContext
             .Accounts.Include(a => a.Operations)
-            .FirstOrDefaultAsync(a => a.Id == command.Id && a.UserId == _authContext.CurrentUserId, cancellationToken);
-
-        if (account is null)
-        {
-            return AccountErrors.AccountNotFound;
-        }
-
-        var deletedAt = _timeProvider.GetUtcNow();
-        var deleteResult = account.Delete(deletedAt);
-
-        if (deleteResult.IsError)
-        {
-            return deleteResult.Errors;
-        }
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return new DeleteAccountResponse(
-            account.Id,
-            account.Name,
-            account.Bank,
-            account.Type,
-            account.InitialBalance,
-            account.Balance,
-            account.CreatedAt,
-            account.UpdatedAt,
-            account.DeletedAt!.Value
-        );
-    }
+            .FirstOrErrorAsync(
+                account => account.Id == accountId && account.UserId == _authContext.CurrentUserId,
+                AccountErrors.AccountNotFound,
+                cancellationToken
+            );
 }

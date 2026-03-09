@@ -67,7 +67,7 @@ public sealed class Account : Entity
         return new Account(userId, name, bank, type, balance, createdAt);
     }
 
-    public ErrorOr<Success> AddOperation(
+    public ErrorOr<Account> AddOperation(
         string description,
         decimal amount,
         DateTimeOffset operationDate,
@@ -81,18 +81,18 @@ public sealed class Account : Entity
 
         return AccountOperation
             .Create(Id, description, amount, Balance, operationDate, createdAt)
-            .MatchFirst<ErrorOr<Success>>(
+            .MatchFirst(
                 operation =>
                 {
                     _operations.Add(operation);
                     Balance = operation.NextBalance;
-                    return Result.Success;
+                    return this.ToErrorOr();
                 },
                 error => error
             );
     }
 
-    public ErrorOr<Success> Patch(string name, string bank, decimal? initialBalance, DateTimeOffset updatedAt)
+    public ErrorOr<Account> Patch(string name, string bank, decimal? initialBalance, DateTimeOffset updatedAt)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -123,7 +123,7 @@ public sealed class Account : Entity
         }
 
         UpdatedAt = updatedAt;
-        return Result.Success;
+        return this;
     }
 
     private void UpdateInitialBalance(decimal newInitialBalance, DateTimeOffset updatedAt)
@@ -171,7 +171,7 @@ public sealed class Account : Entity
         return Result.Success;
     }
 
-    public ErrorOr<Success> DeleteOperation(Guid operationId, DateTimeOffset deletedAt)
+    public ErrorOr<Account> DeleteOperation(Guid operationId, DateTimeOffset deletedAt)
     {
         var operation = _operations.FirstOrDefault(o => o.Id == operationId);
         if (operation is null)
@@ -198,13 +198,13 @@ public sealed class Account : Entity
         }
 
         // Update account balance to the last operation's next balance, or the starting balance if no operations remain
-        Balance = subsequentOperations.Any() ? currentBalance : operation.PreviousBalance;
+        Balance = subsequentOperations.Count != 0 ? currentBalance : operation.PreviousBalance;
         UpdatedAt = deletedAt;
 
-        return Result.Success;
+        return this;
     }
 
-    public ErrorOr<Success> Delete(DateTimeOffset deletedAt)
+    public ErrorOr<Account> Delete(DateTimeOffset deletedAt)
     {
         if (DeletedAt is not null)
         {
@@ -219,6 +219,6 @@ public sealed class Account : Entity
             operation.Delete(deletedAt);
         }
 
-        return Result.Success;
+        return this;
     }
 }

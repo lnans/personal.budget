@@ -20,38 +20,30 @@ public sealed class CreateAccountHandler : ICommandHandler<CreateAccountCommand,
     public async Task<ErrorOr<CreateAccountResponse>> Handle(
         CreateAccountCommand command,
         CancellationToken cancellationToken
-    )
-    {
-        var createdAt = _timeProvider.GetUtcNow();
-
-        var accountResult = Account.Create(
-            _authContext.CurrentUserId,
-            command.Name,
-            command.Bank,
-            command.Type,
-            command.InitialBalance,
-            createdAt
-        );
-
-        if (accountResult.IsError)
-        {
-            return accountResult.Errors;
-        }
-
-        var account = accountResult.Value;
-
-        _dbContext.Accounts.Add(account);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return new CreateAccountResponse(
-            account.Id,
-            account.Name,
-            account.Bank,
-            account.Type,
-            account.InitialBalance,
-            account.Balance,
-            account.CreatedAt,
-            account.UpdatedAt
-        );
-    }
+    ) =>
+        await Account
+            .Create(
+                _authContext.CurrentUserId,
+                command.Name,
+                command.Bank,
+                command.Type,
+                command.InitialBalance,
+                _timeProvider.GetUtcNow()
+            )
+            .ThenDo(account => _dbContext.Accounts.Add(account))
+            .ThenDoAsync(_ => _dbContext.SaveChangesAsync(cancellationToken))
+            .MatchFirst(
+                account =>
+                    new CreateAccountResponse(
+                        account.Id,
+                        account.Name,
+                        account.Bank,
+                        account.Type,
+                        account.InitialBalance,
+                        account.Balance,
+                        account.CreatedAt,
+                        account.UpdatedAt
+                    ).ToErrorOr(),
+                error => error
+            );
 }

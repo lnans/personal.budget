@@ -20,7 +20,8 @@ public sealed class GetAccountsHandler : IQueryHandler<GetAccountsQuery, List<Ge
         CancellationToken cancellationToken
     ) =>
         await _dbContext
-            .Accounts.Where(account => account.UserId == _authContext.CurrentUserId)
+            .Accounts.AsNoTracking()
+            .Where(account => account.UserId == _authContext.CurrentUserId)
             .Select(account => new GetAccountsResponse(
                 account.Id,
                 account.Name,

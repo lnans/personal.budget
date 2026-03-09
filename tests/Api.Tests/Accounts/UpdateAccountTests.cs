@@ -67,7 +67,7 @@ public class UpdateAccountTests : ApiTestBase
         result.ShouldBeProblem();
         result.Problem.ShouldNotBeNull();
         result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
-        result.Problem.ShouldHaveValidationError("Name", AccountErrors.AccountNameRequired.Code);
+        result.Problem.ShouldHaveError(AccountErrors.AccountNameRequired.Code);
     }
 
     [Fact]
@@ -90,7 +90,7 @@ public class UpdateAccountTests : ApiTestBase
         result.ShouldBeProblem();
         result.Problem.ShouldNotBeNull();
         result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
-        result.Problem.ShouldHaveValidationError("Name", AccountErrors.AccountNameTooLong.Code);
+        result.Problem.ShouldHaveError(AccountErrors.AccountNameTooLong.Code);
     }
 
     [Fact]
@@ -113,7 +113,7 @@ public class UpdateAccountTests : ApiTestBase
         result.ShouldBeProblem();
         result.Problem.ShouldNotBeNull();
         result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
-        result.Problem.ShouldHaveValidationError("Bank", AccountErrors.AccountBankRequired.Code);
+        result.Problem.ShouldHaveError(AccountErrors.AccountBankRequired.Code);
     }
 
     [Fact]
@@ -136,7 +136,7 @@ public class UpdateAccountTests : ApiTestBase
         result.ShouldBeProblem();
         result.Problem.ShouldNotBeNull();
         result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
-        result.Problem.ShouldHaveValidationError("Bank", AccountErrors.AccountBankTooLong.Code);
+        result.Problem.ShouldHaveError(AccountErrors.AccountBankTooLong.Code);
     }
 
     [Fact]

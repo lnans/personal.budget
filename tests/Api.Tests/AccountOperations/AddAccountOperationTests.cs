@@ -117,10 +117,7 @@ public class AddAccountOperationTests : ApiTestBase
         result.ShouldBeProblem();
         result.Problem.ShouldNotBeNull();
         result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
-        result.Problem.ShouldHaveValidationError(
-            "Description",
-            AccountOperationErrors.AccountOperationDescriptionRequired.Code
-        );
+        result.Problem.ShouldHaveError(AccountOperationErrors.AccountOperationDescriptionRequired.Code);
     }
 
     [Fact]
@@ -146,10 +143,7 @@ public class AddAccountOperationTests : ApiTestBase
         result.ShouldBeProblem();
         result.Problem.ShouldNotBeNull();
         result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
-        result.Problem.ShouldHaveValidationError(
-            "Description",
-            AccountOperationErrors.AccountOperationDescriptionTooLong.Code
-        );
+        result.Problem.ShouldHaveError(AccountOperationErrors.AccountOperationDescriptionTooLong.Code);
     }
 
     [Fact]
@@ -349,9 +343,6 @@ public class AddAccountOperationTests : ApiTestBase
         result.ShouldBeProblem();
         result.Problem.ShouldNotBeNull();
         result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
-        result.Problem.ShouldHaveValidationError(
-            "OperationDate",
-            AccountOperationErrors.AccountOperationDateInFuture.Code
-        );
+        result.Problem.ShouldHaveError(AccountOperationErrors.AccountOperationDateInFuture.Code);
     }
 }

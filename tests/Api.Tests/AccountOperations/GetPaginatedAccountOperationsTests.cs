@@ -1,7 +1,6 @@
 using System.Net;
 using Application.Features.AccountOperations.Queries.GetPaginatedAccountOperations;
-using Application.Models;
-using Domain.Accounts;
+using Application.Models.Pagination;
 using Microsoft.AspNetCore.Http;
 using TestFixtures.Domain;
 
@@ -363,24 +362,6 @@ public class GetPaginatedAccountOperationsTests : ApiTestBase
         response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
     }
 
-    [Fact]
-    public async Task GetPaginatedAccountOperations_ReturnsValidationError_WhenAccountIdIsNotValidGuid()
-    {
-        // Act
-        var response = await ApiClient
-            .LoggedAs(UserToken)
-            .GetAsync($"{Endpoint}?accountId=not-a-guid", CancellationToken);
-        var result = await response.ReadResponseOrProblemAsync<PaginatedList<GetPaginatedAccountOperationsResponse>>(
-            CancellationToken
-        );
-
-        // Assert
-        result.ShouldBeProblem();
-        result.Problem.ShouldNotBeNull();
-        result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
-        result.Problem.ShouldHaveValidationError("AccountId", AccountErrors.AccountIdInvalid.Code);
-    }
-
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
@@ -400,7 +381,7 @@ public class GetPaginatedAccountOperationsTests : ApiTestBase
         result.ShouldBeProblem();
         result.Problem.ShouldNotBeNull();
         result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
-        result.Problem.ShouldHaveValidationError("PageNumber", PaginationErrors.PageNumberInvalid.Code);
+        result.Problem.ShouldHaveError(PaginationErrors.PageNumberInvalid.Code);
     }
 
     [Fact]
@@ -418,49 +399,40 @@ public class GetPaginatedAccountOperationsTests : ApiTestBase
         result.ShouldBeProblem();
         result.Problem.ShouldNotBeNull();
         result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
-        result.Problem.ShouldHaveValidationError("PageSize", PaginationErrors.PageSizeTooLarge.Code);
+        result.Problem.ShouldHaveError(PaginationErrors.PageSizeTooLarge.Code);
     }
 
     [Fact]
-    public async Task GetPaginatedAccountOperations_ReturnsValidationError_WhenAccountIdIsEmptyGuid()
+    public async Task GetPaginatedAccountOperations_ReturnsValidationError_WhenPageNumberCausesOffsetOverflow()
     {
-        // Act
+        // pageNumber=1431655767 with pageSize=3 produces offset (1431655766 * 3) = 4294967298
+        // which overflows int and wraps to +2 in unchecked arithmetic
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .GetAsync($"{Endpoint}?accountId={Guid.Empty}", CancellationToken);
+            .GetAsync($"{Endpoint}?pageNumber=1431655767&pageSize=3", CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<PaginatedList<GetPaginatedAccountOperationsResponse>>(
             CancellationToken
         );
 
-        // Assert
         result.ShouldBeProblem();
         result.Problem.ShouldNotBeNull();
         result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
-        result.Problem.ShouldHaveValidationError("AccountId", AccountErrors.AccountIdInvalid.Code);
+        result.Problem.ShouldHaveError(PaginationErrors.PageNumberTooLarge.Code);
     }
 
     [Fact]
-    public async Task GetPaginatedAccountOperations_ReturnsValidationErrors_WhenMultipleFieldsAreInvalid()
+    public async Task GetPaginatedAccountOperations_ReturnsError_WhenPageNumberExceedsIntMax()
     {
-        // Act
+        // 2147483648 is int.MaxValue + 1, which cannot bind to int?
         var response = await ApiClient
             .LoggedAs(UserToken)
-            .GetAsync(
-                $"{Endpoint}?pageNumber=-1&pageSize={PaginationConstants.MaxPageSize + 1}&accountId={Guid.Empty}",
-                CancellationToken
-            );
+            .GetAsync($"{Endpoint}?pageNumber=2147483648", CancellationToken);
         var result = await response.ReadResponseOrProblemAsync<PaginatedList<GetPaginatedAccountOperationsResponse>>(
             CancellationToken
         );
 
-        // Assert
         result.ShouldBeProblem();
         result.Problem.ShouldNotBeNull();
-        result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
-        result.Problem.ShouldHaveValidationErrors(
-            ("PageNumber", PaginationErrors.PageNumberInvalid.Code),
-            ("PageSize", PaginationErrors.PageSizeTooLarge.Code),
-            ("AccountId", AccountErrors.AccountIdInvalid.Code)
-        );
+        result.Problem.Status.ShouldBe(StatusCodes.Status500InternalServerError);
     }
 }

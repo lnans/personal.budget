@@ -14,15 +14,8 @@ internal static class ValidationExtensions
     public static Error CreateValidationError(this List<ValidationFailure> failures)
     {
         var metadata = failures
-            .GroupBy(failure => failure.PropertyName)
-            .ToDictionary(
-                grouping => grouping.Key,
-                grouping =>
-                    (object)
-                        grouping
-                            .Select(failure => new { Description = failure.ErrorMessage, Code = failure.ErrorCode })
-                            .ToList()
-            );
+            .GroupBy(failure => failure.ErrorCode)
+            .ToDictionary(grouping => grouping.Key, object (grouping) => grouping.First().ErrorMessage);
 
         return Error.Validation(
             description: "Validation errors occurred.",

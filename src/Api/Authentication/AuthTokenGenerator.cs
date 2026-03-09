@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Domain.Users;
+using ErrorOr;
 using Microsoft.IdentityModel.Tokens;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
@@ -69,7 +70,7 @@ internal class AuthTokenGenerator : IAuthTokenGenerator
         return new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
     }
 
-    public Guid? ValidateRefreshToken(string refreshToken)
+    public ErrorOr<Guid> ValidateRefreshToken(string refreshToken)
     {
         try
         {
@@ -93,7 +94,7 @@ internal class AuthTokenGenerator : IAuthTokenGenerator
             var tokenTypeClaim = principal.Claims.FirstOrDefault(c => c.Type == "token_type");
             if (tokenTypeClaim?.Value != "refresh")
             {
-                return null;
+                return UserErrors.UserInvalidToken;
             }
 
             var userIdClaim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
@@ -102,11 +103,11 @@ internal class AuthTokenGenerator : IAuthTokenGenerator
                 return userId;
             }
 
-            return null;
+            return UserErrors.UserInvalidToken;
         }
         catch
         {
-            return null;
+            return UserErrors.UserInvalidToken;
         }
     }
 }
