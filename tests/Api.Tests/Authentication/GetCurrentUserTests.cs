@@ -54,7 +54,7 @@ public class GetCurrentUserTests : ApiTestBase
         result.ShouldBeProblem();
         result.Problem.ShouldNotBeNull();
         result.Problem.Status.ShouldBe(StatusCodes.Status404NotFound);
-        result.Problem.Detail.ShouldBe(UserErrors.UserNotFound.Description);
+        result.Problem.ShouldHaveError(UserErrors.UserNotFound.Code);
         result.Problem.Title.ShouldBe("Not Found");
     }
 }

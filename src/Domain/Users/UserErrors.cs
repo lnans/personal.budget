@@ -22,8 +22,8 @@ public static class UserErrors
     public static Error UserInvalidCredentials =>
         Error.Unauthorized(code: "User.InvalidCredentials", description: "Invalid user credentials.");
 
-    public static Error UserInvalidRefreshToken =>
-        Error.Unauthorized(code: "User.InvalidRefreshToken", description: "Invalid or expired refresh token.");
+    public static Error UserInvalidToken =>
+        Error.Unauthorized(code: "User.InvalidToken", description: "Invalid or expired token.");
 
     public static Error UserNotFound => Error.NotFound(code: "User.NotFound", description: "User not found.");
 }

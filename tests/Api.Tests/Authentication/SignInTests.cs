@@ -94,7 +94,7 @@ public class SignInTests : ApiTestBase
         result.ShouldBeProblem();
         result.Problem.ShouldNotBeNull();
         result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
-        result.Problem.ShouldHaveValidationError("Login", UserErrors.UserLoginRequired.Code);
+        result.Problem.ShouldHaveError(UserErrors.UserLoginRequired.Code);
     }
 
     [Fact]
@@ -112,7 +112,7 @@ public class SignInTests : ApiTestBase
         result.ShouldBeProblem();
         result.Problem.ShouldNotBeNull();
         result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
-        result.Problem.ShouldHaveValidationError("Login", UserErrors.UserLoginTooLong.Code);
+        result.Problem.ShouldHaveError(UserErrors.UserLoginTooLong.Code);
     }
 
     [Fact]
@@ -129,7 +129,7 @@ public class SignInTests : ApiTestBase
         result.ShouldBeProblem();
         result.Problem.ShouldNotBeNull();
         result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
-        result.Problem.ShouldHaveValidationError("Password", UserErrors.UserPasswordRequired.Code);
+        result.Problem.ShouldHaveError(UserErrors.UserPasswordRequired.Code);
     }
 
     [Fact]
@@ -146,9 +146,6 @@ public class SignInTests : ApiTestBase
         result.ShouldBeProblem();
         result.Problem.ShouldNotBeNull();
         result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
-        result.Problem.ShouldHaveValidationErrors(
-            ("Login", UserErrors.UserLoginRequired.Code),
-            ("Password", UserErrors.UserPasswordRequired.Code)
-        );
+        result.Problem.ShouldHaveErrors(UserErrors.UserLoginRequired.Code, UserErrors.UserPasswordRequired.Code);
     }
 }

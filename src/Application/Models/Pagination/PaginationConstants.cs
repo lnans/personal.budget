@@ -1,4 +1,4 @@
-namespace Application.Models;
+namespace Application.Models.Pagination;
 
 public static class PaginationConstants
 {

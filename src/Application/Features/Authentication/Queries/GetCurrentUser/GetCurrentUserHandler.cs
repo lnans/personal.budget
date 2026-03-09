@@ -1,3 +1,4 @@
+using Application.Extensions;
 using Application.Interfaces;
 using Domain.Users;
 using ErrorOr;
@@ -19,20 +20,10 @@ public sealed class GetCurrentUserHandler : IQueryHandler<GetCurrentUserQuery, G
     public async Task<ErrorOr<GetCurrentUserResponse>> Handle(
         GetCurrentUserQuery request,
         CancellationToken cancellationToken
-    )
-    {
-        var userId = _authContext.CurrentUserId;
-
-        var user = await _dbContext
-            .Users.Where(u => u.Id == userId)
+    ) =>
+        await _dbContext
+            .Users.AsNoTracking()
+            .Where(u => u.Id == _authContext.CurrentUserId)
             .Select(u => new GetCurrentUserResponse(u.Id, u.Login))
-            .FirstOrDefaultAsync(cancellationToken);
-
-        if (user is null)
-        {
-            return UserErrors.UserNotFound;
-        }
-
-        return user;
-    }
+            .FirstOrErrorAsync(UserErrors.UserNotFound, cancellationToken);
 }

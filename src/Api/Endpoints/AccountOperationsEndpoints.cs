@@ -2,7 +2,7 @@ using Api.Configurations;
 using Api.Extensions;
 using Application.Features.AccountOperations.Queries.GetPaginatedAccountOperations;
 using Application.Interfaces;
-using Application.Models;
+using Application.Models.Pagination;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Endpoints;
@@ -18,7 +18,7 @@ public class AccountOperationsEndpoints : IEndpoints
         group
             .MapGet("", GetPaginatedAccountOperations)
             .WithDescription("Get paginated account operations")
-            .WithSummary("Get paginated operations")
+            .WithSummary("Get operations")
             .Produces<PaginatedList<GetPaginatedAccountOperationsResponse>>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
@@ -39,8 +39,8 @@ public class AccountOperationsEndpoints : IEndpoints
 
         var query = new GetPaginatedAccountOperationsQuery(
             AccountId: accountId is not null ? parsedAccountId : null,
-            PageNumber: pageNumber ?? PaginationConstants.DefaultPageNumber,
-            PageSize: pageSize ?? PaginationConstants.DefaultPageSize
+            PageNumber: pageNumber,
+            PageSize: pageSize
         );
 
         var result = await handler.Handle(query, cancellationToken);

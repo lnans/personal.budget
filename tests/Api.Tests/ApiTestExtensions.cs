@@ -48,7 +48,7 @@ public static class ApiTestExtensions
         }
     }
 
-    public static void ShouldHaveValidationError(this ProblemDetails problem, string fieldName, string errorCode)
+    public static void ShouldHaveError(this ProblemDetails problem, string errorCode)
     {
         if (problem is null)
         {
@@ -60,36 +60,21 @@ public static class ApiTestExtensions
             throw new InvalidOperationException("ProblemDetails does not contain validation errors.");
         }
 
-        var fieldErrors = errorsJson.EnumerateObject().FirstOrDefault(p => p.Name == fieldName);
-        if (fieldErrors.Value.ValueKind == JsonValueKind.Undefined)
+        var fieldError = errorsJson.EnumerateObject().FirstOrDefault(p => p.Name == errorCode);
+        if (fieldError.Value.ValueKind == JsonValueKind.Undefined)
         {
-            var availableFields = string.Join(", ", errorsJson.EnumerateObject().Select(p => p.Name));
+            var availableErrors = string.Join(", ", errorsJson.EnumerateObject().Select(p => p.Name));
             throw new InvalidOperationException(
-                $"Field '{fieldName}' not found in validation errors. Available fields: {availableFields}"
-            );
-        }
-
-        var hasError = fieldErrors.Value.EnumerateArray().Any(e => e.GetProperty("code").GetString() == errorCode);
-        if (!hasError)
-        {
-            var availableCodes = string.Join(
-                ", ",
-                fieldErrors.Value.EnumerateArray().Select(e => e.GetProperty("code").GetString())
-            );
-            throw new InvalidOperationException(
-                $"Error code '{errorCode}' not found for field '{fieldName}'. Available codes: {availableCodes}"
+                $"Field '{errorCode}' not found in validation errors. Available errors: {availableErrors}"
             );
         }
     }
 
-    public static void ShouldHaveValidationErrors(
-        this ProblemDetails problem,
-        params (string FieldName, string ErrorCode)[] expectedErrors
-    )
+    public static void ShouldHaveErrors(this ProblemDetails problem, params string[] expectedErrors)
     {
-        foreach (var (fieldName, errorCode) in expectedErrors)
+        foreach (var errorCode in expectedErrors)
         {
-            problem.ShouldHaveValidationError(fieldName, errorCode);
+            problem.ShouldHaveError(errorCode);
         }
     }
 

@@ -1,3 +1,4 @@
+using Application.Extensions;
 using Application.Interfaces;
 using Domain.Users;
 using ErrorOr;
@@ -19,23 +20,21 @@ public sealed class RefreshTokenHandler : ICommandHandler<RefreshTokenCommand, R
     public async Task<ErrorOr<RefreshTokenResponse>> Handle(
         RefreshTokenCommand command,
         CancellationToken cancellationToken
-    )
-    {
-        var userId = _authTokenGenerator.ValidateRefreshToken(command.RefreshToken);
-        if (userId is null)
-        {
-            return UserErrors.UserInvalidRefreshToken;
-        }
+    ) =>
+        await _authTokenGenerator
+            .ValidateRefreshToken(command.RefreshToken)
+            .ThenAsync(userId => GetUserByIdAsync(userId, cancellationToken))
+            .MatchFirst(
+                user =>
+                    new RefreshTokenResponse(
+                        user.GenerateAuthToken(_authTokenGenerator),
+                        user.GenerateRefreshToken(_authTokenGenerator)
+                    ).ToErrorOr(),
+                error => error
+            );
 
-        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
-        if (user is null)
-        {
-            return UserErrors.UserInvalidRefreshToken;
-        }
-
-        var bearer = user.GenerateAuthToken(_authTokenGenerator);
-        var refreshToken = user.GenerateRefreshToken(_authTokenGenerator);
-
-        return new RefreshTokenResponse(bearer, refreshToken);
-    }
+    private async Task<ErrorOr<User>> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken) =>
+        await _dbContext
+            .Users.AsNoTracking()
+            .FirstOrErrorAsync(user => user.Id == userId, UserErrors.UserInvalidToken, cancellationToken);
 }

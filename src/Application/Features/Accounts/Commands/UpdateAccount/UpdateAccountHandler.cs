@@ -1,7 +1,7 @@
+using Application.Extensions;
 using Application.Interfaces;
 using Domain.Accounts;
 using ErrorOr;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Accounts.Commands.UpdateAccount;
 
@@ -21,42 +21,37 @@ public sealed class UpdateAccountHandler : ICommandHandler<UpdateAccountCommand,
     public async Task<ErrorOr<UpdateAccountResponse>> Handle(
         UpdateAccountCommand command,
         CancellationToken cancellationToken
-    )
-    {
-        var accountQuery = _dbContext.Accounts.Where(a => a.Id == command.Id && a.UserId == _authContext.CurrentUserId);
+    ) =>
+        await GetAccountByIdAsync(command.Id, command.InitialBalance.HasValue, cancellationToken)
+            .Then(account =>
+                account.Patch(command.Name, command.Bank, command.InitialBalance, _timeProvider.GetUtcNow())
+            )
+            .ThenDoAsync(_ => _dbContext.SaveChangesAsync(cancellationToken))
+            .MatchFirst(
+                account =>
+                    new UpdateAccountResponse(
+                        account.Id,
+                        account.Name,
+                        account.Bank,
+                        account.Type,
+                        account.InitialBalance,
+                        account.Balance,
+                        account.CreatedAt,
+                        account.UpdatedAt
+                    ).ToErrorOr(),
+                error => error
+            );
 
-        // If InitialBalance is being updated, we need to load operations to recalculate balances
-        if (command.InitialBalance.HasValue)
-        {
-            accountQuery = accountQuery.Include(a => a.Operations.Where(o => o.DeletedAt == null));
-        }
-
-        var account = await accountQuery.FirstOrDefaultAsync(cancellationToken);
-
-        if (account is null)
-        {
-            return AccountErrors.AccountNotFound;
-        }
-
-        var updatedAt = _timeProvider.GetUtcNow();
-        var patchResult = account.Patch(command.Name, command.Bank, command.InitialBalance, updatedAt);
-
-        if (patchResult.IsError)
-        {
-            return patchResult.Errors;
-        }
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return new UpdateAccountResponse(
-            account.Id,
-            account.Name,
-            account.Bank,
-            account.Type,
-            account.InitialBalance,
-            account.Balance,
-            account.CreatedAt,
-            account.UpdatedAt
-        );
-    }
+    private async Task<ErrorOr<Account>> GetAccountByIdAsync(
+        Guid accountId,
+        bool includeOperations,
+        CancellationToken cancellationToken
+    ) =>
+        await _dbContext
+            .Accounts.IncludeIf(includeOperations, a => a.Operations.Where(o => o.DeletedAt == null))
+            .FirstOrErrorAsync(
+                account => account.Id == accountId && account.UserId == _authContext.CurrentUserId,
+                AccountErrors.AccountNotFound,
+                cancellationToken
+            );
 }

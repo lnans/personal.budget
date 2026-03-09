@@ -1,3 +1,4 @@
+using Application.Extensions;
 using Application.Interfaces;
 using Domain.Users;
 using ErrorOr;
@@ -22,22 +23,20 @@ public sealed class SignInHandler : ICommandHandler<SignInCommand, SignInRespons
         _authTokenGenerator = authTokenGenerator;
     }
 
-    public async Task<ErrorOr<SignInResponse>> Handle(SignInCommand command, CancellationToken cancellationToken)
-    {
-        var user = await _dbContext.Users.FirstOrDefaultAsync(user => user.Login == command.Login, cancellationToken);
-        if (user is null)
-        {
-            return UserErrors.UserInvalidCredentials;
-        }
+    public async Task<ErrorOr<SignInResponse>> Handle(SignInCommand command, CancellationToken cancellationToken) =>
+        await GetUserByLoginAsync(command.Login, cancellationToken)
+            .Then(user => user.VerifyPassword(command.Password, _passwordHasher))
+            .MatchFirst(
+                user =>
+                    new SignInResponse(
+                        user.GenerateAuthToken(_authTokenGenerator),
+                        user.GenerateRefreshToken(_authTokenGenerator)
+                    ).ToErrorOr(),
+                error => error
+            );
 
-        var passwordCheckResult = user.VerifyPassword(command.Password, _passwordHasher);
-        if (passwordCheckResult.IsError)
-        {
-            return UserErrors.UserInvalidCredentials;
-        }
-
-        var bearer = user.GenerateAuthToken(_authTokenGenerator);
-        var refreshToken = user.GenerateRefreshToken(_authTokenGenerator);
-        return new SignInResponse(bearer, refreshToken);
-    }
+    private async Task<ErrorOr<User>> GetUserByLoginAsync(string userLogin, CancellationToken cancellationToken) =>
+        await _dbContext
+            .Users.AsNoTracking()
+            .FirstOrErrorAsync(user => user.Login == userLogin, UserErrors.UserInvalidCredentials, cancellationToken);
 }
