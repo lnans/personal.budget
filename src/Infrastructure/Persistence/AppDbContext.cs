@@ -2,6 +2,7 @@ using System.Reflection;
 using Application.Interfaces;
 using Domain.AccountOperations;
 using Domain.Accounts;
+using Domain.Tags;
 using Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -16,6 +17,7 @@ internal class AppDbContext : DbContext, IAppDbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<Account> Accounts => Set<Account>();
     public DbSet<AccountOperation> AccountOperations => Set<AccountOperation>();
+    public DbSet<Tag> Tags => Set<Tag>();
 
     public AppDbContext(DbContextOptions<AppDbContext> options, ILoggerFactory loggerFactory)
         : base(options)

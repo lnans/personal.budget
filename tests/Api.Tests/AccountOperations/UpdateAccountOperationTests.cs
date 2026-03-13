@@ -558,7 +558,6 @@ public class UpdateAccountOperationTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var operation = account.Operations[0];
-        var originalOperationDate = operation.OperationDate;
 
         var explicitOperationDate = new DateTimeOffset(2025, 6, 15, 10, 30, 0, TimeSpan.Zero);
         var updateRequest = new UpdateAccountOperationRequest(75m, "Updated Description", explicitOperationDate);

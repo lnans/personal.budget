@@ -1,4 +1,5 @@
 using Domain.Accounts;
+using Domain.Tags;
 using ErrorOr;
 
 namespace Domain.Users;
@@ -16,6 +17,8 @@ public sealed class User : Entity
     public string PasswordHash { get; private set; }
     private readonly ICollection<Account> _accounts = [];
     public IReadOnlyList<Account> Accounts => _accounts.ToList().AsReadOnly();
+    private readonly ICollection<Tag> _tags = [];
+    public IReadOnlyList<Tag> Tags => _tags.ToList().AsReadOnly();
 
     public static ErrorOr<User> Create(string login, string passwordHash, DateTimeOffset createdAt)
     {
