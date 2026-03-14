@@ -28,7 +28,9 @@ public sealed class AddAccountOperationHandler
         var operationDate = command.OperationDate ?? createdAt;
 
         return await GetAccountAsync(command.AccountId, cancellationToken)
-            .Then(account => account.AddOperation(command.Description, command.Amount, operationDate, createdAt))
+            .Then(account =>
+                account.AddOperation(command.Description, command.Amount, command.IsRecurring, operationDate, createdAt)
+            )
             .ThenDoAsync(_ => _dbContext.SaveChangesAsync(cancellationToken))
             .MatchFirst(account => account.Operations[^1].ToErrorOr(), error => error)
             .MatchFirst(
@@ -41,6 +43,7 @@ public sealed class AddAccountOperationHandler
                         operation.Amount,
                         operation.PreviousBalance,
                         operation.NextBalance,
+                        operation.IsRecurring,
                         operation.OperationDate,
                         operation.CreatedAt,
                         operation.UpdatedAt

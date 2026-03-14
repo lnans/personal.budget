@@ -10,6 +10,7 @@ public sealed class AccountOperation : Entity
     public decimal Amount { get; private set; }
     public decimal PreviousBalance { get; private set; }
     public decimal NextBalance { get; private set; }
+    public bool IsRecurring { get; private set; }
     public DateTimeOffset OperationDate { get; private set; }
     public Account Account { get; } = null!;
 
@@ -18,6 +19,7 @@ public sealed class AccountOperation : Entity
         string description,
         decimal amount,
         decimal previousBalance,
+        bool isRecurring,
         DateTimeOffset operationDate,
         DateTimeOffset createdAt
     )
@@ -28,6 +30,7 @@ public sealed class AccountOperation : Entity
         Amount = amount;
         PreviousBalance = previousBalance;
         NextBalance = previousBalance + amount;
+        IsRecurring = isRecurring;
         OperationDate = operationDate;
     }
 
@@ -36,6 +39,7 @@ public sealed class AccountOperation : Entity
         string description,
         decimal amount,
         decimal previousBalance,
+        bool isRecurring,
         DateTimeOffset operationDate,
         DateTimeOffset createdAt
     )
@@ -55,7 +59,15 @@ public sealed class AccountOperation : Entity
             return AccountOperationErrors.AccountOperationDateInFuture;
         }
 
-        return new AccountOperation(accountId, description, amount, previousBalance, operationDate, createdAt);
+        return new AccountOperation(
+            accountId,
+            description,
+            amount,
+            previousBalance,
+            isRecurring,
+            operationDate,
+            createdAt
+        );
     }
 
     public ErrorOr<AccountOperation> Rename(string description, DateTimeOffset updatedAt)
@@ -85,6 +97,12 @@ public sealed class AccountOperation : Entity
         OperationDate = operationDate;
         UpdatedAt = updatedAt;
         return this;
+    }
+
+    public void UpdateRecurring(bool isRecurring, DateTimeOffset updatedAt)
+    {
+        IsRecurring = isRecurring;
+        UpdatedAt = updatedAt;
     }
 
     internal void UpdateAmount(decimal newAmount, DateTimeOffset updatedAt)

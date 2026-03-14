@@ -70,6 +70,7 @@ public sealed class Account : Entity
     public ErrorOr<Account> AddOperation(
         string description,
         decimal amount,
+        bool isRecurring,
         DateTimeOffset operationDate,
         DateTimeOffset createdAt
     )
@@ -80,7 +81,7 @@ public sealed class Account : Entity
         }
 
         return AccountOperation
-            .Create(Id, description, amount, Balance, operationDate, createdAt)
+            .Create(Id, description, amount, Balance, isRecurring, operationDate, createdAt)
             .MatchFirst(
                 operation =>
                 {

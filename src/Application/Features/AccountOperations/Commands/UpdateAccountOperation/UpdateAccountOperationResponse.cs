@@ -8,6 +8,7 @@ public record UpdateAccountOperationResponse(
     decimal Amount,
     decimal PreviousBalance,
     decimal NextBalance,
+    bool IsRecurring,
     DateTimeOffset OperationDate,
     DateTimeOffset CreatedAt,
     DateTimeOffset UpdatedAt

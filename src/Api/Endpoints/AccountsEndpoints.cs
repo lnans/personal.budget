@@ -140,7 +140,13 @@ public class AccountsEndpoints : IEndpoints
         CancellationToken cancellationToken
     )
     {
-        var command = new AddAccountOperationCommand(id, request.Description, request.Amount, request.OperationDate);
+        var command = new AddAccountOperationCommand(
+            id,
+            request.Description,
+            request.Amount,
+            request.IsRecurring,
+            request.OperationDate
+        );
         var result = await handler.Handle(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
     }
@@ -159,6 +165,7 @@ public class AccountsEndpoints : IEndpoints
             operationId,
             request.Amount,
             request.Description,
+            request.IsRecurring,
             request.OperationDate
         );
         var result = await handler.Handle(command, cancellationToken);

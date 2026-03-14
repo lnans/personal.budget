@@ -45,8 +45,8 @@ public class GetPaginatedAccountOperationsTests : ApiTestBase
     {
         // Arrange
         var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
-        account.AddOperation("First operation", 50m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
-        account.AddOperation("Second operation", -30m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        account.AddOperation("First operation", 50m, false, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        account.AddOperation("Second operation", -30m, false, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
@@ -68,7 +68,7 @@ public class GetPaginatedAccountOperationsTests : ApiTestBase
     {
         // Arrange
         var account = AccountFixture.CreateValidAccount(User.Id, name: "My Account", initialBalance: 200m);
-        account.AddOperation("Salary", 500m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        account.AddOperation("Salary", 500m, false, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
@@ -97,11 +97,11 @@ public class GetPaginatedAccountOperationsTests : ApiTestBase
     {
         // Arrange
         var account1 = AccountFixture.CreateValidAccount(User.Id, name: "Account 1", initialBalance: 100m);
-        account1.AddOperation("Op 1", 50m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
-        account1.AddOperation("Op 2", 25m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        account1.AddOperation("Op 1", 50m, false, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        account1.AddOperation("Op 2", 25m, false, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
 
         var account2 = AccountFixture.CreateValidAccount(User.Id, name: "Account 2", initialBalance: 200m);
-        account2.AddOperation("Op 3", 75m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        account2.AddOperation("Op 3", 75m, false, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
 
         DbContext.Accounts.AddRange(account1, account2);
         await DbContext.SaveChangesAsync(CancellationToken);
@@ -127,10 +127,10 @@ public class GetPaginatedAccountOperationsTests : ApiTestBase
     {
         // Arrange
         var account1 = AccountFixture.CreateValidAccount(User.Id, name: "Account 1", initialBalance: 100m);
-        account1.AddOperation("Op 1", 50m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        account1.AddOperation("Op 1", 50m, false, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
 
         var account2 = AccountFixture.CreateValidAccount(User.Id, name: "Account 2", initialBalance: 200m);
-        account2.AddOperation("Op 2", 75m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        account2.AddOperation("Op 2", 75m, false, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
 
         DbContext.Accounts.AddRange(account1, account2);
         await DbContext.SaveChangesAsync(CancellationToken);
@@ -158,6 +158,7 @@ public class GetPaginatedAccountOperationsTests : ApiTestBase
             account.AddOperation(
                 $"Op {i}",
                 10m,
+                false,
                 DateTimeOffset.UtcNow.AddMinutes(i),
                 DateTimeOffset.UtcNow.AddMinutes(i)
             );
@@ -194,6 +195,7 @@ public class GetPaginatedAccountOperationsTests : ApiTestBase
             account.AddOperation(
                 $"Op {i}",
                 10m,
+                false,
                 DateTimeOffset.UtcNow.AddMinutes(i),
                 DateTimeOffset.UtcNow.AddMinutes(i)
             );
@@ -231,6 +233,7 @@ public class GetPaginatedAccountOperationsTests : ApiTestBase
             account.AddOperation(
                 $"Op {i}",
                 10m,
+                false,
                 DateTimeOffset.UtcNow.AddMinutes(i),
                 DateTimeOffset.UtcNow.AddMinutes(i)
             );
@@ -263,9 +266,21 @@ public class GetPaginatedAccountOperationsTests : ApiTestBase
     {
         // Arrange
         var account = AccountFixture.CreateValidAccount(User.Id, initialBalance: 0m);
-        account.AddOperation("Oldest", 10m, DateTimeOffset.UtcNow.AddMinutes(-2), DateTimeOffset.UtcNow.AddMinutes(-2));
-        account.AddOperation("Middle", 20m, DateTimeOffset.UtcNow.AddMinutes(-1), DateTimeOffset.UtcNow.AddMinutes(-1));
-        account.AddOperation("Newest", 30m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        account.AddOperation(
+            "Oldest",
+            10m,
+            false,
+            DateTimeOffset.UtcNow.AddMinutes(-2),
+            DateTimeOffset.UtcNow.AddMinutes(-2)
+        );
+        account.AddOperation(
+            "Middle",
+            20m,
+            false,
+            DateTimeOffset.UtcNow.AddMinutes(-1),
+            DateTimeOffset.UtcNow.AddMinutes(-1)
+        );
+        account.AddOperation("Newest", 30m, false, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
@@ -293,10 +308,10 @@ public class GetPaginatedAccountOperationsTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var ownAccount = AccountFixture.CreateValidAccount(User.Id, name: "My Account", initialBalance: 100m);
-        ownAccount.AddOperation("My Op", 50m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        ownAccount.AddOperation("My Op", 50m, false, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
 
         var otherAccount = AccountFixture.CreateValidAccount(otherUser.Id, name: "Other Account", initialBalance: 200m);
-        otherAccount.AddOperation("Other Op", 75m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        otherAccount.AddOperation("Other Op", 75m, false, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
 
         DbContext.Accounts.AddRange(ownAccount, otherAccount);
         await DbContext.SaveChangesAsync(CancellationToken);
@@ -326,6 +341,7 @@ public class GetPaginatedAccountOperationsTests : ApiTestBase
             account.AddOperation(
                 $"Op {i}",
                 10m,
+                false,
                 DateTimeOffset.UtcNow.AddMinutes(i),
                 DateTimeOffset.UtcNow.AddMinutes(i)
             );

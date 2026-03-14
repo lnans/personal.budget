@@ -16,7 +16,7 @@ public class AccountAddOperationTests
         const decimal operationAmount = 10m;
 
         // Act
-        var result = account.AddOperation("Test Operation", operationAmount, updatedAt, updatedAt);
+        var result = account.AddOperation("Test Operation", operationAmount, false, updatedAt, updatedAt);
 
         // Assert
         FixtureBase.AssertSuccess(result);
@@ -36,7 +36,7 @@ public class AccountAddOperationTests
         var updatedAt = FixtureBase.GetTestDate(1);
 
         // Act
-        var result = account.AddOperation(description!, 10m, updatedAt, updatedAt);
+        var result = account.AddOperation(description!, 10m, false, updatedAt, updatedAt);
 
         // Assert
         FixtureBase.AssertError(result, AccountOperationErrors.AccountOperationDescriptionRequired);
@@ -54,7 +54,7 @@ public class AccountAddOperationTests
         var longDescription = AccountOperationFixture.GenerateLongOperationDescription();
 
         // Act
-        var result = account.AddOperation(longDescription, 10m, updatedAt, updatedAt);
+        var result = account.AddOperation(longDescription, 10m, false, updatedAt, updatedAt);
 
         // Assert
         FixtureBase.AssertError(result, AccountOperationErrors.AccountOperationDescriptionTooLong);
@@ -70,7 +70,7 @@ public class AccountAddOperationTests
         var createdAt = FixtureBase.GetTestDate();
         var futureOperationDate = createdAt.AddDays(1);
 
-        var result = account.AddOperation("Test Operation", 10m, futureOperationDate, createdAt);
+        var result = account.AddOperation("Test Operation", 10m, false, futureOperationDate, createdAt);
 
         FixtureBase.AssertError(result, AccountOperationErrors.AccountOperationDateInFuture);
         account.Balance.ShouldBe(0m);
@@ -84,7 +84,7 @@ public class AccountAddOperationTests
         var account = AccountFixture.CreateValidAccount(user.Id);
         var createdAt = FixtureBase.GetTestDate();
 
-        var result = account.AddOperation("Test Operation", 10m, createdAt, createdAt);
+        var result = account.AddOperation("Test Operation", 10m, false, createdAt, createdAt);
 
         FixtureBase.AssertSuccess(result);
         account.Operations.Count.ShouldBe(1);

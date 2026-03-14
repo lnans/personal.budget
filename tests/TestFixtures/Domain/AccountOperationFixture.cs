@@ -8,6 +8,7 @@ public static class AccountOperationFixture
         string description = "Test Operation",
         decimal amount = 100m,
         decimal previousBalance = 0m,
+        bool isRecurring = false,
         DateTimeOffset? operationDate = null,
         DateTimeOffset? createdAt = null
     ) =>
@@ -17,6 +18,7 @@ public static class AccountOperationFixture
                 description,
                 amount,
                 previousBalance,
+                isRecurring,
                 operationDate ?? FixtureBase.GetTestDate(),
                 createdAt ?? FixtureBase.GetTestDate()
             )
