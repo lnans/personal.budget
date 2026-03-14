@@ -8,6 +8,7 @@ public sealed record GetPaginatedAccountOperationsResponse(
     decimal Amount,
     decimal PreviousBalance,
     decimal NextBalance,
+    bool IsRecurring,
     DateTimeOffset OperationDate,
     DateTimeOffset CreatedAt,
     DateTimeOffset UpdatedAt

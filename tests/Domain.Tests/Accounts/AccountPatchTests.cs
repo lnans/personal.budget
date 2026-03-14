@@ -116,9 +116,9 @@ public class AccountPatchTests
         var account = AccountFixture.CreateValidAccount(user.Id, initialBalance: 100m, createdAt: createdAt);
 
         // Add operations: +50, -30, +20 => Balance should be 100 + 50 - 30 + 20 = 140
-        account.AddOperation("Operation 1", 50m, createdAt.AddMinutes(1), createdAt.AddMinutes(1));
-        account.AddOperation("Operation 2", -30m, createdAt.AddMinutes(2), createdAt.AddMinutes(2));
-        account.AddOperation("Operation 3", 20m, createdAt.AddMinutes(3), createdAt.AddMinutes(3));
+        account.AddOperation("Operation 1", 50m, false, createdAt.AddMinutes(1), createdAt.AddMinutes(1));
+        account.AddOperation("Operation 2", -30m, false, createdAt.AddMinutes(2), createdAt.AddMinutes(2));
+        account.AddOperation("Operation 3", 20m, false, createdAt.AddMinutes(3), createdAt.AddMinutes(3));
 
         account.Balance.ShouldBe(140m);
 
@@ -158,7 +158,7 @@ public class AccountPatchTests
         var createdAt = FixtureBase.GetTestDate();
         var account = AccountFixture.CreateValidAccount(user.Id, initialBalance: 100m, createdAt: createdAt);
 
-        account.AddOperation("Operation 1", 50m, createdAt.AddMinutes(1), createdAt.AddMinutes(1));
+        account.AddOperation("Operation 1", 50m, false, createdAt.AddMinutes(1), createdAt.AddMinutes(1));
 
         var operation = account.Operations[0];
         var originalUpdatedAt = operation.UpdatedAt;
@@ -206,7 +206,7 @@ public class AccountPatchTests
         var createdAt = FixtureBase.GetTestDate();
         var account = AccountFixture.CreateValidAccount(user.Id, initialBalance: 100m, createdAt: createdAt);
 
-        account.AddOperation("Operation 1", 50m, createdAt.AddMinutes(1), createdAt.AddMinutes(1));
+        account.AddOperation("Operation 1", 50m, false, createdAt.AddMinutes(1), createdAt.AddMinutes(1));
 
         var updatedAt = FixtureBase.GetTestDate(1);
         const decimal newInitialBalance = -100m;
@@ -233,7 +233,7 @@ public class AccountPatchTests
         var createdAt = FixtureBase.GetTestDate();
         var account = AccountFixture.CreateValidAccount(user.Id, initialBalance: 500m, createdAt: createdAt);
 
-        account.AddOperation("Operation 1", 100m, createdAt.AddMinutes(1), createdAt.AddMinutes(1));
+        account.AddOperation("Operation 1", 100m, false, createdAt.AddMinutes(1), createdAt.AddMinutes(1));
 
         var updatedAt = FixtureBase.GetTestDate(1);
         const decimal newInitialBalance = 0m;

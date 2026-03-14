@@ -7,5 +7,6 @@ public sealed record UpdateAccountOperationCommand(
     Guid OperationId,
     decimal Amount,
     string Description,
+    bool IsRecurring = false,
     DateTimeOffset? OperationDate = null
 ) : ICommand<UpdateAccountOperationResponse>;

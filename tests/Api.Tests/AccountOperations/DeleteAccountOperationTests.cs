@@ -18,7 +18,7 @@ public class DeleteAccountOperationTests : ApiTestBase
     {
         // Arrange
         var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
-        account.AddOperation("Test Operation", 50m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        account.AddOperation("Test Operation", 50m, false, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
@@ -61,9 +61,9 @@ public class DeleteAccountOperationTests : ApiTestBase
         // Arrange
         var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
         var now = DateTimeOffset.UtcNow;
-        account.AddOperation("First", 50m, now, now);
-        account.AddOperation("Second", 30m, now.AddMilliseconds(10), now.AddMilliseconds(10));
-        account.AddOperation("Third", 20m, now.AddMilliseconds(20), now.AddMilliseconds(20));
+        account.AddOperation("First", 50m, false, now, now);
+        account.AddOperation("Second", 30m, false, now.AddMilliseconds(10), now.AddMilliseconds(10));
+        account.AddOperation("Third", 20m, false, now.AddMilliseconds(20), now.AddMilliseconds(20));
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
@@ -117,9 +117,9 @@ public class DeleteAccountOperationTests : ApiTestBase
         // Arrange
         var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
         var now = DateTimeOffset.UtcNow;
-        account.AddOperation("First", 50m, now, now);
-        account.AddOperation("Second", 30m, now.AddMilliseconds(10), now.AddMilliseconds(10));
-        account.AddOperation("Third", 20m, now.AddMilliseconds(20), now.AddMilliseconds(20));
+        account.AddOperation("First", 50m, false, now, now);
+        account.AddOperation("Second", 30m, false, now.AddMilliseconds(10), now.AddMilliseconds(10));
+        account.AddOperation("Third", 20m, false, now.AddMilliseconds(20), now.AddMilliseconds(20));
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
@@ -168,8 +168,8 @@ public class DeleteAccountOperationTests : ApiTestBase
         // Arrange
         var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
         var now = DateTimeOffset.UtcNow;
-        account.AddOperation("First", 50m, now, now);
-        account.AddOperation("Second", 30m, now.AddMilliseconds(10), now.AddMilliseconds(10));
+        account.AddOperation("First", 50m, false, now, now);
+        account.AddOperation("Second", 30m, false, now.AddMilliseconds(10), now.AddMilliseconds(10));
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
@@ -263,7 +263,7 @@ public class DeleteAccountOperationTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         // Create an operation for the other user's account
-        otherAccount.AddOperation("Test", 50m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        otherAccount.AddOperation("Test", 50m, false, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var operationId = otherAccount.Operations[0].Id;
@@ -286,9 +286,9 @@ public class DeleteAccountOperationTests : ApiTestBase
         // Arrange
         var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
         var now = DateTimeOffset.UtcNow;
-        account.AddOperation("Deposit", 50m, now, now);
-        account.AddOperation("Withdrawal", -30m, now.AddMilliseconds(10), now.AddMilliseconds(10));
-        account.AddOperation("Another Deposit", 20m, now.AddMilliseconds(20), now.AddMilliseconds(20));
+        account.AddOperation("Deposit", 50m, false, now, now);
+        account.AddOperation("Withdrawal", -30m, false, now.AddMilliseconds(10), now.AddMilliseconds(10));
+        account.AddOperation("Another Deposit", 20m, false, now.AddMilliseconds(20), now.AddMilliseconds(20));
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 

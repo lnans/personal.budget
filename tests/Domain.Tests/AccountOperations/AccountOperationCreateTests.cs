@@ -23,6 +23,7 @@ public class AccountOperationCreateTests
             operationDescription,
             operationAmount,
             previousBalance,
+            false,
             operationDate,
             createdAt
         );
@@ -35,6 +36,7 @@ public class AccountOperationCreateTests
         result.Value.NextBalance.ShouldBe(150m);
         result.Value.AccountId.ShouldBe(accountId);
         result.Value.OperationDate.ShouldBe(operationDate);
+        result.Value.IsRecurring.ShouldBeFalse();
         result.Value.CreatedAt.ShouldBe(createdAt);
         result.Value.UpdatedAt.ShouldBe(createdAt);
     }
@@ -55,6 +57,7 @@ public class AccountOperationCreateTests
             operationDescription,
             operationAmount,
             previousBalance,
+            false,
             createdAt,
             createdAt
         );
@@ -79,6 +82,7 @@ public class AccountOperationCreateTests
             operationDescription,
             operationAmount,
             previousBalance,
+            false,
             createdAt,
             createdAt
         );
@@ -103,6 +107,7 @@ public class AccountOperationCreateTests
             operationDescription,
             operationAmount,
             previousBalance,
+            false,
             createdAt,
             createdAt
         );
@@ -127,6 +132,7 @@ public class AccountOperationCreateTests
             operationDescription,
             operationAmount,
             previousBalance,
+            false,
             createdAt,
             createdAt
         );
@@ -154,6 +160,7 @@ public class AccountOperationCreateTests
             operationDescription,
             operationAmount,
             previousBalance,
+            false,
             createdAt,
             createdAt
         );
@@ -182,11 +189,37 @@ public class AccountOperationCreateTests
             operationDescription,
             operationAmount,
             previousBalance,
+            false,
             operationDate,
             createdAt
         );
 
         // Assert
         FixtureBase.AssertError(result, AccountOperationErrors.AccountOperationDateInFuture);
+    }
+
+    [Fact]
+    public void AccountOperation_Create_WithIsRecurringTrue_ShouldCreateRecurringAccountOperation()
+    {
+        var accountId = Guid.NewGuid();
+        const string operationDescription = "Recurring Operation";
+        const decimal operationAmount = 100m;
+        const decimal previousBalance = 50m;
+        var createdAt = FixtureBase.GetTestDate();
+
+        var result = AccountOperation.Create(
+            accountId,
+            operationDescription,
+            operationAmount,
+            previousBalance,
+            true,
+            createdAt,
+            createdAt
+        );
+
+        result.IsError.ShouldBeFalse();
+        result.Value.IsRecurring.ShouldBeTrue();
+        result.Value.Description.ShouldBe(operationDescription);
+        result.Value.Amount.ShouldBe(operationAmount);
     }
 }

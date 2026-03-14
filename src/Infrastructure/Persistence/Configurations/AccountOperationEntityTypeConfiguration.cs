@@ -41,6 +41,8 @@ public class AccountOperationEntityTypeConfiguration : IEntityTypeConfiguration<
 
         builder.Property(accountOperation => accountOperation.NextBalance).HasColumnName("NextBalance").IsRequired();
 
+        builder.Property(accountOperation => accountOperation.IsRecurring).HasColumnName("IsRecurring").IsRequired();
+
         builder
             .Property(accountOperation => accountOperation.OperationDate)
             .HasColumnName("OperationDate")

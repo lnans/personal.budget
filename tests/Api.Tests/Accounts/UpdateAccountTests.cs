@@ -260,18 +260,21 @@ public class UpdateAccountTests : ApiTestBase
         account.AddOperation(
             "Operation 1",
             50m,
+            false,
             DateTimeOffset.UtcNow.AddMinutes(1),
             DateTimeOffset.UtcNow.AddMinutes(1)
         );
         account.AddOperation(
             "Operation 2",
             -30m,
+            false,
             DateTimeOffset.UtcNow.AddMinutes(2),
             DateTimeOffset.UtcNow.AddMinutes(2)
         );
         account.AddOperation(
             "Operation 3",
             20m,
+            false,
             DateTimeOffset.UtcNow.AddMinutes(3),
             DateTimeOffset.UtcNow.AddMinutes(3)
         );
@@ -327,6 +330,7 @@ public class UpdateAccountTests : ApiTestBase
         account.AddOperation(
             "Operation 1",
             50m,
+            false,
             DateTimeOffset.UtcNow.AddMinutes(1),
             DateTimeOffset.UtcNow.AddMinutes(1)
         );
@@ -359,6 +363,7 @@ public class UpdateAccountTests : ApiTestBase
         account.AddOperation(
             "Operation 1",
             100m,
+            false,
             DateTimeOffset.UtcNow.AddMinutes(1),
             DateTimeOffset.UtcNow.AddMinutes(1)
         );
@@ -391,6 +396,7 @@ public class UpdateAccountTests : ApiTestBase
         account.AddOperation(
             "Operation 1",
             50m,
+            false,
             DateTimeOffset.UtcNow.AddMinutes(1),
             DateTimeOffset.UtcNow.AddMinutes(1)
         );

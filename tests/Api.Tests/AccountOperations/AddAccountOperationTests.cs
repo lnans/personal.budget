@@ -283,7 +283,7 @@ public class AddAccountOperationTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var explicitOperationDate = new DateTimeOffset(2025, 6, 15, 10, 30, 0, TimeSpan.Zero);
-        var request = new AddAccountOperationRequest("Backdated Operation", 200m, explicitOperationDate);
+        var request = new AddAccountOperationRequest("Backdated Operation", 200m, OperationDate: explicitOperationDate);
 
         var response = await ApiClient
             .LoggedAs(UserToken)
@@ -333,7 +333,7 @@ public class AddAccountOperationTests : ApiTestBase
         await DbContext.SaveChangesAsync(CancellationToken);
 
         var futureDate = DateTimeOffset.UtcNow.AddDays(1);
-        var request = new AddAccountOperationRequest("Future Operation", 50m, futureDate);
+        var request = new AddAccountOperationRequest("Future Operation", 50m, OperationDate: futureDate);
 
         var response = await ApiClient
             .LoggedAs(UserToken)

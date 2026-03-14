@@ -32,6 +32,7 @@ public sealed class UpdateAccountOperationHandler
             .Then(operation => operation.Rename(command.Description, updatedAt))
             .Then(operation => UpdateOperationDate(operation, command, updatedAt))
             .ThenAsync(operation => UpdateOperationAmountAsync(operation, command, updatedAt, cancellationToken))
+            .ThenDo(operation => operation.UpdateRecurring(command.IsRecurring, updatedAt))
             .ThenDoAsync(_ => _dbContext.SaveChangesAsync(cancellationToken))
             .MatchFirst(
                 operation =>
@@ -43,6 +44,7 @@ public sealed class UpdateAccountOperationHandler
                         operation.Amount,
                         operation.PreviousBalance,
                         operation.NextBalance,
+                        operation.IsRecurring,
                         operation.OperationDate,
                         operation.CreatedAt,
                         operation.UpdatedAt

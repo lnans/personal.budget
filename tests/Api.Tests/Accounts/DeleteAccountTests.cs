@@ -161,8 +161,8 @@ public class DeleteAccountTests : ApiTestBase
         DbContext.Accounts.Add(account);
         await DbContext.SaveChangesAsync(CancellationToken);
 
-        account.AddOperation("Operation 1", 100m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
-        account.AddOperation("Operation 2", 50m, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        account.AddOperation("Operation 1", 100m, false, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        account.AddOperation("Operation 2", 50m, false, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
         await DbContext.SaveChangesAsync(CancellationToken);
         var accountId = account.Id;
 

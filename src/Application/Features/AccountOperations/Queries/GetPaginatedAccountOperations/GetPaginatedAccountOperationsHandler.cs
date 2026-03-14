@@ -36,6 +36,7 @@ public sealed class GetPaginatedAccountOperationsHandler
                     operation.Amount,
                     operation.PreviousBalance,
                     operation.NextBalance,
+                    operation.IsRecurring,
                     operation.OperationDate,
                     operation.CreatedAt,
                     operation.UpdatedAt
