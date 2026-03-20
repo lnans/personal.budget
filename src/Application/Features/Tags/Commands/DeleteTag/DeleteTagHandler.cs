@@ -2,6 +2,7 @@ using Application.Extensions;
 using Application.Interfaces;
 using Domain.Tags;
 using ErrorOr;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Tags.Commands.DeleteTag;
 
@@ -23,7 +24,8 @@ public sealed class DeleteTagHandler : ICommandHandler<DeleteTagCommand, DeleteT
         CancellationToken cancellationToken
     ) =>
         await _dbContext
-            .Tags.FirstOrErrorAsync(
+            .Tags.Include(t => t.AccountOperations)
+            .FirstOrErrorAsync(
                 tag => tag.Id == command.Id && tag.UserId == _authContext.CurrentUserId,
                 TagErrors.TagNotFound,
                 cancellationToken

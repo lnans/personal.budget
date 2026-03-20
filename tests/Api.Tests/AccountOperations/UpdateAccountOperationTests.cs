@@ -2,8 +2,11 @@ using System.Net.Http.Json;
 using Api.Contracts.AccountOperations;
 using Application.Features.AccountOperations.Commands.UpdateAccountOperation;
 using Domain.AccountOperations;
+using Domain.Tags;
+using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using TestFixtures.Domain;
 
 namespace Api.Tests.AccountOperations;
@@ -732,5 +735,195 @@ public class UpdateAccountOperationTests : ApiTestBase
             .Accounts.AsNoTracking()
             .FirstOrDefaultAsync(a => a.Id == account.Id, CancellationToken);
         updatedAccount!.Balance.ShouldBe(150m);
+    }
+
+    [Fact]
+    public async Task UpdateAccountOperation_WithTagIds_ShouldAssignTagsAndReturnInResponse()
+    {
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
+        DbContext.Accounts.Add(account);
+        var tag = TagFixture.CreateValidTag(User.Id, name: "Travel", color: "#ABCDEF");
+        DbContext.Tags.Add(tag);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        account.AddOperation("Trip", -50m, false, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        var operation = account.Operations[0];
+        var updateRequest = new UpdateAccountOperationRequest(50m, "Trip", TagIds: [tag.Id]);
+
+        var response = await ApiClient
+            .LoggedAs(UserToken)
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operation.Id}", updateRequest, CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);
+
+        result.ShouldBeSuccessful();
+        result.Response.ShouldNotBeNull();
+        result.Response.Tags.Count.ShouldBe(1);
+        result.Response.Tags[0].Id.ShouldBe(tag.Id);
+        result.Response.Tags[0].Name.ShouldBe("Travel");
+
+        var operationInDb = await DbContext
+            .AccountOperations.AsNoTracking()
+            .Include(o => o.Tags)
+            .FirstOrDefaultAsync(o => o.Id == operation.Id, CancellationToken);
+
+        operationInDb.ShouldNotBeNull();
+        operationInDb.Tags.Count.ShouldBe(1);
+        operationInDb.Tags[0].Id.ShouldBe(tag.Id);
+    }
+
+    [Fact]
+    public async Task UpdateAccountOperation_WithDefaultTagIds_ShouldClearExistingTags()
+    {
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
+        DbContext.Accounts.Add(account);
+        var tag = TagFixture.CreateValidTag(User.Id);
+        DbContext.Tags.Add(tag);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        account.AddOperation("Op", -10m, false, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        var operation = account.Operations[0];
+        operation.UpdateTags([tag], DateTimeOffset.UtcNow);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        var updateRequest = new UpdateAccountOperationRequest(10m, "Updated");
+
+        var response = await ApiClient
+            .LoggedAs(UserToken)
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operation.Id}", updateRequest, CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);
+
+        result.ShouldBeSuccessful();
+        result.Response.ShouldNotBeNull();
+        result.Response.Tags.Count.ShouldBe(0);
+
+        using var verifyScope = CreateFreshScope();
+        var verifyDb = verifyScope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var operationInDb = await verifyDb
+            .AccountOperations.AsNoTracking()
+            .Include(o => o.Tags)
+            .FirstOrDefaultAsync(o => o.Id == operation.Id, CancellationToken);
+
+        operationInDb.ShouldNotBeNull();
+        operationInDb.Tags.Count.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task UpdateAccountOperation_WithEmptyTagIdsArray_ShouldClearExistingTags()
+    {
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
+        DbContext.Accounts.Add(account);
+        var tag = TagFixture.CreateValidTag(User.Id);
+        DbContext.Tags.Add(tag);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        account.AddOperation("Op", -10m, false, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        var operation = account.Operations[0];
+        operation.UpdateTags([tag], DateTimeOffset.UtcNow);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        var updateRequest = new UpdateAccountOperationRequest(10m, "Updated", TagIds: []);
+
+        var response = await ApiClient
+            .LoggedAs(UserToken)
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operation.Id}", updateRequest, CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);
+
+        result.ShouldBeSuccessful();
+        result.Response.ShouldNotBeNull();
+        result.Response.Tags.Count.ShouldBe(0);
+
+        using var verifyScope = CreateFreshScope();
+        var verifyDb = verifyScope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var operationInDb = await verifyDb
+            .AccountOperations.AsNoTracking()
+            .Include(o => o.Tags)
+            .FirstOrDefaultAsync(o => o.Id == operation.Id, CancellationToken);
+
+        operationInDb.ShouldNotBeNull();
+        operationInDb.Tags.Count.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task UpdateAccountOperation_WithDuplicateTagIds_ShouldReturnValidationError()
+    {
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
+        DbContext.Accounts.Add(account);
+        var tag = TagFixture.CreateValidTag(User.Id);
+        DbContext.Tags.Add(tag);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        account.AddOperation("Op", 10m, false, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        var operation = account.Operations[0];
+        var updateRequest = new UpdateAccountOperationRequest(10m, "Op", TagIds: [tag.Id, tag.Id]);
+
+        var response = await ApiClient
+            .LoggedAs(UserToken)
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operation.Id}", updateRequest, CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);
+
+        result.ShouldBeProblem();
+        result.Problem.ShouldNotBeNull();
+        result.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
+        result.Problem.ShouldHaveError(TagErrors.TagDuplicated.Code);
+    }
+
+    [Fact]
+    public async Task UpdateAccountOperation_WithNonExistentTagId_ShouldReturnNotFound()
+    {
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
+        DbContext.Accounts.Add(account);
+        account.AddOperation("Op", 10m, false, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        var operation = account.Operations[0];
+        var updateRequest = new UpdateAccountOperationRequest(10m, "Op", TagIds: [Guid.NewGuid()]);
+
+        var response = await ApiClient
+            .LoggedAs(UserToken)
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operation.Id}", updateRequest, CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);
+
+        result.ShouldBeProblem();
+        result.Problem.ShouldNotBeNull();
+        result.Problem.Status.ShouldBe(StatusCodes.Status404NotFound);
+        result.Problem.ShouldHaveError(TagErrors.TagNotFound.Code);
+    }
+
+    [Fact]
+    public async Task UpdateAccountOperation_WithTagOwnedByAnotherUser_ShouldReturnNotFound()
+    {
+        var otherUser = UserFixture.CreateValidUser(login: "other-tag-user");
+        DbContext.Users.Add(otherUser);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Test Account", initialBalance: 100m);
+        DbContext.Accounts.Add(account);
+        var otherTag = TagFixture.CreateValidTag(otherUser.Id);
+        DbContext.Tags.Add(otherTag);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        account.AddOperation("Op", 10m, false, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        var operation = account.Operations[0];
+        var updateRequest = new UpdateAccountOperationRequest(10m, "Op", TagIds: [otherTag.Id]);
+
+        var response = await ApiClient
+            .LoggedAs(UserToken)
+            .PutAsJsonAsync($"{BaseEndpoint}/{account.Id}/operations/{operation.Id}", updateRequest, CancellationToken);
+        var result = await response.ReadResponseOrProblemAsync<UpdateAccountOperationResponse>(CancellationToken);
+
+        result.ShouldBeProblem();
+        result.Problem.ShouldNotBeNull();
+        result.Problem.Status.ShouldBe(StatusCodes.Status404NotFound);
+        result.Problem.ShouldHaveError(TagErrors.TagNotFound.Code);
     }
 }

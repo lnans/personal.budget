@@ -29,6 +29,22 @@ internal static class QueryableExtensions
             return entity is null ? error : entity;
         }
 
+        internal async Task<ErrorOr<List<TEntity>>> FindAllWithExpectedCountOrErrorAsync(
+            int count,
+            Expression<Func<TEntity, bool>> predicate,
+            Error error,
+            CancellationToken cancellationToken = default
+        )
+        {
+            if (count == 0)
+            {
+                return new List<TEntity>();
+            }
+
+            var entities = await source.Where(predicate).ToListAsync(cancellationToken);
+            return entities.Count != count ? error : entities;
+        }
+
         internal async Task<ErrorOr<PaginatedList<TResult>>> ToPaginatedListOrErrorAsync<TResult>(
             Expression<Func<TEntity, TResult>> selector,
             int? pageNumber = PaginationConstants.DefaultPageNumber,

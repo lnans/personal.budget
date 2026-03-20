@@ -26,4 +26,10 @@ public static class TagErrors
 
     public static Error TagAlreadyDeleted =>
         Error.Validation(code: "Tag.AlreadyDeleted", description: "Tag is already deleted.");
+
+    public static Error TagIsLinkedToOperation =>
+        Error.Validation(code: "Tag.IsLinkedToOperation", description: "Tag is linked to an account operation.");
+
+    public static Error TagDuplicated =>
+        Error.Validation(code: "Tag.Duplicated", description: "Tag ids must be unique.");
 }

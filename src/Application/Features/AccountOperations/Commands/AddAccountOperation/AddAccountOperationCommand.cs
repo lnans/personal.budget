@@ -7,5 +7,6 @@ public sealed record AddAccountOperationCommand(
     string Description,
     decimal Amount,
     bool IsRecurring = false,
-    DateTimeOffset? OperationDate = null
+    DateTimeOffset? OperationDate = null,
+    IReadOnlyList<Guid>? TagIds = null
 ) : ICommand<AddAccountOperationResponse>;

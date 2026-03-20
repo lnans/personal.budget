@@ -2,6 +2,7 @@ using Application.Extensions;
 using Application.Interfaces;
 using Domain.AccountOperations;
 using Domain.Accounts;
+using Domain.Tags;
 using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,12 +28,16 @@ public sealed class UpdateAccountOperationHandler
     )
     {
         var updatedAt = _timeProvider.GetUtcNow();
+        var tags = await GetTagsAsync(command.TagIds ?? [], cancellationToken);
 
-        return await GetAccountOperationAsync(command.AccountId, command.OperationId, cancellationToken)
+        return await tags.ThenAsync(_ =>
+                GetAccountOperationAsync(command.AccountId, command.OperationId, cancellationToken)
+            )
             .Then(operation => operation.Rename(command.Description, updatedAt))
             .Then(operation => UpdateOperationDate(operation, command, updatedAt))
             .ThenAsync(operation => UpdateOperationAmountAsync(operation, command, updatedAt, cancellationToken))
             .ThenDo(operation => operation.UpdateRecurring(command.IsRecurring, updatedAt))
+            .Then(operation => operation.UpdateTags(tags.Value, updatedAt))
             .ThenDoAsync(_ => _dbContext.SaveChangesAsync(cancellationToken))
             .MatchFirst(
                 operation =>
@@ -45,6 +50,9 @@ public sealed class UpdateAccountOperationHandler
                         operation.PreviousBalance,
                         operation.NextBalance,
                         operation.IsRecurring,
+                        operation
+                            .Tags.Select(tag => new UpdateAccountOperationTagResponse(tag.Id, tag.Name, tag.Color))
+                            .ToList(),
                         operation.OperationDate,
                         operation.CreatedAt,
                         operation.UpdatedAt
@@ -60,11 +68,23 @@ public sealed class UpdateAccountOperationHandler
     ) =>
         await _dbContext
             .AccountOperations.Include(o => o.Account)
+            .Include(o => o.Tags)
             .FirstOrErrorAsync(
                 o => o.Id == operationId && o.AccountId == accountId && o.Account.UserId == _authContext.CurrentUserId,
                 AccountOperationErrors.AccountOperationNotFound,
                 cancellationToken
             );
+
+    private async Task<ErrorOr<List<Tag>>> GetTagsAsync(
+        IReadOnlyList<Guid> tagIds,
+        CancellationToken cancellationToken
+    ) =>
+        await _dbContext.Tags.FindAllWithExpectedCountOrErrorAsync(
+            tagIds.Count,
+            tag => tag.UserId == _authContext.CurrentUserId && tagIds.Contains(tag.Id),
+            TagErrors.TagNotFound,
+            cancellationToken
+        );
 
     private static ErrorOr<AccountOperation> UpdateOperationDate(
         AccountOperation operation,

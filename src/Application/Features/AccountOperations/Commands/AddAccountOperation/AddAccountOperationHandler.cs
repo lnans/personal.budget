@@ -1,6 +1,7 @@
 using Application.Extensions;
 using Application.Interfaces;
 using Domain.Accounts;
+using Domain.Tags;
 using ErrorOr;
 
 namespace Application.Features.AccountOperations.Commands.AddAccountOperation;
@@ -26,13 +27,15 @@ public sealed class AddAccountOperationHandler
     {
         var createdAt = _timeProvider.GetUtcNow();
         var operationDate = command.OperationDate ?? createdAt;
+        var tags = await GetTagsAsync(command.TagIds ?? [], cancellationToken);
 
-        return await GetAccountAsync(command.AccountId, cancellationToken)
+        return await tags.ThenAsync(_ => GetAccountAsync(command.AccountId, cancellationToken))
             .Then(account =>
                 account.AddOperation(command.Description, command.Amount, command.IsRecurring, operationDate, createdAt)
             )
-            .ThenDoAsync(_ => _dbContext.SaveChangesAsync(cancellationToken))
             .MatchFirst(account => account.Operations[^1].ToErrorOr(), error => error)
+            .Then(operation => operation.UpdateTags(tags.Value, createdAt))
+            .ThenDoAsync(_ => _dbContext.SaveChangesAsync(cancellationToken))
             .MatchFirst(
                 operation =>
                     new AddAccountOperationResponse(
@@ -44,6 +47,9 @@ public sealed class AddAccountOperationHandler
                         operation.PreviousBalance,
                         operation.NextBalance,
                         operation.IsRecurring,
+                        operation
+                            .Tags.Select(tag => new AddAccountOperationTagResponse(tag.Id, tag.Name, tag.Color))
+                            .ToList(),
                         operation.OperationDate,
                         operation.CreatedAt,
                         operation.UpdatedAt
@@ -56,6 +62,17 @@ public sealed class AddAccountOperationHandler
         await _dbContext.Accounts.FirstOrErrorAsync(
             account => account.Id == accountId && account.UserId == _authContext.CurrentUserId,
             AccountErrors.AccountNotFound,
+            cancellationToken
+        );
+
+    private async Task<ErrorOr<List<Tag>>> GetTagsAsync(
+        IReadOnlyList<Guid> tagIds,
+        CancellationToken cancellationToken
+    ) =>
+        await _dbContext.Tags.FindAllWithExpectedCountOrErrorAsync(
+            tagIds.Count,
+            tag => tag.UserId == _authContext.CurrentUserId && tagIds.Contains(tag.Id),
+            TagErrors.TagNotFound,
             cancellationToken
         );
 }

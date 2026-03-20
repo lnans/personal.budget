@@ -9,7 +9,10 @@ public sealed record AddAccountOperationResponse(
     decimal PreviousBalance,
     decimal NextBalance,
     bool IsRecurring,
+    IReadOnlyList<AddAccountOperationTagResponse> Tags,
     DateTimeOffset OperationDate,
     DateTimeOffset CreatedAt,
     DateTimeOffset UpdatedAt
 );
+
+public sealed record AddAccountOperationTagResponse(Guid Id, string Name, string Color);

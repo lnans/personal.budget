@@ -1,4 +1,5 @@
 using Domain.AccountOperations;
+using Domain.Tags;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -53,6 +54,27 @@ public class AccountOperationEntityTypeConfiguration : IEntityTypeConfiguration<
         builder.Property(accountOperation => accountOperation.UpdatedAt).HasColumnName("UpdatedAt").IsRequired();
 
         builder.Property(accountOperation => accountOperation.DeletedAt).HasColumnName("DeletedAt").IsRequired(false);
+
+        builder
+            .HasMany(accountOperation => accountOperation.Tags)
+            .WithMany(tag => tag.AccountOperations)
+            .UsingEntity<Dictionary<string, object>>(
+                "AccountOperationTags",
+                right =>
+                    right
+                        .HasOne<Tag>()
+                        .WithMany()
+                        .HasForeignKey("TagId")
+                        .HasConstraintName("FK_AccountOperationTags_Tags_TagId")
+                        .OnDelete(DeleteBehavior.Cascade),
+                left =>
+                    left.HasOne<AccountOperation>()
+                        .WithMany()
+                        .HasForeignKey("AccountOperationId")
+                        .HasConstraintName("FK_AccountOperationTags_AccountOperations_AccountOperationId")
+                        .OnDelete(DeleteBehavior.Cascade),
+                join => join.HasKey("AccountOperationId", "TagId").HasName("PK_AccountOperationTags")
+            );
 
         builder.HasQueryFilter(accountOperation => accountOperation.DeletedAt == null);
     }

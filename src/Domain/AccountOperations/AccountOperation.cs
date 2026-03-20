@@ -1,4 +1,5 @@
 using Domain.Accounts;
+using Domain.Tags;
 using ErrorOr;
 
 namespace Domain.AccountOperations;
@@ -13,6 +14,8 @@ public sealed class AccountOperation : Entity
     public bool IsRecurring { get; private set; }
     public DateTimeOffset OperationDate { get; private set; }
     public Account Account { get; } = null!;
+    private readonly ICollection<Tag> _tags = [];
+    public IReadOnlyList<Tag> Tags => _tags.ToList().AsReadOnly();
 
     private AccountOperation(
         Guid accountId,
@@ -103,6 +106,17 @@ public sealed class AccountOperation : Entity
     {
         IsRecurring = isRecurring;
         UpdatedAt = updatedAt;
+    }
+
+    public ErrorOr<AccountOperation> UpdateTags(IEnumerable<Tag> tags, DateTimeOffset updatedAt)
+    {
+        _tags.Clear();
+        foreach (var tag in tags)
+        {
+            _tags.Add(tag);
+        }
+        UpdatedAt = updatedAt;
+        return this;
     }
 
     internal void UpdateAmount(decimal newAmount, DateTimeOffset updatedAt)
