@@ -1,0 +1,528 @@
+## Overview
+
+**Personal.Budget** is a personal finance management REST API built with **.NET 10** and **PostgreSQL**. It follows **Clean Architecture** with a **CQRS** approach and uses **ErrorOr** for functional error handling mapped to RFC 7807 Problem Details responses.
+
+---
+
+## Project Structure
+
+### Solution Layout
+
+```
+Personal.Budget/
+├── src/
+│   ├── Api/                        # HTTP layer (endpoints, auth, error mapping)
+│   │   ├── Authentication/         # JWT auth context, token generator, options
+│   │   ├── Configurations/         # OpenAPI, authentication, endpoints, exception handling, logs
+│   │   ├── Contracts/              # Request DTOs grouped by feature
+│   │   │   ├── Accounts/
+│   │   │   ├── AccountOperations/
+│   │   │   ├── Authentication/
+│   │   │   └── Tags/
+│   │   ├── Endpoints/              # Minimal API endpoint classes (IEndpoints)
+│   │   └── Extensions/             # ErrorOr → IResult mapping
+│   │
+│   ├── Application/                # Use cases, CQRS handlers, validation
+│   │   ├── Decorators/             # LoggingDecorator, ValidationDecorator
+│   │   ├── Extensions/             # FluentValidation helpers
+│   │   ├── Features/               # CQRS features grouped by domain aggregate
+│   │   │   ├── Accounts/
+│   │   │   │   ├── Commands/       # CreateAccount, UpdateAccount, DeleteAccount
+│   │   │   │   └── Queries/        # GetAccounts
+│   │   │   ├── AccountOperations/
+│   │   │   ├── Authentication/
+│   │   │   └── Tags/
+│   │   ├── Interfaces/             # ICommandHandler, IQueryHandler, IAppDbContext, IAuthContext
+│   │   └── Models/                 # Shared application models
+│   │
+│   ├── Domain/                     # Core business logic (zero external dependencies)
+│   │   ├── Entity.cs               # Base entity (Id, CreatedAt, UpdatedAt, DeletedAt)
+│   │   ├── Accounts/               # Account entity, errors, constants, AccountType enum
+│   │   ├── AccountOperations/      # AccountOperation entity, errors, constants
+│   │   ├── Tags/                   # Tag entity, errors, constants
+│   │   └── Users/                  # User entity, errors, constants
+│   │
+│   └── Infrastructure/             # External concerns implementation
+│       ├── Authentication/         # PasswordHasher
+│       └── Persistence/            # AppDbContext, migrations, initializer
+│
+├── tests/
+│   ├── Api.Tests/                  # Integration tests (WebApplicationFactory + Testcontainers)
+│   ├── Architecture.Tests/         # Architecture constraint tests (NetArchTest)
+│   ├── Domain.Tests/               # Pure domain unit tests
+│   └── TestFixtures/               # Shared test data factories
+│       └── Domain/                 # AccountFixture, UserFixture, TagFixture, etc.
+│
+├── doc/                            # Documentation & assets
+├── Directory.Build.props           # Shared build properties (TFM, nullable, warnings)
+├── Directory.Packages.props        # Central package version management
+├── docker-compose.yml              # PostgreSQL + API container orchestration
+├── Dockerfile                      # Multi-stage build for the API
+├── global.json                     # SDK version pinning (.NET 10)
+└── env.template                    # Environment variable template for docker-compose
+```
+
+### Layer Responsibilities
+
+| Layer              | Project              | Depends on                  | Role                                                   |
+| ------------------ | -------------------- | --------------------------- | ------------------------------------------------------ |
+| **Domain**         | `src/Domain`         | _(none)_                    | Entities, value objects, domain errors, business rules |
+| **Application**    | `src/Application`    | Domain                      | CQRS handlers, validators, interfaces, decorators      |
+| **Infrastructure** | `src/Infrastructure` | Application, Domain         | EF Core persistence, password hashing                  |
+| **API**            | `src/Api`            | Application, Infrastructure | Minimal API endpoints, auth, error mapping, DI wiring  |
+
+> **Pragmatic note:** EF Core is referenced in the Application layer (via `IAppDbContext`) rather than being strictly isolated to Infrastructure. This is an intentional trade-off for simplicity.
+
+---
+
+## Architecture & Patterns
+
+### Clean Architecture
+
+The project follows Clean Architecture with the dependency rule: outer layers depend on inner layers, never the reverse.
+
+```
+┌──────────────────────────────────┐
+│            API Layer             │  ← HTTP, auth, serialization
+├──────────────────────────────────┤
+│      Infrastructure Layer        │  ← EF Core, external services
+├──────────────────────────────────┤
+│       Application Layer          │  ← Use cases, CQRS, validation
+├──────────────────────────────────┤
+│         Domain Layer             │  ← Entities, errors, rules
+└──────────────────────────────────┘
+```
+
+Startup wiring is handled in `Program.cs` by calling each layer's DI extension method:
+
+```csharp
+services.AddApiServices(configuration);
+services.AddApplicationServices();
+services.AddInfrastructureServices(configuration);
+```
+
+### CQRS
+
+Commands and queries are organized by feature in `Application/Features/{Feature}/Commands/{Action}` and `Application/Features/{Feature}/Queries/{Action}`.
+
+Each command/query folder typically contains 4 files:
+
+| File                                       | Purpose                                                                     |
+| ------------------------------------------ | --------------------------------------------------------------------------- |
+| `{Action}Command.cs` or `{Action}Query.cs` | Input record implementing `ICommand<TResponse>` or `IQuery<TResponse>`      |
+| `{Action}Handler.cs`                       | Orchestration logic implementing `ICommandHandler<,>` or `IQueryHandler<,>` |
+| `{Action}Response.cs`                      | Output record                                                               |
+| `{Action}Validator.cs`                     | FluentValidation rules                                                      |
+
+**Example — CreateAccount:**
+
+```csharp
+// Command
+public sealed record CreateAccountCommand(string Name, string Bank, AccountType Type, decimal InitialBalance)
+    : ICommand<CreateAccountResponse>;
+
+// Handler
+public sealed class CreateAccountHandler : ICommandHandler<CreateAccountCommand, CreateAccountResponse>
+{
+    public async Task<ErrorOr<CreateAccountResponse>> Handle(
+        CreateAccountCommand command, CancellationToken cancellationToken) => ...
+}
+
+// Validator
+internal sealed class CreateAccountValidator : AbstractValidator<CreateAccountCommand>
+{
+    public CreateAccountValidator()
+    {
+        RuleFor(q => q.Name).NotEmpty().WithError(AccountErrors.AccountNameRequired);
+        // ...
+    }
+}
+```
+
+Handler interfaces:
+
+- `ICommandHandler<TCommand>` → returns `ErrorOr<Success>`
+- `ICommandHandler<TCommand, TResponse>` → returns `ErrorOr<TResponse>`
+- `IQueryHandler<TQuery, TResponse>` → returns `ErrorOr<TResponse>`
+
+#### Thin Handlers, Rich Domain
+
+Handlers contain **absolutely no business logic** — no `if` checks, no calculations, no rule enforcement. A handler is a thin orchestrator whose only job is:
+
+1. **Load** the entities it needs from `IAppDbContext` (queries, `FindAsync`, etc.)
+2. **Call domain entity methods** that encapsulate business rules (e.g., `Account.Create(...)`, `operation.Rename(...)`, `tag.Delete(...)`)
+3. **Persist** changes via `SaveChangesAsync`
+4. **Map** the resulting entity to a response DTO
+
+Every business decision — validation, state transitions, invariant checks — is the sole responsibility of **domain entity methods**. These methods return `ErrorOr<T>` so a handler never needs to inspect state or make decisions; it just chains the results.
+
+**What a handler must NOT do:**
+
+- Check field lengths, null values, or any domain constraint → the entity's `Create()` / `Update()` method does that
+- Compute derived state (e.g., balance after operation) → the entity method does that
+- Throw or catch business exceptions → `ErrorOr<T>` flows through the chain
+- Contain any conditional branching based on business rules
+
+**What a handler does:**
+
+```csharp
+// 1. Load entity from DbContext
+var account = await _dbContext.Accounts.FirstOrDefaultAsync(...);
+
+// 2. Call domain method (business logic lives here)
+var result = account.AddOperation(description, amount, isRecurring, operationDate, now);
+
+// 3. Persist + map (no logic, just plumbing)
+return result
+    .ThenDoAsync(_ => _dbContext.SaveChangesAsync(cancellationToken))
+    .MatchFirst(op => new Response(...).ToErrorOr(), error => error);
+```
+
+**Contrast with the domain entity, where all business rules live:**
+
+```csharp
+// Domain entity — owns ALL validation and state mutation
+public ErrorOr<Account> AddOperation(...)
+{
+    if (operationDate > createdAt)
+        return AccountOperationErrors.AccountOperationDateInFuture;
+
+    var operation = new AccountOperation(...);
+    _operations.Add(operation);
+    Balance += amount;
+    return this;
+}
+```
+
+This strict separation ensures:
+
+- Business rules are **never duplicated** across handlers
+- Domain logic is **testable in isolation** (pure unit tests, no DB or HTTP)
+- Handlers remain trivial to read — just a sequence of load → delegate → persist → map
+
+#### ErrorOr Chaining in Handlers
+
+Handlers use the **ErrorOr** fluent chaining API to compose operations in a railway-oriented style. Each step in the chain either forwards the success value to the next step or short-circuits with the error — no manual `if (result.IsError)` checks needed.
+
+| Method          | Signature                                                | Purpose                                                                     |
+| --------------- | -------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `Then()`        | `ErrorOr<T> → (T → ErrorOr<U>) → ErrorOr<U>`             | Transform the value via a function that can itself fail (returns `ErrorOr`) |
+| `ThenAsync()`   | `ErrorOr<T> → (T → Task<ErrorOr<U>>) → Task<ErrorOr<U>>` | Same as `Then` but for async operations                                     |
+| `ThenDo()`      | `ErrorOr<T> → (T → void) → ErrorOr<T>`                   | Perform a side effect (e.g., add to DbSet), pass through the same value     |
+| `ThenDoAsync()` | `ErrorOr<T> → (T → Task) → Task<ErrorOr<T>>`             | Async side effect (e.g., `SaveChangesAsync`), pass through the same value   |
+| `MatchFirst()`  | `ErrorOr<T> → (T → U, Error → U) → U`                    | Terminal: extract the final result or map the first error                   |
+
+**Typical patterns used in this project:**
+
+**1. Create → persist → map to response** (most common)
+
+```csharp
+return await Tag.Create(userId, command.Name, command.Color, now)  // ErrorOr<Tag>
+    .ThenDo(tag => _dbContext.Tags.Add(tag))                       // side effect, still ErrorOr<Tag>
+    .ThenDoAsync(_ => _dbContext.SaveChangesAsync(cancellationToken)) // async side effect
+    .MatchFirst(                                                     // terminal
+        tag => new CreateTagResponse(...).ToErrorOr(),
+        error => error
+    );
+```
+
+**2. Fetch → transform with possible failure → persist**
+
+```csharp
+return await GetUserByLoginAsync(command.Login, cancellationToken)  // Task<ErrorOr<User>>
+    .Then(user => user.VerifyPassword(command.Password, _passwordHasher)) // can fail
+    .MatchFirst(
+        user => new SignInResponse(...).ToErrorOr(),
+        error => error
+    );
+```
+
+**3. Multi-step mutation chain** (complex updates)
+
+```csharp
+return await GetAccountOperationAsync(accountId, operationId, cancellationToken)
+    .Then(op => op.Rename(command.Description, updatedAt))         // sync, can fail
+    .Then(op => UpdateOperationDate(op, command, updatedAt))       // sync, can fail
+    .ThenAsync(op => UpdateOperationAmountAsync(op, ...))          // async, can fail
+    .ThenDo(op => op.UpdateRecurring(command.IsRecurring, updatedAt)) // void side effect
+    .ThenDoAsync(_ => _dbContext.SaveChangesAsync(cancellationToken)) // persist
+    .MatchFirst(op => new UpdateResponse(...).ToErrorOr(), errors => errors);
+```
+
+**Key rules:**
+
+- Use `Then` / `ThenAsync` when the step can produce a **new error** (the lambda returns `ErrorOr<T>`)
+- Use `ThenDo` / `ThenDoAsync` for **side effects** that cannot fail (the lambda returns `void` / `Task`)
+- Always end the chain with `MatchFirst` to convert to the final response type
+
+### Decorator Pipeline
+
+Cross-cutting concerns are implemented as decorators wrapping every handler. Registered order in `AddApplicationServices()`:
+
+```
+Request
+  → LoggingDecorator (outer — logs entry/exit/duration)
+    → ValidationDecorator (runs FluentValidation, short-circuits on failure)
+      → Concrete Handler (actual business logic)
+```
+
+Decorators are registered with Scrutor's `TryDecorate`:
+
+```csharp
+services.TryDecorate(typeof(ICommandHandler<,>), typeof(ValidationDecorator.CommandHandler<,>));
+services.TryDecorate(typeof(ICommandHandler<,>), typeof(LoggingDecorator.CommandHandler<,>));
+```
+
+### Endpoint Discovery
+
+Endpoints implement the `IEndpoints` interface and are discovered automatically at startup via reflection:
+
+```csharp
+public interface IEndpoints
+{
+    void MapEndpoints(WebApplication app);
+}
+```
+
+`MapApiEndpoints()` scans the `Api` assembly for all classes implementing `IEndpoints` and invokes `MapEndpoints()` on each. New endpoint modules just need to implement the interface.
+
+Endpoints use `RequireAuthorization()` on route groups, map to handler delegates, and return `result.ToOkResultOrProblem(context)`.
+
+### Error Handling (ErrorOr)
+
+The project uses the **ErrorOr** library for functional error handling instead of exceptions:
+
+1. **Domain** defines typed errors in `*Errors.cs` with stable codes (`Account.Name.Required`, `Account.NotFound`, etc.)
+2. **Handlers** return `ErrorOr<TResponse>` — either the success value or an `Error`
+3. **API** maps errors to RFC 7807 Problem Details via `ErrorExtensions.ToOkResultOrProblem()`:
+
+```
+ErrorType.Validation → 400 Bad Request
+ErrorType.NotFound   → 404 Not Found
+ErrorType.Conflict   → 409 Conflict
+ErrorType.Forbidden  → 403 Forbidden
+ErrorType.Unauthorized → 401 Unauthorized
+ErrorType.Unexpected → 500 Internal Server Error
+```
+
+### Domain Entity Conventions
+
+All entities inherit the `Entity` base class:
+
+```csharp
+public abstract class Entity
+{
+    public Guid Id { get; } = Guid.CreateVersion7();
+    public DateTimeOffset CreatedAt { get; private set; }
+    public DateTimeOffset UpdatedAt { get; protected set; }
+    public DateTimeOffset? DeletedAt { get; protected set; }
+}
+```
+
+Key conventions:
+
+- **GUID v7** for IDs (time-sortable)
+- **Soft delete** via nullable `DeletedAt` timestamp
+- **Factory methods** (`Entity.Create(...)`) that return `ErrorOr<Entity>` to enforce domain validation
+- **Private constructors** — entities cannot be created without going through the factory
+
+Entity relationships:
+
+```
+User (1) ──→ (N) Account (1) ──→ (N) AccountOperation
+User (1) ──→ (N) Tag
+```
+
+### Dependency Injection & Assembly Scanning
+
+The Application layer uses **Scrutor** to auto-register all `ICommandHandler<>` and `IQueryHandler<>` implementations by scanning the assembly. Validators are auto-registered from the same assembly by **FluentValidation**.
+
+Infrastructure registers `AppDbContext` (implementing `IAppDbContext`), `PasswordHasher`, and the database initializer.
+
+---
+
+## Libraries
+
+### Runtime Libraries
+
+| Library                                           | Purpose                                   |
+| ------------------------------------------------- | ----------------------------------------- |
+| **ErrorOr**                                       | Functional error handling (`ErrorOr<T>`)  |
+| **FluentValidation**                              | Request validation with fluent rules      |
+| **Scrutor**                                       | Assembly scanning for DI registration     |
+| **Ardalis.GuardClauses**                          | Defensive guard clauses for preconditions |
+| **Serilog**                                       | Structured logging (console sink)         |
+| **Serilog.AspNetCore**                            | ASP.NET Core integration for Serilog      |
+| **Scalar.AspNetCore**                             | API documentation UI                      |
+| **Microsoft.AspNetCore.Authentication.JwtBearer** | JWT bearer token authentication           |
+| **Microsoft.EntityFrameworkCore**                 | ORM framework                             |
+| **Npgsql.EntityFrameworkCore.PostgreSQL**         | PostgreSQL EF Core provider               |
+
+### Testing Libraries
+
+| Library                                       | Purpose                                                |
+| --------------------------------------------- | ------------------------------------------------------ |
+| **xUnit v3**                                  | Test framework                                         |
+| **Shouldly**                                  | Fluent assertions                                      |
+| **NSubstitute**                               | Mocking library                                        |
+| **Testcontainers.PostgreSql**                 | Disposable PostgreSQL containers for integration tests |
+| **Respawn**                                   | Fast database reset between tests                      |
+| **NetArchTest.Rules**                         | Architecture constraint verification                   |
+| **Microsoft.AspNetCore.Mvc.Testing**          | `WebApplicationFactory` for integration tests          |
+| **Microsoft.Testing.Extensions.CodeCoverage** | Code coverage collection                               |
+
+---
+
+## Bash Scripts
+
+All scripts are at the repository root and should be run from there.
+
+### `run-server.sh` — Start the API
+
+Builds and starts all Docker services (PostgreSQL + API) in detached mode.
+
+```bash
+./run-server.sh
+```
+
+Equivalent to `docker-compose up -d --build`. The API is accessible at `http://localhost:8080`.
+
+### `run-test.sh` — Run tests
+
+Runs all test projects (Domain, Architecture, API) using the Microsoft Testing Platform with code coverage.
+
+```bash
+# Run all tests
+./run-test.sh
+
+# Run with HTML coverage report (opens in browser)
+./run-test.sh --coverage
+
+# CI mode (generates report without opening browser)
+./run-test.sh --coverage --ci
+```
+
+Test execution order:
+
+1. `Domain.Tests` — fast pure domain unit tests
+2. `Architecture.Tests` — structural constraint checks
+3. `Api.Tests` — integration tests (spins up Testcontainers PostgreSQL)
+
+Coverage reports are generated in `.coverage/` using **ReportGenerator**.
+
+### `format.sh` — Format code
+
+Applies code formatting using both `dotnet format` and **CSharpier**. EF Core migrations are excluded.
+
+```bash
+./format.sh
+```
+
+Steps:
+
+1. `dotnet format` — applies `.editorconfig` rules
+2. `dotnet csharpier format` — opinionated C# formatting
+
+### `run-update.sh` — Update dependencies
+
+Restores tools, updates all .NET tools, and updates outdated NuGet packages.
+
+```bash
+./run-update.sh
+```
+
+---
+
+## Docker & Environment
+
+### Docker Compose
+
+`docker-compose.yml` defines two services:
+
+| Service      | Image                   | Port                    | Description                               |
+| ------------ | ----------------------- | ----------------------- | ----------------------------------------- |
+| **postgres** | `postgres:16-alpine`    | `5432` (localhost only) | PostgreSQL database with health check     |
+| **api**      | Built from `Dockerfile` | `8080` (localhost only) | .NET 10 API, waits for healthy PostgreSQL |
+
+The API container runs as a non-root user for security.
+
+### Environment Variables
+
+Copy `env.template` to `.env` and customize values:
+
+| Variable                 | Default            | Description                             |
+| ------------------------ | ------------------ | --------------------------------------- |
+| `JWT_SECRET_KEY`         | _(template value)_ | JWT signing key (minimum 32 characters) |
+| `BUDGET_USER`            | `admin`            | Default seeded user username            |
+| `BUDGET_PASSWORD`        | `admin`            | Default seeded user password            |
+| `DB_HOST`                | `postgres`         | Database host                           |
+| `DB_PORT`                | `5432`             | Database port                           |
+| `DB_NAME`                | `budget-sqldb`     | Database name                           |
+| `DB_USER`                | `postgres`         | Database user                           |
+| `DB_PASSWORD`            | `postgrespw`       | Database password                       |
+| `ASPNETCORE_ENVIRONMENT` | `Production`       | ASP.NET environment                     |
+
+### Health Check
+
+The API exposes a health endpoint at `GET /health` returning `{ status: "Healthy", timestamp: "..." }`.
+
+---
+
+## Testing
+
+### Test Projects
+
+| Project              | Type        | Infrastructure            | Description                                      |
+| -------------------- | ----------- | ------------------------- | ------------------------------------------------ |
+| `Domain.Tests`       | Unit        | None                      | Pure domain entity logic tests                   |
+| `Architecture.Tests` | Unit        | None                      | Verifies layer dependency rules with NetArchTest |
+| `Api.Tests`          | Integration | Testcontainers PostgreSQL | Full API tests via `WebApplicationFactory`       |
+
+### Test Conventions
+
+- **Naming:** `{Method}_{Scenario}_{ExpectedResult}`
+- **Base classes:** `ApiTestBase` (integration), `TestBase` (domain)
+- **State isolation:** Respawn resets the database between API tests
+- **Test fixtures:** Shared factories in `tests/TestFixtures/Domain/` (e.g., `AccountFixture.CreateValidAccount(...)`)
+- **Collection fixtures:** API tests use `ApiTestCollection` for shared container lifecycle
+- **Comments:** Emit `// Arrange`, `// Act`, `// Assert` comments
+
+---
+
+## Code Style & Guardrails
+
+The project enforces strict standards via `.editorconfig`, analyzers, and `TreatWarningsAsErrors=true`.
+
+| Rule                     | Convention                                                           |
+| ------------------------ | -------------------------------------------------------------------- |
+| C# version               | Latest (C# 14)                                                       |
+| Target framework         | .NET 10.0                                                            |
+| Nullable reference types | Enabled globally                                                     |
+| Local declarations       | Always use `var`                                                     |
+| Namespaces               | File-scoped                                                          |
+| Null checks              | `is null` / `is not null` (not `==` / `!=`)                          |
+| Braces                   | Always use braces, Allman style (new-line opening brace)             |
+| `this.` qualifier        | Avoid unless required for disambiguation                             |
+| Type keywords            | Prefer keywords (`string`, `int`) over BCL names (`String`, `Int32`) |
+| Pattern matching         | Prefer where possible                                                |
+| Constructors             | Do not use primary constructors                                      |
+| Package versions         | Central management in `Directory.Packages.props`                     |
+| Migrations               | Run from `src/Infrastructure` project                                |
+| Cancellation tokens      | Always forward through async calls                                   |
+
+---
+
+## Adding a New Feature — Step by Step
+
+1. **Domain entity** (if new) — add in `src/Domain/{Entity}/` with `Entity.cs`, `{Entity}Errors.cs`, `{Entity}Constants.cs`
+2. **DbSet** — register in `IAppDbContext` and `AppDbContext`, add EF configuration
+3. **Migration** — run `dotnet ef migrations add <Name>` from `src/Infrastructure`
+4. **Command/Query** — create folder in `Application/Features/{Feature}/Commands/{Action}/` with:
+    - `{Action}Command.cs` (record implementing `ICommand<TResponse>`)
+    - `{Action}Handler.cs` (class implementing `ICommandHandler<TCommand, TResponse>`)
+    - `{Action}Response.cs` (result record)
+    - `{Action}Validator.cs` (FluentValidation rules)
+5. **API contract** — add request DTO in `Api/Contracts/{Feature}/`
+6. **Endpoint** — add route in an `IEndpoints` class in `Api/Endpoints/`
+7. **Tests** — add domain tests in `Domain.Tests/`, integration tests in `Api.Tests/`, and fixtures in `TestFixtures/Domain/`
+8. **Format** — run `./format.sh` before committing

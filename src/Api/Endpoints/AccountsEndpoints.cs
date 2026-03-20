@@ -145,7 +145,8 @@ public class AccountsEndpoints : IEndpoints
             request.Description,
             request.Amount,
             request.IsRecurring,
-            request.OperationDate
+            request.OperationDate,
+            request.TagIds
         );
         var result = await handler.Handle(command, cancellationToken);
         return result.ToOkResultOrProblem(context);
@@ -166,7 +167,8 @@ public class AccountsEndpoints : IEndpoints
             request.Amount,
             request.Description,
             request.IsRecurring,
-            request.OperationDate
+            request.OperationDate,
+            request.TagIds
         );
         var result = await handler.Handle(command, cancellationToken);
         return result.ToOkResultOrProblem(context);

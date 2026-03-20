@@ -1,3 +1,4 @@
+using Domain.AccountOperations;
 using Domain.Users;
 using ErrorOr;
 
@@ -10,6 +11,8 @@ public sealed class Tag : Entity
     public string Color { get; private set; }
 
     public User User { get; } = null!;
+    private readonly ICollection<AccountOperation> _accountOperations = [];
+    public IReadOnlyList<AccountOperation> AccountOperations => _accountOperations.ToList().AsReadOnly();
 
     private Tag(Guid userId, string name, string color, DateTimeOffset createdAt)
         : base(createdAt)
@@ -77,6 +80,11 @@ public sealed class Tag : Entity
         if (DeletedAt is not null)
         {
             return TagErrors.TagAlreadyDeleted;
+        }
+
+        if (AccountOperations.Count > 0)
+        {
+            return TagErrors.TagIsLinkedToOperation;
         }
 
         DeletedAt = deletedAt;

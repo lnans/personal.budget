@@ -53,10 +53,10 @@ applyTo: "**/*.cs"
 
 ## Data Access Patterns
 
-- Guide the implementation of a data access layer using Entity Framework Core.
-- Explain different options (SQL Server, SQLite, In-Memory) for development and production.
-- Demonstrate repository pattern implementation and when it's beneficial.
-- Show how to implement database migrations and data seeding.
+- Use Entity Framework Core with `IAppDbContext` for data access.
+- Database is PostgreSQL via `Npgsql.EntityFrameworkCore.PostgreSQL`.
+- EF Core is pragmatically referenced in the Application layer (via `IAppDbContext`) rather than strictly isolated to Infrastructure.
+- For EF migrations, run from `src/Infrastructure` (existing project convention).
 - Explain efficient query patterns to avoid common performance issues.
 
 ## Authentication and Authorization
@@ -69,11 +69,29 @@ applyTo: "**/*.cs"
 
 ## Validation and Error Handling
 
-- Guide the implementation of model validation using data annotations and FluentValidation.
-- Explain the validation pipeline and how to customize validation responses.
-- Demonstrate a global exception handling strategy using middleware.
-- Show how to create consistent error responses across the API.
-- Explain problem details (RFC 9457) implementation for standardized error responses.
+- Use `ErrorOr<T>` for functional error handling instead of exceptions in domain methods and handlers.
+- Guide the implementation of model validation using FluentValidation.
+- Keep business validation in both FluentValidation validators and domain factory/mutation methods.
+- Domain errors are defined in `*Errors.cs` with stable codes (e.g., `Account.Name.Required`); use `Error.Validation(...)`, `Error.NotFound(...)`, etc.
+- Handlers return `ErrorOr<TResponse>` and the API layer maps errors to RFC 7807 Problem Details via `ToOkResultOrProblem()`.
+- Never throw or catch business exceptions; let `ErrorOr<T>` flow through the chain.
+
+## Domain Entity Conventions
+
+- Domain entities inherit `Entity` base class (GUID v7 `Id`, `CreatedAt`, `UpdatedAt`, nullable `DeletedAt` for soft delete).
+- Use **private constructors** and static **factory methods** (`Entity.Create(...)`) that return `ErrorOr<Entity>` to enforce domain validation at creation.
+- All business rules, validation, state transitions, and invariant checks live exclusively on **domain entity methods** returning `ErrorOr<T>`.
+- Never put business logic in handlers — handlers only load entities, call domain methods, persist, and map to response DTOs.
+
+## Handler Conventions (Thin Handlers, Rich Domain)
+
+- Handlers contain **absolutely no business logic**. They are thin orchestrators: load from `IAppDbContext` → call domain entity methods → persist via `SaveChangesAsync` → map to response DTO.
+- Handlers must NOT: check field lengths or null values, compute derived state, throw or catch business exceptions, or contain conditional branching based on business rules.
+- Use the ErrorOr chaining API to compose handler pipelines in a railway-oriented style:
+    - `Then` / `ThenAsync` — for steps that can produce a new error (lambda returns `ErrorOr<T>`).
+    - `ThenDo` / `ThenDoAsync` — for side effects that cannot fail (lambda returns `void` / `Task`).
+    - `MatchFirst` — terminal step to convert to the final response type.
+- Always end a handler chain with `MatchFirst`.
 
 ## API Versioning and Documentation
 
@@ -97,10 +115,9 @@ applyTo: "**/*.cs"
 - Guide users through creating unit tests.
 - Do not emit "Act", "Arrange" or "Assert" comments.
 - Copy existing style in nearby files for test method names and capitalization.
-- Explain integration testing approaches for API endpoints.
-- Demonstrate how to mock dependencies for effective testing.
-- Show how to test authentication and authorization logic.
-- Explain test-driven development principles as applied to API development.
+- Test naming convention: `{Method}_{Scenario}_{ExpectedResult}`.
+- Domain tests are pure unit tests inheriting `TestBase`; API tests are integration tests inheriting `ApiTestBase` using Testcontainers PostgreSQL + `WebApplicationFactory` + Respawn.
+- Use domain test data factories from `tests/TestFixtures/Domain/` (pattern: `{Entity}Fixture.CreateValid{Entity}(...)`).
 
 ## Performance Optimization
 

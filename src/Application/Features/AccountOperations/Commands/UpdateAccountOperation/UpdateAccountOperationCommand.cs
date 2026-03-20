@@ -8,5 +8,6 @@ public sealed record UpdateAccountOperationCommand(
     decimal Amount,
     string Description,
     bool IsRecurring = false,
-    DateTimeOffset? OperationDate = null
+    DateTimeOffset? OperationDate = null,
+    IReadOnlyList<Guid>? TagIds = null
 ) : ICommand<UpdateAccountOperationResponse>;

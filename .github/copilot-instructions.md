@@ -17,9 +17,20 @@
 - Cross-cutting concerns are implemented with decorators registered in `AddApplicationServices`: `ValidationDecorator` and `LoggingDecorator` around command/query handlers; validators are auto-registered from the `Application` assembly.
 - Decorator order matters: `LoggingDecorator` is the outer layer and `ValidationDecorator` runs before the concrete handler.
 
+## Thin handlers, rich domain
+
+- Handlers contain **absolutely no business logic**. They are thin orchestrators that: load entities from `IAppDbContext`, call domain entity methods, persist via `SaveChangesAsync`, and map to a response DTO.
+- All business rules, validation, state transitions, and invariant checks live exclusively on **domain entity methods** which return `ErrorOr<T>`.
+- Handlers must NOT: check field lengths or null values, compute derived state (e.g. balance), throw or catch business exceptions, or contain conditional branching based on business rules.
+- Use the ErrorOr chaining API (`Then`, `ThenAsync`, `ThenDo`, `ThenDoAsync`, `MatchFirst`) to compose handler pipelines in a railway-oriented style.
+- `Then` / `ThenAsync` are for steps that can produce a new error (lambda returns `ErrorOr<T>`); `ThenDo` / `ThenDoAsync` are for side effects that cannot fail (lambda returns `void` / `Task`).
+- Always end a chain with `MatchFirst` to convert to the final response type.
+
 ## Domain and persistence conventions
 
 - Domain entities inherit `Entity` (`Id` as GUID v7, `CreatedAt`, `UpdatedAt`, `DeletedAt`). Soft delete is timestamp-based.
+- Domain entities use **private constructors** and static **factory methods** (`Entity.Create(...)`) that return `ErrorOr<Entity>` to enforce domain validation at creation.
+- All business rules and state mutations are methods on domain entities returning `ErrorOr<T>` — never in handlers.
 - Prefer domain errors from `*Errors.cs` using stable codes (e.g., `Account.Name.Required` in `src/Domain/Accounts/AccountErrors.cs`).
 - `IAuthContext.CurrentUserId` is the boundary for authenticated user identity; API implementation reads JWT claim `nameidentifier`/`sub`.
 - `AppDbContextInitializer` runs migrations at startup and seeds default user from `BUDGET_USER` / `BUDGET_PASSWORD` when DB is empty.

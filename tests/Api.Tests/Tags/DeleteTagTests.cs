@@ -1,5 +1,9 @@
+using System.Net.Http.Json;
+using Api.Contracts.AccountOperations;
+using Application.Features.AccountOperations.Commands.AddAccountOperation;
 using Application.Features.Tags.Commands.DeleteTag;
 using Application.Features.Tags.Queries.GetTags;
+using Domain.Tags;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +16,7 @@ namespace Api.Tests.Tags;
 public class DeleteTagTests : ApiTestBase
 {
     private const string Endpoint = "/tags";
+    private const string AccountsEndpoint = "/accounts";
 
     public DeleteTagTests(ApiTestFixture factory)
         : base(factory) { }
@@ -128,5 +133,30 @@ public class DeleteTagTests : ApiTestBase
         result.ShouldBeSuccessful();
         result.Response.ShouldNotBeNull();
         result.Response.UpdatedAt.ShouldBeCloseTo(result.Response.DeletedAt, TimeSpan.FromMilliseconds(1));
+    }
+
+    [Fact]
+    public async Task DeleteTag_WhenTagIsAssignedToAccountOperation_ShouldReturnValidationError()
+    {
+        var account = AccountFixture.CreateValidAccount(User.Id, name: "Tagged ops", initialBalance: 100m);
+        DbContext.Accounts.Add(account);
+        var tag = TagFixture.CreateValidTag(User.Id, name: "Linked");
+        DbContext.Tags.Add(tag);
+        await DbContext.SaveChangesAsync(CancellationToken);
+
+        var addRequest = new AddAccountOperationRequest("Purchase", -5m, TagIds: [tag.Id]);
+        var addResponse = await ApiClient
+            .LoggedAs(UserToken)
+            .PostAsJsonAsync($"{AccountsEndpoint}/{account.Id}/operations", addRequest, CancellationToken);
+        var addResult = await addResponse.ReadResponseOrProblemAsync<AddAccountOperationResponse>(CancellationToken);
+        addResult.ShouldBeSuccessful();
+
+        var deleteResponse = await ApiClient.LoggedAs(UserToken).DeleteAsync($"{Endpoint}/{tag.Id}", CancellationToken);
+        var deleteResult = await deleteResponse.ReadResponseOrProblemAsync<DeleteTagResponse>(CancellationToken);
+
+        deleteResult.ShouldBeProblem();
+        deleteResult.Problem.ShouldNotBeNull();
+        deleteResult.Problem.Status.ShouldBe(StatusCodes.Status400BadRequest);
+        deleteResult.Problem.ShouldHaveError(TagErrors.TagIsLinkedToOperation.Code);
     }
 }
