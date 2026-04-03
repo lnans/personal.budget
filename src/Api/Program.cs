@@ -1,5 +1,6 @@
 using Api;
 using Api.Configurations;
+using Api.Middlewares;
 using Application;
 using Infrastructure;
 using Infrastructure.Persistence;
@@ -32,6 +33,7 @@ try
         }
     );
 
+    app.UseMiddleware<LogMiddleware>();
     app.UseExceptionHandling();
     app.UseCors(config =>
     {
