@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./doc/logo.png" />
+    <img src="../budget.png" />
 </p>
 
 # Budget. API
@@ -8,22 +8,22 @@
 
 ## Technology Stack
 
--   **.NET 10.0** - Latest .NET framework
--   **Entity Framework Core 10.0** - ORM with PostgreSQL provider
--   **PostgreSQL** - Primary database
--   **Scrutor** - Assembly scanning and dependency injection
--   **FluentValidation** - Validation library
--   **Scalar** - ASP.NET Core utilities for API endpoints documentation
--   **ErrorOr** - Functional error handling library
--   **Ardalis.GuardClauses** - Guard clauses for input validation
--   **xUnit v3** - Testing framework
--   **Microsoft Testing Platform** - Native test runner with code coverage support
--   **Shouldly** - Assertion library
--   **Testcontainers** - Containerization for testing
--   **Serilog** - Logging library
--   **NSubstitute** - Mocking library
--   **Respawn** - Database reset library
--   **ReportGenerator** - Code coverage report generator
+- **.NET 10.0** - Latest .NET framework
+- **Entity Framework Core 10.0** - ORM with PostgreSQL provider
+- **PostgreSQL** - Primary database
+- **Scrutor** - Assembly scanning and dependency injection
+- **FluentValidation** - Validation library
+- **Scalar** - ASP.NET Core utilities for API endpoints documentation
+- **ErrorOr** - Functional error handling library
+- **Ardalis.GuardClauses** - Guard clauses for input validation
+- **xUnit v3** - Testing framework
+- **Microsoft Testing Platform** - Native test runner with code coverage support
+- **Shouldly** - Assertion library
+- **Testcontainers** - Containerization for testing
+- **Serilog** - Logging library
+- **NSubstitute** - Mocking library
+- **Respawn** - Database reset library
+- **ReportGenerator** - Code coverage report generator
 
 ## Architecture
 
@@ -49,17 +49,17 @@ src/
 
 ### Layers
 
--   **Api**: Contains API configurations, endpoints, and middleware. Depends on Application and Infrastructure.
--   **Application**: Defines application-specific business rules and interfaces. Depends only on Domain.
--   **Domain**: Contains core business logic, entities, and domain errors. No dependencies on other layers.
--   **Infrastructure**: Implements external concerns like database access. Depends on Application and Domain.
+- **Api**: Contains API configurations, endpoints, and middleware. Depends on Application and Infrastructure.
+- **Application**: Defines application-specific business rules and interfaces. Depends only on Domain.
+- **Domain**: Contains core business logic, entities, and domain errors. No dependencies on other layers.
+- **Infrastructure**: Implements external concerns like database access. Depends on Application and Domain.
 
 ## Prerequisites
 
--   [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) or later
--   [PostgreSQL](https://www.postgresql.org/download/) database server
--   [Docker](https://www.docker.com/products/docker-desktop/) for containerization
--   (Optional) [.NET Tools](https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools) for code formatting and EF Core tools for migrations
+- [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) or later
+- [PostgreSQL](https://www.postgresql.org/download/) database server
+- [Docker](https://www.docker.com/products/docker-desktop/) for containerization
+- (Optional) [.NET Tools](https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools) for code formatting and EF Core tools for migrations
 
 ## Run the project
 
@@ -82,10 +82,10 @@ docker-compose down
 docker-compose down -v
 ```
 
--   API: http://localhost:8080
--   API Documentation: http://localhost:8080/docs
--   Default User: admin
--   Default Password: admin
+- API: http://localhost:8080
+- API Documentation: http://localhost:8080/docs
+- Default User: admin
+- Default Password: admin
 
 ## Development
 
@@ -126,8 +126,8 @@ Format the codebase:
 
 This script uses:
 
--   `dotnet format` for standard .NET formatting
--   `CSharpier` for additional code style enforcement
+- `dotnet format` for standard .NET formatting
+- `CSharpier` for additional code style enforcement
 
 Note: Migration files are excluded from formatting.
 
@@ -135,9 +135,9 @@ Note: Migration files are excluded from formatting.
 
 The project uses centralized package management:
 
--   `Directory.Build.props` - Common build properties
--   `Directory.Packages.props` - Centralized NuGet package versions
--   `global.json` - .NET SDK version pinning
+- `Directory.Build.props` - Common build properties
+- `Directory.Packages.props` - Centralized NuGet package versions
+- `global.json` - .NET SDK version pinning
 
 ## License
 
