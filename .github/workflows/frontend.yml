@@ -1,0 +1,43 @@
+name: Frontend
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "[Init] Checkout code"
+        uses: actions/checkout@v4
+
+      - name: "[Init] Setup Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: "[Install] Install dependencies"
+        working-directory: frontend
+        run: yarn install --immutable
+
+      - name: "[Lint] Lint code"
+        working-directory: frontend
+        run: yarn validate
+
+      - name: "[Lint] Verify linting"
+        working-directory: frontend
+        run: |
+          set -e
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::Code formatting issues detected. Please run yarn validate locally and commit the changes."
+            git diff
+            exit 1
+          fi
+
+      - name: "[Build] Build application"
+        working-directory: frontend
+        run: yarn build

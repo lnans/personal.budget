@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./doc/logo.png" />
+    <img src="../budget.png" />
 </p>
 
 # Budget. Web

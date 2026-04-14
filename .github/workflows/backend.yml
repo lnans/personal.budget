@@ -1,15 +1,14 @@
-name: Build and Test
+name: Backend
 
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-  workflow_dispatch:
 
 jobs:
-  build-and-test:
-    name: Build and Test
+  build:
+    name: Build Backend
     runs-on: ubuntu-latest
 
     env:
@@ -24,9 +23,10 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "10.0.x"
-          global-json-file: global.json
+          global-json-file: backend/global.json
 
       - name: "[Check] Check code formatting"
+        working-directory: backend
         run: |
           set -e
           ./format.sh
@@ -37,19 +37,13 @@ jobs:
           fi
 
       - name: "[Build] Restore dependencies"
+        working-directory: backend
         run: dotnet restore Personal.Budget.slnx
 
       - name: "[Build] Build solution"
+        working-directory: backend
         run: dotnet build Personal.Budget.slnx --configuration Release --no-restore
 
       - name: "[Test] Run tests"
+        working-directory: backend
         run: ./run-test.sh --ci
-
-      - name: "[Test] Upload coverage reports"
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-reports
-          path: |
-            tests/**/coverage.cobertura.xml
-            .coverage/
-          if-no-files-found: ignore
