@@ -5,7 +5,7 @@ import { AccountsErrors } from '@/types/accounts/accountsErrors'
 const MAX_NAME_LENGTH = 20
 const MAX_BANK_LENGTH = 20
 
-export const PatchAccountFormSchema = z
+export const PutAccountFormSchema = z
   .object({
     name: z
       .string()
@@ -23,15 +23,15 @@ export const PatchAccountFormSchema = z
     path: ['initialBalance'],
   })
 
-export type PatchAccountSchemaDto = z.infer<typeof PatchAccountFormSchema>
+export type PutAccountSchemaDto = z.infer<typeof PutAccountFormSchema>
 
-export type PatchAccountFormDto = {
+export type PutAccountFormDto = {
   name: string
   bank: string
   initialBalance?: number
 }
 
-export const toPatchAccountRequest = (form: PatchAccountSchemaDto): PatchAccountFormDto => {
+export const toPutAccountRequest = (form: PutAccountSchemaDto): PutAccountFormDto => {
   return {
     name: form.name,
     bank: form.bank,

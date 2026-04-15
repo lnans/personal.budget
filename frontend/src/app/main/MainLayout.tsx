@@ -22,7 +22,7 @@ import { AccountsList } from '@/features/accounts/components/AccountsList'
 import { AccountsNetWorth } from '@/features/accounts/components/AccountsNetWorth'
 import { AccountsAddFormDialog } from '@/features/accounts/components/forms/AccountsAddFormDialog'
 import { AccountsDeleteFormDialog } from '@/features/accounts/components/forms/AccountsDeleteFormDialog'
-import { AccountsPatchFormDialog } from '@/features/accounts/components/forms/AccountsPatchFormDialog'
+import { AccountsPutFormDialog } from '@/features/accounts/components/forms/AccountsPutFormDialog'
 import { useAccountsStore } from '@/features/accounts/stores/accountsStore'
 import { AuthProfileButton } from '@/features/authentication/components/AuthProfileButton'
 import { useSearchParams } from '@/hooks/useSearchParams'
@@ -74,7 +74,7 @@ function MainLayout() {
 
           <AccountsAddButton />
           <AccountsAddFormDialog />
-          <AccountsPatchFormDialog />
+          <AccountsPutFormDialog />
           <AccountsDeleteFormDialog />
         </SidebarContent>
 

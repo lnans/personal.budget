@@ -1,6 +1,6 @@
 import type { AccountType } from '../enums/AccountType'
 
-export type PatchAccountResponseDto = {
+export type PutAccountResponseDto = {
   id: string
   name: string
   bank: string

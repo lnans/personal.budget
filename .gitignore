@@ -1,0 +1,2 @@
+# Docker Compose at repo root (copy from backend/.env.production.template)
+.env

@@ -38,7 +38,7 @@
 ## Critical workflows
 
 - Build: `dotnet build Personal.Budget.sln`
-- Run API locally with containers: `docker-compose up -d --build` (or `./run-server.sh`).
+- Run the full stack (DB + API + web) from the **repository root**: `./run-server.sh` or `docker compose up -d --build` (compose file is at the repo root).
 - Run tests with project convention: `./run-test.sh` (uses Microsoft Testing Platform via `dotnet run` on test projects).
 - Coverage report: `./run-test.sh --coverage` (HTML generated in `.coverage/`).
 - Format: `./format.sh` (runs `dotnet format` + `dotnet csharpier` and excludes migrations).

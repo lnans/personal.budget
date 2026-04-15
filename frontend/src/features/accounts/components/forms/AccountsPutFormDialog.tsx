@@ -3,22 +3,18 @@ import React from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
-import { useGetAccountById, usePatchAccount } from '@/api/endpoints/AccountsEndpoints'
+import { useGetAccountById, usePutAccount } from '@/api/endpoints/AccountsEndpoints'
 import { CheckboxControlled } from '@/components/forms/CheckboxControlled'
 import { InputControlled } from '@/components/forms/InputControlled'
 import { InputNumberControlled } from '@/components/forms/InputNumberControlled'
 import { Button } from '@/components/ui/Button'
 import { FieldGroup } from '@/components/ui/Field'
 import { ResponsiveDialog } from '@/components/ui/ResponsiveDialog'
-import {
-  PatchAccountFormSchema,
-  toPatchAccountRequest,
-  type PatchAccountSchemaDto,
-} from '@/types/accounts/forms/PatchAccountFormDto'
+import { PutAccountFormSchema, type PutAccountSchemaDto, toPutAccountRequest } from '@/types/accounts/forms/PutAccountFormDto'
 
 import { useAccountsStore } from '../../stores/accountsStore'
 
-function AccountsPatchFormDialog() {
+function AccountsPutFormDialog() {
   const { t } = useTranslation()
 
   const patchingAccountId = useAccountsStore((state) => state.patchingAccountId)
@@ -32,20 +28,20 @@ function AccountsPatchFormDialog() {
 
   return (
     <ResponsiveDialog open={!!patchingAccountId} title={t('accounts.actions.patch.title')} onOpenChange={handleOpenChange}>
-      {patchingAccountId && <AccountPatchForm accountId={patchingAccountId} />}
+      {patchingAccountId && <AccountPutForm accountId={patchingAccountId} />}
     </ResponsiveDialog>
   )
 }
 
-function AccountPatchForm({ accountId }: { accountId: string }) {
+function AccountPutForm({ accountId }: { accountId: string }) {
   const { t } = useTranslation()
   const setPatchingAccountId = useAccountsStore((state) => state.actions.setPatchingAccountId)
 
   const account = useGetAccountById(accountId)
-  const patchAccountMutation = usePatchAccount()
+  const putAccountMutation = usePutAccount()
 
-  const form = useForm<PatchAccountSchemaDto>({
-    resolver: zodResolver(PatchAccountFormSchema),
+  const form = useForm<PutAccountSchemaDto>({
+    resolver: zodResolver(PutAccountFormSchema),
     defaultValues: {
       name: account?.name ?? '',
       bank: account?.bank ?? '',
@@ -55,9 +51,9 @@ function AccountPatchForm({ accountId }: { accountId: string }) {
   })
 
   const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
-    form.handleSubmit((data: PatchAccountSchemaDto) => {
-      patchAccountMutation.mutate(
-        { id: accountId, data: toPatchAccountRequest(data) },
+    form.handleSubmit((data) => {
+      putAccountMutation.mutate(
+        { id: accountId, data: toPutAccountRequest(data) },
         {
           onSuccess: () => {
             setPatchingAccountId(null)
@@ -68,8 +64,8 @@ function AccountPatchForm({ accountId }: { accountId: string }) {
   }
 
   const isPatchInitialBalance = useWatch({ control: form.control, name: 'updateInitialBalance' })
-  const isSubmitDisabled = patchAccountMutation.isSuccess || patchAccountMutation.isPending
-  const isSubmitPending = patchAccountMutation.isPending
+  const isSubmitDisabled = putAccountMutation.isSuccess || putAccountMutation.isPending
+  const isSubmitPending = putAccountMutation.isPending
 
   return (
     <form className="grid items-start gap-6 p-4" onSubmit={handleSubmit}>
@@ -102,4 +98,4 @@ function AccountPatchForm({ accountId }: { accountId: string }) {
   )
 }
 
-export { AccountsPatchFormDialog }
+export { AccountsPutFormDialog }

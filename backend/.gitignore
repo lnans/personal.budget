@@ -6,6 +6,9 @@
 # dotenv files
 .env
 
+# Production Docker / server secrets (copy from .env.production.template)
+.env.production
+
 # User-specific files
 *.rsuser
 *.suo

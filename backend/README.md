@@ -4,7 +4,7 @@
 
 # Budget. API
 
-**Budget.** is a personal finance management API designed to organize and track spending and savings over time. This repository contains the backend implementation built with modern .NET technologies, following **Clean Architecture** and **CQRS** principles.
+Backend for **Budget.**: .NET 10, **Clean Architecture**, and **CQRS**. See the [repository README](../README.md) for product overview and how to run the full stack with Docker.
 
 ## Technology Stack
 
@@ -63,24 +63,26 @@ src/
 
 ## Run the project
 
-This project uses Docker Compose to run the project. To run the project, you need to have Docker Compose installed.
+Docker Compose is defined at the **repository root** (monorepo: `backend/` + `frontend/`). From the repo root:
 
 ```bash
-# Build and start all services
-docker-compose up --build
+# Build and start database, API, and web (recommended)
+./run-server.sh
 
-# Run in detached mode
-docker-compose up -d --build
+# Or using Docker Compose v2 from the repo root
+docker compose up -d --build
 
 # View logs
-docker-compose logs -f api
+docker compose logs -f budget-api
 
 # Stop services
-docker-compose down
+docker compose down
 
-# Stop and remove volumes (⚠️ destroys database)
-docker-compose down -v
+# Stop and remove volumes (destroys database data in the volume)
+docker compose down -v
 ```
+
+No env files are required for local Docker; compose defaults are enough. To override API or DB settings, copy [`backend/.env.production.template`](.env.production.template) to `backend/.env.production` and/or add a `.env` at the [repository root](../README.md#local-development).
 
 - API: http://localhost:8080
 - API Documentation: http://localhost:8080/docs

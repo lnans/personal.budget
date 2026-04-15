@@ -2,7 +2,7 @@ import { ArrowDownToLine, ServerOff } from 'lucide-react'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useGetInfiniteAccountOperations } from '@/api/endpoints/AccountsEndpoints'
+import { useGetInfiniteAccountOperations } from '@/api/endpoints/AccountOperationsEndpoints'
 import { Avatar, AvatarFallback } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
 import { Skeleton } from '@/components/ui/Skeleton'
