@@ -11,6 +11,7 @@ export function useIsMobile() {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
     }
     mediaQueryListener.addEventListener('change', onChange)
+    // eslint-disable-next-line react-x/set-state-in-effect
     setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
     return () => mediaQueryListener.removeEventListener('change', onChange)
   }, [])
