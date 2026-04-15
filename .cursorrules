@@ -56,10 +56,9 @@ Personal.Budget/
 ├── doc/                            # Documentation & assets
 ├── Directory.Build.props           # Shared build properties (TFM, nullable, warnings)
 ├── Directory.Packages.props        # Central package version management
-├── docker-compose.yml              # PostgreSQL + API container orchestration
-├── Dockerfile                      # Multi-stage build for the API
+├── Dockerfile                      # Multi-stage build for the API (API image)
 ├── global.json                     # SDK version pinning (.NET 10)
-└── env.template                    # Environment variable template for docker-compose
+└── .env.production.template        # Compose secrets template (copy to repo `.env` and/or `backend/.env.production`)
 ```
 
 ### Layer Responsibilities
@@ -375,17 +374,17 @@ Infrastructure registers `AppDbContext` (implementing `IAppDbContext`), `Passwor
 
 ## Bash Scripts
 
-All scripts are at the repository root and should be run from there.
+Scripts that start the whole stack (`run-server.sh`) live at the **repository root** (monorepo). Backend-only scripts (`run-test.sh`, `format.sh`, …) run from `backend/`.
 
-### `run-server.sh` — Start the API
+### `run-server.sh` — Start the stack (repo root)
 
-Builds and starts all Docker services (PostgreSQL + API) in detached mode.
+Builds and starts Docker services (PostgreSQL + API + web) in detached mode.
 
 ```bash
 ./run-server.sh
 ```
 
-Equivalent to `docker-compose up -d --build`. The API is accessible at `http://localhost:8080`.
+Uses `docker compose up -d --build` from the repo root. API: `http://localhost:8080`, web: `http://localhost:8081`.
 
 ### `run-test.sh` — Run tests
 
@@ -437,30 +436,33 @@ Restores tools, updates all .NET tools, and updates outdated NuGet packages.
 
 ### Docker Compose
 
-`docker-compose.yml` defines two services:
+`docker-compose.yml` at the **repository root** defines three services:
 
-| Service      | Image                   | Port                    | Description                               |
-| ------------ | ----------------------- | ----------------------- | ----------------------------------------- |
-| **postgres** | `postgres:16-alpine`    | `5432` (localhost only) | PostgreSQL database with health check     |
-| **api**      | Built from `Dockerfile` | `8080` (localhost only) | .NET 10 API, waits for healthy PostgreSQL |
+| Service | Image / build            | Port                    | Description                                        |
+| ------------- | ------------------------ | ----------------------- | -------------------------------------------------- |
+| **budget-db** | `postgres:16-alpine`     | `5432` (localhost only) | PostgreSQL with health check                       |
+| **budget-api** | `backend/Dockerfile`    | `8080` (localhost only) | .NET 10 API, waits for healthy DB                  |
+| **budget-web** | `frontend/Dockerfile`   | `8081` (localhost only) | Static SPA (Vite build), waits for healthy API     |
 
 The API container runs as a non-root user for security.
 
 ### Environment Variables
 
-Copy `env.template` to `.env` and customize values:
+**Local development:** no env files are required—`docker-compose.yml` defaults cover the API/DB, and the frontend Docker build uses committed `frontend/.env`. **Overrides:** optional root `.env`, `backend/.env.production`, and/or `frontend/.env.production` (Compose reads root `.env`; `./run-server.sh` sources those when present). Templates: `backend/.env.production.template`, `frontend/.env.production.template`; for Vite dev without the committed `.env`, copy `frontend/env.template` → `frontend/.env`.
 
 | Variable                 | Default            | Description                             |
 | ------------------------ | ------------------ | --------------------------------------- |
 | `JWT_SECRET_KEY`         | _(template value)_ | JWT signing key (minimum 32 characters) |
 | `BUDGET_USER`            | `admin`            | Default seeded user username            |
 | `BUDGET_PASSWORD`        | `admin`            | Default seeded user password            |
-| `DB_HOST`                | `postgres`         | Database host                           |
+| `DB_HOST`                | `budget-db`        | Database host (Docker service name)     |
 | `DB_PORT`                | `5432`             | Database port                           |
 | `DB_NAME`                | `budget-sqldb`     | Database name                           |
 | `DB_USER`                | `postgres`         | Database user                           |
 | `DB_PASSWORD`            | `postgrespw`       | Database password                       |
 | `ASPNETCORE_ENVIRONMENT` | `Production`       | ASP.NET environment                     |
+| `VITE_API_URL`           | _(frontend template)_ | Browser-reachable API URL (web build) |
+| `VITE_LIST_PAGE_SIZE`    | `10`               | Default list page size (frontend)       |
 
 ### Health Check
 

@@ -18,7 +18,7 @@ export function useGetCurrentUser(params: QueryParams = { enabled: true }) {
   return useQuery({
     queryKey: queryKeys.auth.all,
     queryFn: async ({ signal }) => {
-      const response = await apiClient.get<GetCurrentUserResponseDto>(basePath, { signal })
+      const response = await apiClient.get<GetCurrentUserResponseDto>(`${basePath}/me`, { signal })
       return response.data
     },
     enabled: params.enabled,

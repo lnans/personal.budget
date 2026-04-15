@@ -1,7 +1,9 @@
+name: personal-budget
+
 services:
-  postgres:
+  budget-db:
     image: postgres:16-alpine
-    container_name: budget-postgres
+    container_name: budget-db
     environment:
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgrespw}
@@ -16,20 +18,20 @@ services:
       timeout: 5s
       retries: 5
 
-  api:
+  budget-api:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
     container_name: budget-api
     ports:
       - "127.0.0.1:8080:8080"
     depends_on:
-      postgres:
+      budget-db:
         condition: service_healthy
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
 
-      - ConnectionStrings__Database=Server=${DB_HOST:-postgres};Database=${DB_NAME:-budget-sqldb};User Id=${DB_USER:-postgres};Password=${DB_PASSWORD:-postgrespw};
+      - ConnectionStrings__Database=Server=${DB_HOST:-budget-db};Database=${DB_NAME:-budget-sqldb};User Id=${DB_USER:-postgres};Password=${DB_PASSWORD:-postgrespw};
 
       - Auth__SecretKey=${JWT_SECRET_KEY:-your-super-secret-key-change-this-in-production-min-32-chars}
       - Auth__Issuer=budget.api
@@ -37,7 +39,6 @@ services:
       - Auth__ExpirationMinutes=60
       - Auth__RefreshTokenExpirationDays=7
 
-      # Default User Credentials
       - BUDGET_USER=${BUDGET_USER:-admin}
       - BUDGET_PASSWORD=${BUDGET_PASSWORD:-admin}
     healthcheck:
@@ -46,6 +47,18 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    restart: unless-stopped
+
+  budget-web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: budget-web
+    ports:
+      - "127.0.0.1:8081:80"
+    depends_on:
+      budget-api:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:

@@ -4,7 +4,7 @@
 
 # Budget. Web
 
-**Budget.** is a personal finance management web application designed to organize and track spending and savings over time. This repository contains the frontend implementation built with modern React technologies, following **Clean Architecture** principles.
+Frontend for **Budget.**: React, TypeScript, and Vite. See the [repository README](../README.md) for product overview and how to run the full stack with Docker.
 
 ## Technology Stack
 
@@ -92,40 +92,29 @@ The development server will start at http://localhost:5173 (or the next availabl
 
 ## Docker
 
-This project uses Docker Compose for containerized deployment:
+Compose orchestrates the **whole stack** from the **repository root** (not from `frontend/`). From the repo root:
 
 ```bash
-# Build and start all services
-docker-compose up --build
+./run-server.sh
 
-# Run in detached mode
-docker-compose up -d --build
+# Or
+docker compose up -d --build
 
-# View logs
-docker-compose logs -f web
-
-# Stop services
-docker-compose down
-
-# Stop and remove volumes
-docker-compose down -v
+docker compose logs -f budget-web
+docker compose down
 ```
 
-- Web Application: http://localhost:8081
+Local Docker needs no env setup: the image build uses the committed `frontend/.env`. For production builds or custom API URLs, use `frontend/.env.production` (see `.env.production.template`)—`VITE_*` is read at **build** time.
+
+- Web application (container): http://localhost:8081
 
 ## Running with Backend
 
-The web application requires the backend API to be running. To run the full application:
+The web application requires the backend API. To run the full application locally:
 
-1. **Start the backend API**: Follow the instructions in the [backend repository](https://github.com/lnans/personal.budget)
+1. **Docker (full stack)**: From the repo root, run `./run-server.sh` (see [Docker](#docker)).
 
-2. **Configure the API URL**: Create a `.env` file in the root of the project:
-
-   ```bash
-   VITE_API_URL=http://localhost:8080
-   ```
-
-3. **Start the web application**: Run the development server as described in the [Development](#development) section.
+2. **Development (Vite + API in Docker or locally)**: The repo includes `frontend/.env` with defaults; run `yarn dev` as in [Development](#development). Use `env.template` only if you need to recreate `.env` or change `VITE_API_URL` / `VITE_LIST_PAGE_SIZE`.
 
 ## Environment Variables
 
