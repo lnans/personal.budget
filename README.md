@@ -22,11 +22,11 @@ This repository is a **monorepo**: the API lives under [`backend/`](backend/), t
 
 ## Repository layout
 
-| Path                                       | Role                                                 |
-| ------------------------------------------ | ---------------------------------------------------- |
-| [`backend/`](backend/)                     | .NET 10 API, EF Core, PostgreSQL                     |
-| [`frontend/`](frontend/)                   | React + Vite SPA                                     |
-| [`docker-compose.yml`](docker-compose.yml) | `budget-db`, `budget-api`, `budget-web`              |
+| Path                                       | Role                                                        |
+| ------------------------------------------ | ----------------------------------------------------------- |
+| [`backend/`](backend/)                     | .NET 10 API, EF Core, PostgreSQL                            |
+| [`frontend/`](frontend/)                   | React + Vite SPA                                            |
+| [`docker-compose.yml`](docker-compose.yml) | `budget-db`, `budget-api`, `budget-web`                     |
 | [`run-server.sh`](run-server.sh)           | Optional env overrides, then `docker compose up -d --build` |
 
 ## Run with Docker
@@ -76,6 +76,20 @@ On a VPS or dedicated host you still run the same Compose project, but you shoul
 
 - **[Backend (API)](backend/README.md)** — stack, architecture, local `dotnet` workflow, tests, formatting
 - **[Frontend (Web)](frontend/README.md)** — stack, architecture, Yarn scripts, Docker notes
+
+### Codebase documentation
+
+Detailed documentation lives under [`docs/codebase/`](docs/codebase/):
+
+| Document                                           | Description                                                    |
+| -------------------------------------------------- | -------------------------------------------------------------- |
+| [`STACK.md`](docs/codebase/STACK.md)               | Languages, runtimes, frameworks, and all key dependencies      |
+| [`STRUCTURE.md`](docs/codebase/STRUCTURE.md)       | Directory layout, entry points, and module boundaries          |
+| [`ARCHITECTURE.md`](docs/codebase/ARCHITECTURE.md) | Architectural style, request lifecycle, and design patterns    |
+| [`CONVENTIONS.md`](docs/codebase/CONVENTIONS.md)   | Naming, formatting, error handling, and coding standards       |
+| [`INTEGRATIONS.md`](docs/codebase/INTEGRATIONS.md) | External services, database, authentication, and observability |
+| [`TESTING.md`](docs/codebase/TESTING.md)           | Test stack, layout, scope matrix, and isolation strategy       |
+| [`CONCERNS.md`](docs/codebase/CONCERNS.md)         | Known risks, technical debt, and security concerns             |
 
 ## License
 

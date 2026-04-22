@@ -1,0 +1,306 @@
+
+=== DIRECTORY TREE (max depth 3, source files only) ===
+.cursorrules
+.github
+.github/agents
+.github/agents/Coder.agent.md
+.github/agents/Orchestrator.agent.md
+.github/agents/Planner.agent.md
+.github/copilot-instructions.md
+.github/instructions
+.github/instructions/csharp.instructions.md
+.github/skills
+.github/skills/acquire-codebase-knowledge
+.github/skills/acquire-codebase-knowledge/SKILL.md
+.github/skills/acquire-codebase-knowledge/assets
+.github/skills/acquire-codebase-knowledge/references
+.github/skills/acquire-codebase-knowledge/scripts
+.github/workflows
+.github/workflows/backend.yml
+.github/workflows/frontend.yml
+.gitignore
+.vscode
+.vscode/settings.json
+README.md
+backend
+backend/.config
+backend/.config/dotnet-tools.json
+backend/.dockerignore
+backend/.editorconfig
+backend/.env.production.template
+backend/.gitattributes
+backend/.gitignore
+backend/.idea
+backend/.idea/.idea.Personal.Budget
+backend/.idea/.idea.Personal.Budget/.idea
+backend/Directory.Build.props
+backend/Directory.Packages.props
+backend/Dockerfile
+backend/LICENSE
+backend/Personal.Budget.slnx
+backend/README.md
+backend/format.sh
+backend/global.json
+backend/run-test.sh
+backend/run-update.sh
+backend/src
+backend/src/Api
+backend/src/Api/Api.csproj
+backend/src/Api/Authentication
+backend/src/Api/Configurations
+backend/src/Api/Contracts
+backend/src/Api/DependencyInjection.cs
+backend/src/Api/Endpoints
+backend/src/Api/Extensions
+backend/src/Api/IApiAssemblyMarker.cs
+backend/src/Api/Middlewares
+backend/src/Api/Program.cs
+backend/src/Api/Properties
+backend/src/Api/appsettings.json
+backend/src/Application
+backend/src/Application/Application.csproj
+backend/src/Application/Decorators
+backend/src/Application/DependencyInjection.cs
+backend/src/Application/Extensions
+backend/src/Application/Features
+backend/src/Application/Interfaces
+backend/src/Application/Models
+backend/src/Domain
+backend/src/Domain/AccountOperations
+backend/src/Domain/Accounts
+backend/src/Domain/Domain.csproj
+backend/src/Domain/Entity.cs
+backend/src/Domain/Regexes.cs
+backend/src/Domain/Tags
+backend/src/Domain/Users
+backend/src/Infrastructure
+backend/src/Infrastructure/Authentication
+backend/src/Infrastructure/DependencyInjection.cs
+backend/src/Infrastructure/Infrastructure.csproj
+backend/src/Infrastructure/Persistence
+backend/tests
+backend/tests/Api.Tests
+backend/tests/Api.Tests/AccountOperations
+backend/tests/Api.Tests/Accounts
+backend/tests/Api.Tests/Api.Tests.csproj
+backend/tests/Api.Tests/ApiFactory.cs
+backend/tests/Api.Tests/ApiTestBase.cs
+backend/tests/Api.Tests/ApiTestCollection.cs
+backend/tests/Api.Tests/ApiTestExtensions.cs
+backend/tests/Api.Tests/ApiTestFixture.cs
+backend/tests/Api.Tests/Authentication
+backend/tests/Api.Tests/Tags
+backend/tests/Api.Tests/dotnet.config.ini
+backend/tests/Api.Tests/xunit.runner.json
+backend/tests/Architecture.Tests
+backend/tests/Architecture.Tests/Application
+backend/tests/Architecture.Tests/Architecture.Tests.csproj
+backend/tests/Architecture.Tests/TestExtensions.cs
+backend/tests/Architecture.Tests/TestRules.cs
+backend/tests/Architecture.Tests/dotnet.config.ini
+backend/tests/Architecture.Tests/xunit.runner.json
+backend/tests/Domain.Tests
+backend/tests/Domain.Tests/AccountOperations
+backend/tests/Domain.Tests/Accounts
+backend/tests/Domain.Tests/Domain.Tests.csproj
+backend/tests/Domain.Tests/Tags
+backend/tests/Domain.Tests/TestBase.cs
+backend/tests/Domain.Tests/Users
+backend/tests/Domain.Tests/dotnet.config.ini
+backend/tests/Domain.Tests/xunit.runner.json
+backend/tests/TestFixtures
+backend/tests/TestFixtures/Domain
+backend/tests/TestFixtures/FixtureBase.cs
+backend/tests/TestFixtures/TestFixtures.csproj
+backend/tests/settings.coverage.xml
+budget.png
+docker-compose.yml
+docs
+docs/codebase
+docs/codebase/.codebase-scan.txt
+frontend
+frontend/.dockerignore
+frontend/.env
+frontend/.env.production.template
+frontend/.gitattributes
+frontend/.gitignore
+frontend/.prettierignore
+frontend/.prettierrc.json
+frontend/.yarnrc.yml
+frontend/Dockerfile
+frontend/README.md
+frontend/components.json
+frontend/env.template
+frontend/eslint.config.js
+frontend/index.html
+frontend/nginx.conf
+frontend/package.json
+frontend/plugins
+frontend/plugins/i18n-format.ts
+frontend/plugins/vite-env-plugin.ts
+frontend/public
+frontend/public/favicon.ico
+frontend/public/locales
+frontend/public/locales/en.json
+frontend/src
+frontend/src/App.tsx
+frontend/src/api
+frontend/src/api/QueryClient.ts
+frontend/src/api/QueryKeys.ts
+frontend/src/api/endpoints
+frontend/src/app
+frontend/src/app/auth
+frontend/src/app/main
+frontend/src/components
+frontend/src/components/forms
+frontend/src/components/ui
+frontend/src/config
+frontend/src/config/I18next.ts
+frontend/src/config/axios.ts
+frontend/src/env.ts
+frontend/src/features
+frontend/src/features/accounts
+frontend/src/features/authentication
+frontend/src/hooks
+frontend/src/hooks/useMediaQuery.ts
+frontend/src/hooks/useMobile.ts
+frontend/src/hooks/useSearchParams.ts
+frontend/src/index.css
+frontend/src/lib
+frontend/src/lib/lazyimport.tsx
+frontend/src/lib/utils.ts
+frontend/src/main.tsx
+frontend/src/providers
+frontend/src/providers/AuthProvider.tsx
+frontend/src/providers/QueryProvider.tsx
+frontend/src/providers/RouterProvider.tsx
+frontend/src/types
+frontend/src/types/EnvSchema.ts
+frontend/src/types/InfiniteDataGrouped.ts
+frontend/src/types/PaginatedList.ts
+frontend/src/types/Problem.ts
+frontend/src/types/QueryParams.ts
+frontend/src/types/accountOperations
+frontend/src/types/accounts
+frontend/src/types/authentication
+frontend/src/vite-env.d.ts
+frontend/tsconfig.app.json
+frontend/tsconfig.json
+frontend/tsconfig.node.json
+frontend/vite.config.ts
+frontend/yarn.lock
+run-server.sh
+
+=== STACK DETECTION (manifest files) ===
+No recognized manifest files found in project root.
+
+=== ENTRY POINTS ===
+No common entry points found. Check 'main' or 'scripts.start' in manifest files above.
+
+=== LINTING AND FORMATTING CONFIG ===
+No linting or formatting config files found in project root.
+
+=== ENVIRONMENT VARIABLE TEMPLATES ===
+No .env.example or .env.template found. Identify required environment variables by searching the code and config for environment variable reads.
+
+=== TODO / FIXME / HACK (production code only, test dirs excluded) ===
+.github/skills/acquire-codebase-knowledge/scripts/scan.py:28: TODO_LIMIT = 60
+.github/skills/acquire-codebase-knowledge/scripts/scan.py:291: """Search for TODO/FIXME/HACK comments."""
+.github/skills/acquire-codebase-knowledge/scripts/scan.py:291: """Search for TODO/FIXME/HACK comments."""
+.github/skills/acquire-codebase-knowledge/scripts/scan.py:291: """Search for TODO/FIXME/HACK comments."""
+.github/skills/acquire-codebase-knowledge/scripts/scan.py:293: patterns = ["TODO", "FIXME", "HACK"]
+.github/skills/acquire-codebase-knowledge/scripts/scan.py:293: patterns = ["TODO", "FIXME", "HACK"]
+.github/skills/acquire-codebase-knowledge/scripts/scan.py:293: patterns = ["TODO", "FIXME", "HACK"]
+.github/skills/acquire-codebase-knowledge/scripts/scan.py:320: return todos[:TODO_LIMIT]
+.github/skills/acquire-codebase-knowledge/scripts/scan.py:617: # TODOs
+.github/skills/acquire-codebase-knowledge/scripts/scan.py:620: print_section("TODO / FIXME / HACK (production code only, test dirs excluded)", todos, output_file)
+.github/skills/acquire-codebase-knowledge/scripts/scan.py:620: print_section("TODO / FIXME / HACK (production code only, test dirs excluded)", todos, output_file)
+.github/skills/acquire-codebase-knowledge/scripts/scan.py:620: print_section("TODO / FIXME / HACK (production code only, test dirs excluded)", todos, output_file)
+.github/skills/acquire-codebase-knowledge/scripts/scan.py:622: print_section("TODO / FIXME / HACK (production code only, test dirs excluded)", ["None found."], output_file)
+.github/skills/acquire-codebase-knowledge/scripts/scan.py:622: print_section("TODO / FIXME / HACK (production code only, test dirs excluded)", ["None found."], output_file)
+.github/skills/acquire-codebase-knowledge/scripts/scan.py:622: print_section("TODO / FIXME / HACK (production code only, test dirs excluded)", ["None found."], output_file)
+
+=== GIT RECENT COMMITS (last 20) ===
+9cd3334 chore(workspace): fix not working endpoints
+62b0270 chore(workspace): update actions and documentation
+eb8abb0 chore(workspace): move all files to backend folder and import frontend
+1d8a852 chore(logs): add log middleware
+cabd8e1 feat(tags): implement tags for account operations
+cdfa90c feat(operations): add isRecurring property
+74d0a0b feat(tags): implement CRUD for tags
+87f75b7 chore(infra): Refactor functional flows, files, and tests
+b473aa7 feat(operations): add OperationDate on AccountOperation
+0f7e266 chore(tests): add architecture unit tests
+a07ac80 chore(archi): refactoring of api contracts
+b2b3885 chore(archi): rework namespaces and update account operation
+f93574e chore(style): update editor config
+40a3dec chore(packages): update
+bbd8ba7 chore(logs): rework config
+20f39b8 chore(packages): remove mediatr
+898a837 feat(operations): add validator for query paginated account operations
+30ba783 feat(operations): add paginated operations list endpoint
+acb3245 feat(operations): add account name in responses
+e492621 chore(packages): update all packages
+
+=== HIGH-CHURN FILES (last 90 days, top 20) ===
+  11 src/Api/Endpoints/AccountsEndpoints.cs
+   7 tests/Api.Tests/AccountOperations/UpdateAccountOperationTests.cs
+   6 src/Infrastructure/Persistence/Migrations/AppDbContextModelSnapshot.cs
+   6 tests/Api.Tests/AccountOperations/AddAccountOperationTests.cs
+   6 src/Domain/Accounts/Account.cs
+   6 src/Application/Models/PaginatedQuery.cs
+   6 Directory.Packages.props
+   5 src/Application/Features/AccountOperations/Commands/AddAccountOperation/AddAccountOperationCommand.cs
+   5 src/Application/Features/AccountOperations/Commands/AddAccountOperation/AddAccountOperationHandler.cs
+   5 src/Application/Features/AccountOperations/Commands/UpdateAccountOperation/UpdateAccountOperationCommand.cs
+   5 src/Application/Features/AccountOperations/Commands/UpdateAccountOperation/UpdateAccountOperationHandler.cs
+   5 tests/Api.Tests/Accounts/UpdateAccountTests.cs
+   4 .cursorrules
+   4 .github/copilot-instructions.md
+   4 src/Api/Contracts/AccountOperations/AddAccountOperationRequest.cs
+   4 src/Api/Contracts/AccountOperations/UpdateAccountOperationRequest.cs
+   4 src/Application/Features/AccountOperations/Commands/AddAccountOperation/AddAccountOperationResponse.cs
+   4 src/Application/Features/AccountOperations/Commands/AddAccountOperation/AddAccountOperationValidator.cs
+   4 src/Application/Features/AccountOperations/Commands/UpdateAccountOperation/UpdateAccountOperationResponse.cs
+   4 src/Application/Features/AccountOperations/Commands/UpdateAccountOperation/UpdateAccountOperationValidator.cs
+
+=== MONOREPO SIGNALS ===
+No monorepo signals detected.
+
+=== CODE METRICS ===
+Total files scanned: 366
+Total lines of code: 19837
+
+Files by language:
+  C#: 193
+  Other: 72
+  TypeScript/React: 51
+  TypeScript: 48
+  JavaScript: 1
+  Python: 1
+
+Top 10 largest files:
+frontend/yarn.lock: 249.9KB
+backend/tests/Api.Tests/AccountOperations/UpdateAccountOperationTests.cs: 41.1KB
+.github/skills/acquire-codebase-knowledge/scripts/scan.py: 23.2KB
+frontend/src/components/ui/Sidebar.tsx: 20.8KB
+backend/tests/Api.Tests/AccountOperations/AddAccountOperationTests.cs: 20.4KB
+backend/tests/Api.Tests/Accounts/UpdateAccountTests.cs: 17.9KB
+backend/tests/Api.Tests/AccountOperations/GetPaginatedAccountOperationsTests.cs: 17.3KB
+backend/tests/Api.Tests/AccountOperations/DeleteAccountOperationTests.cs: 14.2KB
+.github/agents/Coder.agent.md: 13.1KB
+backend/src/Infrastructure/Persistence/Migrations/20260321222739_AccountOperationTags.Designer.cs: 10.9KB
+
+=== CI/CD PIPELINES ===
+CI/CD: GitHub Actions
+
+=== CONTAINERS & ORCHESTRATION ===
+Orchestration: Docker Compose found
+
+=== SECURITY & COMPLIANCE ===
+No security configs detected.
+
+=== PERFORMANCE & TESTING ===
+No performance testing configs detected.
+
+=== SCAN COMPLETE ===

@@ -125,3 +125,17 @@ The web application requires the backend API. To run the full application locall
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](https://github.com/lnans/personal.budget/blob/main/LICENSE) file for details.
+
+## Codebase documentation
+
+Detailed documentation for the full monorepo lives under [`docs/codebase/`](../docs/codebase/):
+
+| Document                                              | Description                                                    |
+| ----------------------------------------------------- | -------------------------------------------------------------- |
+| [`STACK.md`](../docs/codebase/STACK.md)               | Languages, runtimes, frameworks, and all key dependencies      |
+| [`STRUCTURE.md`](../docs/codebase/STRUCTURE.md)       | Directory layout, entry points, and module boundaries          |
+| [`ARCHITECTURE.md`](../docs/codebase/ARCHITECTURE.md) | Architectural style, request lifecycle, and design patterns    |
+| [`CONVENTIONS.md`](../docs/codebase/CONVENTIONS.md)   | Naming, formatting, error handling, and coding standards       |
+| [`INTEGRATIONS.md`](../docs/codebase/INTEGRATIONS.md) | External services, database, authentication, and observability |
+| [`TESTING.md`](../docs/codebase/TESTING.md)           | Test stack, layout, scope matrix, and isolation strategy       |
+| [`CONCERNS.md`](../docs/codebase/CONCERNS.md)         | Known risks, technical debt, and security concerns             |
