@@ -30,18 +30,18 @@ internal sealed class Tag : AppBaseEntity<Tag>
         base.Configure(builder);
     }
 
-    public static ErrorOr<Tag> Create(string? name, string? color, DateTimeOffset createdAt) =>
+    public static Result<Tag> Create(string? name, string? color, DateTimeOffset createdAt) =>
         Validation
             .Begin()
             .Check(name, "name", ValidName)
             .Check(color, "color", ValidColor)
-            .Done(() => new Tag(name!, color!, createdAt));
+            .Test(() => new Tag(name!, color!, createdAt));
 
-    public ErrorOr<Tag> Rename(string? name) =>
+    public Result<Tag> Rename(string? name) =>
         Validation
             .Begin()
             .Check(name, "name", ValidName)
-            .Done(() =>
+            .Test(() =>
             {
                 Name = name!;
                 return this;

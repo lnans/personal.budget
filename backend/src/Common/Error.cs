@@ -10,6 +10,18 @@ internal enum ErrorType
     Conflict,
 }
 
+internal union Result<T>(T, IReadOnlyList<Error>);
+
+internal static class ResultExtensions
+{
+    public static async Task<Result<T>> ThenAsync<T>(this Result<T> current, Func<T, Task<Result<T>>> f) =>
+        current switch
+        {
+            T value => await f(value),
+            IReadOnlyList<Error> errors => errors,
+        };
+}
+
 internal readonly record struct Error(ErrorType Type, string Code, string Description, string? Field = null)
 {
     public static Error Failure(string code, string description) => new(ErrorType.Failure, code, description);

@@ -20,6 +20,7 @@ internal sealed class Validation
     }
 
     public ErrorOr<T> Done<T>(Func<T> factory) => _errors.Count == 0 ? factory() : _errors;
+    public Result<T> Test<T>(Func<T> factory) => _errors.Count == 0 ? factory() : _errors;
 }
 
 internal readonly record struct Rule<T>(T Value, Error? Error = null)
